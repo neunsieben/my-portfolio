@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Leonard Semmler — About</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+  @font-face{font-family:'Montreal';src:url('montreal.woff2') format('woff2');font-weight:700;font-display:swap;}
+  @font-face{font-family:'MontrealBook';src:url('montrealbook.woff2') format('woff2');font-weight:400;font-display:swap;}
+
+  :root{--bg:#f5f4f0;--text:#0a0a0a;--grey-mid:#8a8884;--grey-dark:#e8e6e2;--font-head:'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,Arial,sans-serif;--font-body:'MontrealBook','Plus Jakarta Sans',-apple-system,Helvetica Neue,Arial,sans-serif;--font-mono:'Space Mono',monospace;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;overflow-x:hidden;color-scheme:light;background:#f5f4f0;}
+  body{background:#f5f4f0;color:#0a0a0a;font-family:var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased;color-scheme:light;}
+  @media(prefers-color-scheme:dark){html,body{background:#f5f4f0 !important;color:#0a0a0a !important;}}
+
+
+  /* Dot grid pattern */
+  #dotGrid{position:fixed;inset:0;pointer-events:none;z-index:2;mix-blend-mode:difference;}
+  .cursor,.cursor-dot{display:none;}
+  .cursor{width:18px;height:18px;border:1.5px solid var(--text);border-radius:50%;position:fixed;pointer-events:none;z-index:10000;transition:transform .15s ease,background .15s ease;mix-blend-mode:difference;}
+  .cursor-dot{width:4px;height:4px;background:var(--text);border-radius:50%;position:fixed;pointer-events:none;z-index:10001;mix-blend-mode:difference;}
+  .cursor.hovering{transform:scale(3);background:var(--text);opacity:.12;}
+
+  /* Nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:flex;justify-content:space-between;align-items:baseline;transition:padding .4s cubic-bezier(.25,.46,.45,.94),background .4s ease;}
+  nav.scrolled{padding:16px 48px;background:rgba(245,244,240,.4);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+  .nav-logo{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;color:var(--text);text-transform:uppercase;line-height:1.6;}
+  .nav-links{display:flex;gap:20px 32px;list-style:none;align-items:baseline;flex-wrap:wrap;justify-content:flex-end;line-height:1.6;}
+  .nav-links a{color:var(--text);text-decoration:none;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;position:relative;display:inline-block;}
+
+  /* Terminal block */
+  .terminal-link .char{display:inline-block;position:relative;}
+  .terminal-link .char.active{color:#f5f4f0;background:#0a0a0a;}
+
+  /* Hero — centered statement */
+  .about-hero{padding:200px 48px 160px;max-width:1400px;margin:0 auto;text-align:center;}
+  .about-hero-label{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);margin-bottom:60px;}
+  .about-hero-title{font-family:var(--font-head);font-size:clamp(36px,6vw,100px);font-weight:700;line-height:1.1;max-width:1100px;margin:0 auto;}
+  #heroCanvas{display:block;margin:0 auto;}
+
+  /* Photo + Bio — photo left, text right */
+  .about-content{padding:0 48px 140px;max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+  .about-photo{position:sticky;top:120px;}
+  .about-photo img{width:100%;display:block;}
+  .about-photo-placeholder{width:100%;aspect-ratio:3/4;background:linear-gradient(135deg,var(--grey-dark),#dddbd6);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--grey-mid);}
+  .about-text-col{}
+  .about-text-para{font-family:var(--font-head);font-size:16px;font-weight:700;line-height:1.85;color:var(--text);margin-bottom:48px;}
+  .about-text-para a{color:var(--grey-mid);text-decoration:none;transition:color .3s ease;}
+  .about-text-para a:hover{color:var(--text);}
+
+  /* Bio two-column */
+  .about-bio{padding:0 48px 120px;max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;}
+  .about-bio-col{position:relative;}
+  .about-bio-label{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);margin-bottom:32px;}
+  .about-bio-text{font-family:var(--font-head);font-size:16px;font-weight:700;line-height:1.85;color:var(--text);}
+  .about-bio-text strong{color:var(--text);font-weight:700;}
+
+  /* Details grid */
+  .about-details{padding:0 48px 120px;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:60px;}
+  .about-detail-block{}
+  .about-detail-label{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);margin-bottom:20px;}
+  .about-detail-item{font-family:var(--font-mono);font-size:11px;line-height:2.2;color:var(--text);letter-spacing:0.5px;text-transform:uppercase;}
+  .about-detail-indent{padding-left:16px;}
+
+  /* Experience timeline */
+  .about-experience{padding:0 48px 140px;max-width:1400px;margin:0 auto;}
+  .about-experience-title{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);margin-bottom:48px;}
+  .exp-row{display:grid;grid-template-columns:200px 1fr 200px;gap:40px;padding:28px 0;border-top:1px solid rgba(10,10,10,.08);align-items:baseline;}
+  .exp-year{font-family:var(--font-mono);font-size:11px;letter-spacing:1px;color:var(--text);text-transform:uppercase;}
+  .exp-role{font-family:var(--font-mono);font-size:11px;font-weight:400;color:var(--text);letter-spacing:0.5px;text-transform:uppercase;}
+  .exp-company{font-family:var(--font-mono);font-size:11px;color:var(--text);letter-spacing:0.5px;text-transform:uppercase;}
+
+  /* Get in touch */
+  .get-in-touch{background:transparent;padding:120px 48px 120px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;min-height:40vh;z-index:1;}
+  #getInTouchCanvas{display:block;width:100%;}
+  .get-in-touch-links{display:flex;justify-content:center;gap:36px;margin-top:20px;list-style:none;}
+  .get-in-touch-links a{color:var(--text);text-decoration:none;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;position:relative;display:inline-block;transition:color .3s ease;}
+  .get-in-touch-links a:hover{color:var(--text);}
+  .get-in-touch-links .terminal-link .char.active{color:#f5f4f0;background:#0a0a0a;}
+
+  /* Footer */
+  .footer{padding:40px 48px;background:transparent;}
+  .footer-bottom{text-align:center;font-family:var(--font-mono);font-size:11px;font-weight:400;color:var(--grey-mid);letter-spacing:1px;text-transform:uppercase;}
+
+  /* Reveal */
+  .reveal{opacity:0;transform:translateY(44px);transition:all 1s cubic-bezier(.25,.46,.45,.94);}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .reveal-delay-1{transition-delay:.1s;}.reveal-delay-2{transition-delay:.2s;}.reveal-delay-3{transition-delay:.3s;}
+
+  @media(max-width:768px){
+    nav{padding:20px 24px;}
+    nav.scrolled{padding:14px 24px;}
+    .nav-logo{font-size:10px;max-width:40vw;}
+    .nav-links{gap:0;max-width:50vw;flex-direction:column;align-items:flex-end;}
+    .nav-links a{font-size:10px;letter-spacing:1px;line-height:1.6;display:block;}
+    .about-hero{padding:120px 24px 80px;}
+    .about-text-para{font-size:14px;}
+    .about-bio-text{font-size:14px;}
+    .about-content{padding:0 24px 80px;grid-template-columns:1fr;gap:48px;}
+    .about-photo{position:relative;top:0;}
+    .about-bio{padding:0 24px 80px;grid-template-columns:1fr;gap:48px;}
+    .about-details{padding:0 24px 80px;grid-template-columns:1fr;gap:40px;}
+    .about-experience{padding:0 24px 80px;}
+    .exp-row{grid-template-columns:1fr;gap:4px;padding:20px 0;}
+    .get-in-touch{padding:60px 24px 80px;}
+    .get-in-touch-links{gap:24px;flex-wrap:wrap;justify-content:center;}
+    .footer{padding:30px 24px;}
+    .cursor,.cursor-dot{display:none;}
+    body{cursor:auto;}
+  }
+</style>
+</head>
+<body>
+<canvas id="dotGrid"></canvas>
+<div class="cursor"></div>
+<div class="cursor-dot"></div>
+<nav>
+  <a href="homepage-prototype.html" class="nav-logo terminal-link hoverable" id="navLogo"></a>
+  <ul class="nav-links"><li><a href="homepage-prototype.html#projects" class="hoverable terminal-link">Projects</a></li><li><a href="about.html" class="hoverable terminal-link">About</a></li><li><a href="homepage-prototype.html#contact" class="hoverable terminal-link">Get in Touch</a></li></ul>
+</nav>
+
+<section class="about-hero">
+  <div class="about-hero-label reveal">Based in Hamburg, working globally</div>
+  <div class="reveal reveal-delay-1"><canvas id="heroCanvas"></canvas></div>
+</section>
+
+<section class="about-content">
+  <div class="about-photo reveal">
+    <div class="about-photo-placeholder">[ Your Photo ]</div>
+  </div>
+  <div class="about-text-col">
+    <p class="about-text-para reveal">My work covers wireframing, visual design, art direction, UI design, motion and interactive prototypes. This approach enables me to create thoughtful experiences by focusing on the brand's character and intent. Overall, I love to pay attention to detail and care for design execution and emphasizing collaboration with stakeholders throughout all project phases.</p>
+    <p class="about-text-para reveal reveal-delay-1">I enjoy working with enthusiastic people so, within the last couple of years, I've been working with multiple design teams, in person and remotely, but also I've been fortunate to work and collaborate with some talented freelances, studios and agencies, crafting meaningful and remarkable digital experiences for various brands.</p>
+    <p class="about-text-para reveal reveal-delay-2">My work has been recognized with various awards and features across different platforms, reinforcing my commitment to pushing creative boundaries and delivering work that resonates with audiences worldwide.</p>
+  </div>
+</section>
+
+<section class="about-bio">
+  <div class="about-bio-col reveal">
+    <div class="about-bio-label">Background</div>
+    <p class="about-bio-text">I'm <strong>Leonard Semmler</strong>, a designer based in <strong>Hamburg, Germany</strong> with a B.Sc. in <strong>Human-Computer Interaction</strong>. My work lives at the intersection of strategy and aesthetics — I believe the best design doesn't just look good, it communicates clearly and moves people to action.</p>
+  </div>
+  <div class="about-bio-col reveal reveal-delay-1">
+    <div class="about-bio-label">Approach</div>
+    <p class="about-bio-text">From <strong>brand identities</strong> and <strong>packaging design</strong> to <strong>visual direction for music events</strong>, I approach every project as an opportunity to tell a compelling story. I work across diverse materials and formats, always grounded in research and driven by craft.</p>
+  </div>
+</section>
+
+<section class="about-details">
+  <div class="about-detail-block reveal">
+    <div class="about-detail-label">Fields</div>
+    <div class="about-detail-item">Graphic Design</div>
+    <div class="about-detail-item">Branding/ Brand Identity</div>
+    <div class="about-detail-item">Packaging Design</div>
+    <div class="about-detail-item">Visual/ Art Direction</div>
+    <div class="about-detail-item">UX/UI Design</div>
+    <div class="about-detail-item">Motion Design</div>
+  </div>
+  <div class="about-detail-block reveal reveal-delay-1">
+    <div class="about-detail-label">Favourite Tools</div>
+    <div class="about-detail-item">Adobe Creative Cloud</div>
+    <div class="about-detail-item about-detail-indent">Photoshop</div>
+    <div class="about-detail-item about-detail-indent">Illustrator</div>
+    <div class="about-detail-item about-detail-indent">XD</div>
+    <div class="about-detail-item about-detail-indent">After Effects</div>
+    <div class="about-detail-item about-detail-indent">Firefly</div>
+    <div class="about-detail-item">Figma</div>
+    <div class="about-detail-item">Axure RP</div>
+    <div class="about-detail-item">Wordpress</div>
+    <div class="about-detail-item">Current AI Tools</div>
+  </div>
+  <div class="about-detail-block reveal reveal-delay-2">
+    <div class="about-detail-label">Education</div>
+    <div class="about-detail-item">B.Sc. Human-Computer Interaction</div>
+    <div class="about-detail-item">University of Hamburg</div>
+  </div>
+</section>
+
+<section class="get-in-touch">
+  <div class="reveal"><canvas id="getInTouchCanvas"></canvas></div>
+  <ul class="get-in-touch-links reveal reveal-delay-2"><li><a href="#" class="hoverable terminal-link">Instagram ↗</a></li><li><a href="#" class="hoverable terminal-link">LinkedIn ↗</a></li><li><a href="#" class="hoverable terminal-link">Email ↗</a></li></ul>
+</section>
+
+<footer class="footer">
+  <div class="footer-bottom">© 2026 Leonard Semmler. All Rights Reserved.</div>
+</footer>
+
+<script>
+// NAV LOGO
+(function(){
+  const el = document.getElementById('navLogo');
+  const months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  const now = new Date();
+  el.textContent = `LEONARDSEMMLER/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
+})();
+
+// ========================================================
+// VERTICAL FLUTED GLASS — Hero headline
+// ========================================================
+const vSrc = `attribute vec2 a_pos;varying vec2 v_uv;void main(){v_uv=a_pos*0.5+0.5;v_uv.y=1.0-v_uv.y;gl_Position=vec4(a_pos,0.0,1.0);}`;
+const fSrcV = `
+precision highp float;
+varying vec2 v_uv;
+uniform sampler2D u_tex;
+uniform float u_motionValue;
+uniform float u_segments;
+uniform vec2 u_mouse;
+uniform float u_hover;
+uniform float u_reveal;
+#define PI 3.14159265
+void main(){
+  vec2 uv = v_uv;
+  float distY = abs(uv.y - u_mouse.y);
+  float bandWidth = 0.1;
+  float falloff = smoothstep(bandWidth, 0.0, distY) * u_hover;
+  float amplitude = 0.35 * falloff;
+  float sliceProgress = fract(uv.y * u_segments + u_motionValue * falloff);
+  uv.y += amplitude * sin(sliceProgress * PI * 2.0) * (1.0 - 0.5 * abs(sliceProgress - 0.5));
+  vec2 tileIndex = floor(uv);
+  vec2 oddTile = mod(tileIndex, 2.0);
+  vec2 mirroredUV = mix(fract(uv), 1.0 - fract(uv), oddTile);
+  vec4 color = texture2D(u_tex, mirroredUV);
+  // Reveal: text fades in as reveal line passes over it
+  float revealAlpha = 1.0 - smoothstep(u_reveal - 0.12, u_reveal + 0.02, v_uv.y);
+  color.a *= revealAlpha;
+  
+  gl_FragColor = color;
+}`;
+
+function createVerticalGlassEffect(canvasEl, textRenderer, heightDesktop, heightMobile) {
+  const gl = canvasEl.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+  if (!gl) return { resize(){}, render(){} };
+  const dpr = Math.max(window.devicePixelRatio || 1, 2) * 1.5;
+  const tc = document.createElement('canvas');
+  const tx = tc.getContext('2d');
+  function resize() {
+    const W = Math.min(window.innerWidth * 0.85, 1100);
+    const t = Math.min(1, Math.max(0, (window.innerWidth - 480) / (1200 - 480)));
+    const H = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
+    canvasEl.width = W * dpr; canvasEl.height = H * dpr;
+    canvasEl.style.width = W + 'px'; canvasEl.style.height = H + 'px';
+    gl.viewport(0, 0, canvasEl.width, canvasEl.height);
+    tc.width = canvasEl.width; tc.height = canvasEl.height;
+    tx.clearRect(0, 0, tc.width, tc.height);
+    textRenderer(tx, tc, dpr);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+  }
+  function mkS(t,s){const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh;}
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mkS(gl.VERTEX_SHADER,vSrc));
+  gl.attachShader(prog,mkS(gl.FRAGMENT_SHADER,fSrcV));
+  gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const aP=gl.getAttribLocation(prog,'a_pos');gl.enableVertexAttribArray(aP);gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
+  const uMotion=gl.getUniformLocation(prog,'u_motionValue');
+  const uSegs=gl.getUniformLocation(prog,'u_segments');
+  const uMouse=gl.getUniformLocation(prog,'u_mouse');
+  const uHover=gl.getUniformLocation(prog,'u_hover');
+  const uReveal=gl.getUniformLocation(prog,'u_reveal');
+  const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  let motionValue=0.5,targetMotion=0.5;
+  let mouseUVx=0.5,mouseUVy=0.5,tMouseUVx=0.5,tMouseUVy=0.5;
+  let hoverStr=0,tHoverStr=0;
+  let revealPos=-0.2;
+  const motionFactor=-8;
+  canvasEl.addEventListener('mousemove',(e)=>{
+    const r=canvasEl.getBoundingClientRect();
+    tMouseUVx=(e.clientX-r.left)/r.width;tMouseUVy=(e.clientY-r.top)/r.height;
+    targetMotion=0.5+tMouseUVy*motionFactor*0.1;tHoverStr=1.0;
+  });
+  canvasEl.addEventListener('mouseleave',()=>{targetMotion=0.5;tHoverStr=0;});
+  function handleTouch(e){e.preventDefault();const t=e.touches[0];const r=canvasEl.getBoundingClientRect();tMouseUVx=(t.clientX-r.left)/r.width;tMouseUVy=(t.clientY-r.top)/r.height;mouseUVx=tMouseUVx;mouseUVy=tMouseUVy;targetMotion=0.5+tMouseUVy*motionFactor*0.1;tHoverStr=1.0;hoverStr=0.5;}
+  canvasEl.addEventListener('touchstart',handleTouch,{passive:false});
+  canvasEl.addEventListener('touchmove',handleTouch,{passive:false});
+  canvasEl.addEventListener('touchend',()=>{targetMotion=0.5;tHoverStr=0;});
+  function render(){
+    motionValue+=(targetMotion-motionValue)*0.035;mouseUVx+=(tMouseUVx-mouseUVx)*0.06;mouseUVy+=(tMouseUVy-mouseUVy)*0.06;hoverStr+=(tHoverStr-hoverStr)*0.04;
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(uMotion,motionValue);gl.uniform1f(uSegs,0.1);gl.uniform2f(uMouse,mouseUVx,mouseUVy);gl.uniform1f(uHover,hoverStr);gl.uniform1f(uReveal,revealPos);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(render);
+  }
+  window.addEventListener('resize', resize);
+  return { resize, render, force(uvx, uvy, str, rev) { mouseUVx=tMouseUVx=uvx; mouseUVy=tMouseUVy=uvy; hoverStr=tHoverStr=str; motionValue=targetMotion=0.5+uvy*motionFactor*0.1; if(rev!==undefined)revealPos=rev; } };
+}
+
+// Multi-line word wrap text renderer
+function wrapText(tx, text, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  const lines = [];
+  let currentLine = words[0];
+  for (let i = 1; i < words.length; i++) {
+    const test = currentLine + ' ' + words[i];
+    if (tx.measureText(test).width <= maxWidth) {
+      currentLine = test;
+    } else {
+      lines.push(currentLine);
+      currentLine = words[i];
+    }
+  }
+  lines.push(currentLine);
+  return lines;
+}
+
+const heroInstance = createVerticalGlassEffect(
+  document.getElementById('heroCanvas'),
+  (tx, tc, dpr) => {
+    const text = 'Enthusiastic about graphic design, typography, and the dynamic areas of motion and web-based animations. Specialized in translating brands into unique and immersive digital user experiences.';
+    const maxWidth = tc.width * 0.95;
+    // Find font size that fits the text block
+    let fs = Math.floor(80 * dpr);
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    let lines = wrapText(tx, text, maxWidth, fs * 1.15);
+    // Scale down if too many lines for canvas height
+    while (lines.length * fs * 1.15 > tc.height * 0.9 && fs > 10) {
+      fs -= 2;
+      tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+      lines = wrapText(tx, text, maxWidth, fs * 1.15);
+    }
+    const lineH = fs * 1.15;
+    const totalH = lines.length * lineH;
+    const startY = (tc.height - totalH) / 2 + fs * 0.85;
+    tx.fillStyle = '#0a0a0a';
+    tx.textAlign = 'center';
+    tx.textBaseline = 'alphabetic';
+    lines.forEach((line, i) => {
+      tx.fillText(line, tc.width / 2, startY + i * lineH);
+    });
+  },
+  600, 300
+);
+
+const gitInstance = createVerticalGlassEffect(
+  document.getElementById('getInTouchCanvas'),
+  (tx, tc, dpr) => {
+    const maxWidth = tc.width;
+    let fs = Math.floor(300 * dpr);
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    let measured = tx.measureText('Get in touch').width;
+    fs = Math.floor(fs * (maxWidth / measured));
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    tx.textAlign = 'center'; tx.textBaseline = 'middle';
+    tx.fillStyle = '#0a0a0a';
+    tx.fillText('Get in touch', tc.width / 2, tc.height * 0.5);
+  },
+  320, 110
+);
+
+document.fonts.ready.then(() => {
+  heroInstance.resize();
+  heroInstance.render();
+  gitInstance.resize();
+  gitInstance.render();
+  // Get-in-touch starts fully revealed
+  gitInstance.force(0.5, 0.5, 0, 1.2);
+
+  // Auto-sweep top to bottom on load — reveals text line by line
+  setTimeout(() => {
+    const duration = 4000;
+    const startTime = performance.now();
+
+    function step() {
+      const elapsed = performance.now() - startTime;
+      if (elapsed < duration) {
+        const progress = elapsed / duration;
+        // Ease-in start, then strong ease-out end
+        const easeIn = Math.pow(progress, 1.4);
+        const eased = 1 - Math.pow(1 - easeIn, 4.5);
+        const y = -0.1 + eased * 1.2;
+        heroInstance.force(0.5, y, 0.7, y + 0.08);
+        requestAnimationFrame(step);
+      } else {
+        let fadeStart = performance.now();
+        function fadeOut() {
+          const t = Math.min((performance.now() - fadeStart) / 800, 1);
+          const ease = 0.5 - 0.5 * Math.cos(t * Math.PI);
+          heroInstance.force(0.5, 1.1, 0.7 * (1 - ease), 1.2);
+          if (t < 1) requestAnimationFrame(fadeOut);
+        }
+        requestAnimationFrame(fadeOut);
+      }
+    }
+    requestAnimationFrame(step);
+  }, 150);
+});
+
+// CURSOR
+const cur=document.querySelector('.cursor'),dot=document.querySelector('.cursor-dot');
+let cx2=0,cy2=0,dx2=0,dy2=0;
+document.addEventListener('mousemove',(e)=>{cx2=e.clientX;cy2=e.clientY;});
+function ac(){dx2+=(cx2-dx2)*.12;dy2+=(cy2-dy2)*.12;cur.style.left=dx2-9+'px';cur.style.top=dy2-9+'px';dot.style.left=cx2-2+'px';dot.style.top=cy2-2+'px';requestAnimationFrame(ac);}ac();
+document.querySelectorAll('.hoverable,a').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('hovering'));el.addEventListener('mouseleave',()=>cur.classList.remove('hovering'));});
+
+// NAV SCROLL
+const navEl=document.querySelector('nav');
+function updateNav(){if(window.scrollY>50)navEl.classList.add('scrolled');else navEl.classList.remove('scrolled');requestAnimationFrame(updateNav);}
+updateNav();
+
+// REVEAL
+// AUTO-SWEEP — Get in touch on scroll into view
+(function(){
+  const canvas = document.getElementById('getInTouchCanvas');
+  if (!canvas) return;
+  let triggered = false;
+  const sweepObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !triggered) {
+        triggered = true;
+        sweepObs.unobserve(canvas);
+        const duration = 1800;
+        const holdStart = 200;
+        const holdEnd = 400;
+        const totalDuration = holdStart + duration + holdEnd;
+        const startTime = performance.now();
+        function step() {
+          const elapsed = performance.now() - startTime;
+          if (elapsed < holdStart) {
+            const rect = canvas.getBoundingClientRect();
+            canvas.dispatchEvent(new MouseEvent('mousemove', { clientX: rect.left + rect.width * 0.5, clientY: rect.top + rect.height * 0.05, bubbles: true }));
+            requestAnimationFrame(step);
+          } else if (elapsed < holdStart + duration) {
+            const progress = (elapsed - holdStart) / duration;
+            const eased = progress * progress * (3 - 2 * progress);
+            const rect = canvas.getBoundingClientRect();
+            canvas.dispatchEvent(new MouseEvent('mousemove', { clientX: rect.left + rect.width * 0.5, clientY: rect.top + rect.height * (0.05 + eased * 0.9), bubbles: true }));
+            requestAnimationFrame(step);
+          } else if (elapsed < totalDuration) {
+            requestAnimationFrame(step);
+          } else {
+            canvas.dispatchEvent(new MouseEvent('mouseleave'));
+          }
+        }
+        requestAnimationFrame(step);
+      }
+    });
+  }, { threshold: 0.4 });
+  sweepObs.observe(canvas);
+})();
+
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// TERMINAL BLOCK SWEEP
+function splitIntoChars(el){
+  const text=el.textContent;el.textContent='';
+  if(text.includes('/')){
+    const segments=text.split('/');
+    segments.forEach((seg,idx)=>{
+      const wrapper=document.createElement('span');
+      wrapper.style.whiteSpace='nowrap';
+      const fullSeg=idx<segments.length-1?seg+'/':seg;
+      for(let i=0;i<fullSeg.length;i++){const span=document.createElement('span');span.className='char';span.textContent=fullSeg[i]===' '?'\u00A0':fullSeg[i];wrapper.appendChild(span);}
+      el.appendChild(wrapper);
+    });
+  }else{
+    for(let i=0;i<text.length;i++){const span=document.createElement('span');span.className='char';span.textContent=text[i]===' '?'\u00A0':text[i];el.appendChild(span);}
+  }
+}
+function sweepTerminal(el,speed,onComplete){
+  const chars=el.querySelectorAll('.char');let i=0;
+  function step(){if(i>0)chars[i-1].classList.remove('active');if(i<chars.length){chars[i].classList.add('active');i++;setTimeout(step,speed);}else{if(chars.length>0)chars[chars.length-1].classList.remove('active');if(onComplete)onComplete();}}
+  step();
+}
+document.querySelectorAll('.terminal-link').forEach(el=>{
+  splitIntoChars(el);
+  let isAnimating=false;
+  el.addEventListener('mouseenter',()=>{if(isAnimating)return;isAnimating=true;sweepTerminal(el,70,()=>{isAnimating=false;});});
+});
+
+// DOT GRID — Figma-style with subtle random pulse
+(function(){
+  const canvas = document.getElementById('dotGrid');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const spacing = 24;
+  const baseSize = 1.5;
+  let cols, rows, pulses = [];
+  let currentDpr = 1;
+  
+  function resize() {
+    currentDpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * currentDpr;
+    canvas.height = window.innerHeight * currentDpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    cols = Math.ceil(window.innerWidth / spacing) + 1;
+    rows = Math.ceil(window.innerHeight / spacing) + 1;
+    pulses = [];
+    const totalDots = cols * rows;
+    const pulseCount = Math.floor(totalDots * 0.02);
+    for (let i = 0; i < pulseCount; i++) {
+      pulses.push({
+        col: Math.floor(Math.random() * cols),
+        row: Math.floor(Math.random() * rows),
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.15 + Math.random() * 0.25,
+        maxScale: 1.15 + Math.random() * 0.35
+      });
+    }
+  }
+  
+  // Build a lookup map for fast pulse checking
+  let pulseMap = {};
+  function buildPulseMap() {
+    pulseMap = {};
+    for (let i = 0; i < pulses.length; i++) {
+      pulseMap[pulses[i].col + ',' + pulses[i].row] = pulses[i];
+    }
+  }
+  
+  let lastShuffle = 0;
+  function shufflePulses(time) {
+    if (time - lastShuffle > 5000) {
+      lastShuffle = time;
+      for (let i = 0; i < pulses.length; i++) {
+        if (Math.random() < 0.25) {
+          pulses[i].col = Math.floor(Math.random() * cols);
+          pulses[i].row = Math.floor(Math.random() * rows);
+          pulses[i].phase = Math.random() * Math.PI * 2;
+        }
+      }
+      buildPulseMap();
+    }
+  }
+  
+  function render(time) {
+    ctx.setTransform(currentDpr, 0, 0, currentDpr, 0, 0);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    const t = time * 0.001;
+    shufflePulses(time);
+    
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = c * spacing;
+        const y = r * spacing;
+        const p = pulseMap[c + ',' + r];
+        let size = baseSize;
+        if (p) {
+          const wave = (Math.sin(t * p.speed + p.phase) + 1) * 0.5;
+          size = baseSize * (1 + (p.maxScale - 1) * wave);
+        }
+        const half = size * 0.5;
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        ctx.fillRect(Math.round(x - half), Math.round(y - half), Math.round(size), Math.round(size));
+      }
+    }
+    requestAnimationFrame(render);
+  }
+  
+  resize();
+  buildPulseMap();
+  window.addEventListener('resize', () => { resize(); buildPulseMap(); });
+  requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>

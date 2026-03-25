@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Leonard Semmler — Projects</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+  @font-face{font-family:'Montreal';src:url('montreal.woff2') format('woff2');font-weight:700;font-display:swap;}
+  @font-face{font-family:'MontrealBook';src:url('montrealbook.woff2') format('woff2');font-weight:400;font-display:swap;}
+
+  :root{--bg:#f5f4f0;--text:#0a0a0a;--grey-mid:#8a8884;--grey-dark:#e8e6e2;--font-head:'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,Arial,sans-serif;--font-body:'MontrealBook','Plus Jakarta Sans',-apple-system,Helvetica Neue,Arial,sans-serif;--font-mono:'Space Mono',monospace;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:auto;overflow-x:hidden;color-scheme:light;background:#f5f4f0;}
+  body{background:#f5f4f0;color:#0a0a0a;font-family:var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased;color-scheme:light;}
+  @media(prefers-color-scheme:dark){html,body{background:#f5f4f0 !important;color:#0a0a0a !important;}}
+
+
+  /* Dot grid pattern */
+  #dotGrid{position:fixed;inset:0;pointer-events:none;z-index:2;mix-blend-mode:difference;}
+  .cursor,.cursor-dot{display:none;}
+  .cursor{width:18px;height:18px;border:1.5px solid var(--text);border-radius:50%;position:fixed;pointer-events:none;z-index:10000;transition:transform .15s ease,background .15s ease;mix-blend-mode:difference;}
+  .cursor-dot{width:4px;height:4px;background:var(--text);border-radius:50%;position:fixed;pointer-events:none;z-index:10001;mix-blend-mode:difference;}
+  .cursor.hovering{transform:scale(3);background:var(--text);opacity:.12;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:flex;justify-content:space-between;align-items:baseline;transition:padding .4s cubic-bezier(.25,.46,.45,.94),background .4s ease,backdrop-filter .4s ease,-webkit-backdrop-filter .4s ease;}
+  nav.scrolled{padding:16px 48px;background:rgba(245,244,240,.4);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+  .nav-logo{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;color:var(--text);text-transform:uppercase;line-height:1.6;text-decoration:none;}
+  .nav-links{display:flex;gap:20px 32px;list-style:none;align-items:baseline;flex-wrap:wrap;justify-content:flex-end;line-height:1.6;}
+  .nav-links a{color:var(--text);text-decoration:none;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;position:relative;display:inline-block;}
+
+  .terminal-link .char{display:inline-block;position:relative;}
+  .terminal-link .char.active{color:#f5f4f0;background:#0a0a0a;}
+
+  .projects-header{padding:180px 48px 60px;position:relative;z-index:3;}
+  .projects-header-top{display:flex;justify-content:space-between;align-items:baseline;}
+  .projects-title{font-family:var(--font-head);font-size:clamp(48px,8vw,120px);font-weight:700;line-height:1;}
+
+  .view-toggle{font-family:var(--font-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--grey-mid);display:flex;align-items:center;gap:8px;}
+  .view-btn{background:none;border:none;font-family:var(--font-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--grey-mid);padding:4px 8px;transition:color .3s ease;}
+  .view-btn:hover,.view-btn.active{color:var(--text);}
+
+  .projects-container{padding:0 48px 160px;position:relative;z-index:3;}
+
+  /* LIST VIEW */
+  .projects-list{position:relative;min-height:100vh;}
+  .projects-list-image{position:absolute;top:0;left:0;width:38vw;z-index:4;}
+  .projects-list-image.locked{position:fixed;left:48px;}
+  .projects-list-img{width:100%;aspect-ratio:4/3;background-size:cover;background-position:center;transition:opacity .12s ease;}
+  .projects-list-img.fading{opacity:0;}
+
+  .projects-list-rows{margin-left:calc(38vw + 80px);}
+  .project-row-entry{display:grid;grid-template-columns:auto 1fr;gap:40px;padding:80px 0;text-decoration:none;color:var(--text);align-items:start;border-bottom:1px solid rgba(10,10,10,.08);}
+
+  .project-row-num{font-family:var(--font-head);font-size:clamp(20px,2.5vw,36px);font-weight:700;color:var(--text);}
+  .project-row-name{font-family:var(--font-head);font-size:clamp(20px,2.5vw,36px);font-weight:700;margin-bottom:20px;}
+  .project-row-desc{font-family:var(--font-mono);font-size:11px;font-weight:400;line-height:1.8;letter-spacing:0.5px;text-transform:uppercase;color:var(--text);max-width:500px;}
+  .project-row-link{display:none;font-family:var(--font-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none;margin-top:24px;}
+  .project-row-carousel{display:none;}
+  .carousel-track{overflow:hidden;}
+  .carousel-track-inner{display:flex;gap:8px;}
+  .carousel-slide{background-size:cover;background-position:center;flex-shrink:0;}
+
+  /* GRID VIEW */
+  .projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+  .project-grid-item{text-decoration:none;color:var(--text);}
+  .project-grid-img-wrap{overflow:hidden;margin-bottom:16px;}
+  .project-grid-img{width:100%;aspect-ratio:4/3;background-size:cover;background-position:center;transition:transform .6s ease;}
+  .project-grid-item:hover .project-grid-img{transform:scale(1.03);}
+  .project-grid-meta{display:flex;justify-content:space-between;align-items:baseline;}
+  .project-grid-name{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);}
+  .project-grid-cat{font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--grey-mid);}
+
+  .view-hidden{display:none !important;}
+
+  .get-in-touch{background:var(--bg);padding:120px 48px 120px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;min-height:40vh;z-index:1;}
+  #getInTouchCanvas{display:block;width:100%;}
+  .get-in-touch-links{display:flex;justify-content:center;gap:36px;margin-top:20px;list-style:none;}
+  .get-in-touch-links a{color:var(--text);text-decoration:none;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;position:relative;display:inline-block;transition:color .3s ease;}
+  .get-in-touch-links a:hover{color:var(--text);}
+  .get-in-touch-links .terminal-link .char.active{color:#f5f4f0;background:#0a0a0a;}
+
+  .footer{padding:40px 48px;background:transparent;position:relative;z-index:1;}
+  .footer-bottom{text-align:center;font-family:var(--font-mono);font-size:11px;font-weight:400;color:var(--grey-mid);letter-spacing:1px;text-transform:uppercase;}
+
+  .reveal{opacity:0;transform:translateY(44px);transition:all 1s cubic-bezier(.25,.46,.45,.94);}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .reveal-delay-1{transition-delay:.1s;}.reveal-delay-2{transition-delay:.2s;}.reveal-delay-3{transition-delay:.3s;}.reveal-delay-4{transition-delay:.4s;}.reveal-delay-5{transition-delay:.5s;}
+
+  @media(max-width:768px){
+    nav{padding:20px 24px;}nav.scrolled{padding:14px 24px;}
+    .nav-logo{font-size:10px;max-width:40vw;}
+    .nav-links{gap:0;max-width:50vw;flex-direction:column;align-items:flex-end;}
+    .nav-links a{font-size:10px;letter-spacing:1px;line-height:1.6;display:block;}
+    .projects-header{padding:120px 24px 60px;}
+    .projects-header-top{flex-direction:column;gap:24px;}
+    .view-toggle{display:none;}
+    .projects-container{padding:0 0 80px;}
+    .projects-list-image{display:none !important;}
+    .projects-list-rows{margin-left:0;margin-top:0 !important;}
+    .projects-grid{display:none !important;}
+    .project-row-entry{display:block;padding:60px 24px;grid-template-columns:none;gap:0;border-bottom:none;}
+    .project-row-num{margin-bottom:16px;}
+    .project-row-name{margin-bottom:16px;}
+    .project-row-desc{margin-bottom:0;}
+    .project-row-link{display:block;}
+    .project-row-carousel{display:block;margin-top:32px;margin-left:-24px;margin-right:-24px;width:100vw;}
+    .carousel-track{overflow:hidden;}
+    .carousel-track-inner{display:flex;gap:8px;width:max-content;will-change:transform;}
+    .carousel-slide{width:85vw;height:60vw;flex-shrink:0;}
+    .footer{padding:30px 24px;}
+    .get-in-touch{padding:60px 24px 80px;}
+    .get-in-touch-links{gap:24px;flex-wrap:wrap;justify-content:center;}
+    .cursor,.cursor-dot{display:none;}body{cursor:auto;}
+  }
+</style>
+</head>
+<body>
+<canvas id="dotGrid"></canvas>
+<div class="cursor"></div>
+<div class="cursor-dot"></div>
+<nav>
+  <a href="homepage-prototype.html" class="nav-logo terminal-link hoverable" id="navLogo"></a>
+  <ul class="nav-links"><li><a href="projects.html" class="hoverable terminal-link">Projects</a></li><li><a href="about.html" class="hoverable terminal-link">About</a></li><li><a href="homepage-prototype.html#contact" class="hoverable terminal-link">Get in Touch</a></li></ul>
+</nav>
+
+<section class="projects-header">
+  <div class="projects-header-top">
+    <span class="projects-title reveal">Projects</span>
+    <div class="view-toggle reveal reveal-delay-1">
+      <span>[</span><span>View</span>
+      <button class="view-btn active hoverable" id="btnList">List</button>
+      <button class="view-btn hoverable" id="btnGrid">Grid</button>
+      <span>]</span>
+    </div>
+  </div>
+</section>
+
+<section class="projects-container">
+  <div class="projects-list" id="listView">
+    <div class="projects-list-image" id="imgPanel">
+      <div class="projects-list-img" id="stickyImg" style="background:linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4);"></div>
+    </div>
+    <div class="projects-list-rows" id="listRows">
+      <div class="project-row-entry reveal" data-img="linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)">
+        <div class="project-row-num">001</div>
+        <div class="project-row-info">
+          <div class="project-row-name">Zalazium GmbH</div>
+          <div class="project-row-desc">Interactive website and brand identity for a tech startup, introducing their platform through an engaging digital experience.</div>
+          <a href="#" class="project-row-link hoverable">See More</a>
+        </div>
+        <div class="project-row-carousel"><div class="carousel-track"><div class="carousel-track-inner"><div class="carousel-slide" style="background:linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#d0ceca,#bab8b4,#c8c6c2);"></div><div class="carousel-slide" style="background:linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#d0ceca,#bab8b4,#c8c6c2);"></div></div></div></div>
+      </div>
+      <div class="project-row-entry reveal reveal-delay-1" data-img="linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)">
+        <div class="project-row-num">002</div>
+        <div class="project-row-info">
+          <div class="project-row-name">Daily Grind Coffee</div>
+          <div class="project-row-desc">Complete brand identity and packaging design for a specialty coffee roastery based in Hamburg.</div>
+          <a href="#" class="project-row-link hoverable">See More</a>
+        </div>
+        <div class="project-row-carousel"><div class="carousel-track"><div class="carousel-track-inner"><div class="carousel-slide" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#0f3460,#1a1a2e,#16213e);"></div><div class="carousel-slide" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#0f3460,#1a1a2e,#16213e);"></div></div></div></div>
+      </div>
+      <div class="project-row-entry reveal reveal-delay-2" data-img="linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604)">
+        <div class="project-row-num">003</div>
+        <div class="project-row-info">
+          <div class="project-row-name">Donata Jan Trio</div>
+          <div class="project-row-desc">Album artwork and visual identity for a contemporary jazz trio, capturing the essence of their sound through design.</div>
+          <a href="#" class="project-row-link hoverable">See More</a>
+        </div>
+        <div class="project-row-carousel"><div class="carousel-track"><div class="carousel-track-inner"><div class="carousel-slide" style="background:linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#0a0604,#2a1a0e,#1a0e06);"></div><div class="carousel-slide" style="background:linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#0a0604,#2a1a0e,#1a0e06);"></div></div></div></div>
+      </div>
+      <div class="project-row-entry reveal reveal-delay-3" data-img="linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba)">
+        <div class="project-row-num">004</div>
+        <div class="project-row-info">
+          <div class="project-row-name">Studio Liebe</div>
+          <div class="project-row-desc">Visual branding and digital presence for a Hamburg-based design studio focused on culture and music.</div>
+          <a href="#" class="project-row-link hoverable">See More</a>
+        </div>
+        <div class="project-row-carousel"><div class="carousel-track"><div class="carousel-track-inner"><div class="carousel-slide" style="background:linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#c0beba,#cccac6,#d4d2ce);"></div><div class="carousel-slide" style="background:linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#c0beba,#cccac6,#d4d2ce);"></div></div></div></div>
+      </div>
+      <div class="project-row-entry reveal reveal-delay-4" data-img="linear-gradient(135deg,#8a7e72,#a09488,#b8aca0)">
+        <div class="project-row-num">005</div>
+        <div class="project-row-info">
+          <div class="project-row-name">Nordlicht Festival</div>
+          <div class="project-row-desc">Event branding and visual direction for an electronic music festival in Northern Germany.</div>
+          <a href="#" class="project-row-link hoverable">See More</a>
+        </div>
+        <div class="project-row-carousel"><div class="carousel-track"><div class="carousel-track-inner"><div class="carousel-slide" style="background:linear-gradient(135deg,#8a7e72,#a09488,#b8aca0);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#b8aca0,#8a7e72,#a09488);"></div><div class="carousel-slide" style="background:linear-gradient(135deg,#8a7e72,#a09488,#b8aca0);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#b8aca0,#8a7e72,#a09488);"></div></div></div></div>
+      </div>
+      <div class="project-row-entry reveal reveal-delay-5" data-img="linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)">
+        <div class="project-row-num">006</div>
+        <div class="project-row-info">
+          <div class="project-row-name">Hafenklang Visuals</div>
+          <div class="project-row-desc">Motion design and live visuals for a renowned Hamburg music venue and cultural space.</div>
+          <a href="#" class="project-row-link hoverable">See More</a>
+        </div>
+        <div class="project-row-carousel"><div class="carousel-track"><div class="carousel-track-inner"><div class="carousel-slide" style="background:linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#4c4c5a,#2c2c3a,#3c3c4a);"></div><div class="carousel-slide" style="background:linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a);"></div><div class="carousel-slide" style="background:linear-gradient(160deg,#4c4c5a,#2c2c3a,#3c3c4a);"></div></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="projects-grid view-hidden" id="gridView">
+    <a href="#" class="project-grid-item reveal hoverable"><div class="project-grid-img-wrap"><div class="project-grid-img" style="background:linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4);"></div></div><div class="project-grid-meta"><span class="project-grid-cat">UX · Branding · Motion</span><span class="project-grid-name">Zalazium GmbH</span></div></a>
+    <a href="#" class="project-grid-item reveal reveal-delay-1 hoverable"><div class="project-grid-img-wrap"><div class="project-grid-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);"></div></div><div class="project-grid-meta"><span class="project-grid-cat">Branding · Packaging</span><span class="project-grid-name">Daily Grind Coffee</span></div></a>
+    <a href="#" class="project-grid-item reveal reveal-delay-2 hoverable"><div class="project-grid-img-wrap"><div class="project-grid-img" style="background:linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604);"></div></div><div class="project-grid-meta"><span class="project-grid-cat">Album Artwork</span><span class="project-grid-name">Donata Jan Trio</span></div></a>
+    <a href="#" class="project-grid-item reveal reveal-delay-3 hoverable"><div class="project-grid-img-wrap"><div class="project-grid-img" style="background:linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba);"></div></div><div class="project-grid-meta"><span class="project-grid-cat">Branding · Web Design</span><span class="project-grid-name">Studio Liebe</span></div></a>
+    <a href="#" class="project-grid-item reveal reveal-delay-4 hoverable"><div class="project-grid-img-wrap"><div class="project-grid-img" style="background:linear-gradient(135deg,#8a7e72,#a09488,#b8aca0);"></div></div><div class="project-grid-meta"><span class="project-grid-cat">Event Branding</span><span class="project-grid-name">Nordlicht Festival</span></div></a>
+    <a href="#" class="project-grid-item reveal reveal-delay-5 hoverable"><div class="project-grid-img-wrap"><div class="project-grid-img" style="background:linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a);"></div></div><div class="project-grid-meta"><span class="project-grid-cat">Motion · Live Visuals</span><span class="project-grid-name">Hafenklang Visuals</span></div></a>
+  </div>
+</section>
+
+<section class="get-in-touch">
+  <div class="reveal"><canvas id="getInTouchCanvas"></canvas></div>
+  <ul class="get-in-touch-links reveal reveal-delay-2"><li><a href="#" class="hoverable terminal-link">Instagram ↗</a></li><li><a href="#" class="hoverable terminal-link">LinkedIn ↗</a></li><li><a href="#" class="hoverable terminal-link">Email ↗</a></li></ul>
+</section>
+
+<footer class="footer"><div class="footer-bottom">© 2026 Leonard Semmler. All Rights Reserved.</div></footer>
+
+<script>
+(function(){const el=document.getElementById('navLogo');const m=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];const n=new Date();el.textContent=`LEONARDSEMMLER/PORTFOLIO/${n.getFullYear()}/${m[n.getMonth()]}`;})();
+
+// VIEW TOGGLE
+(function(){
+  const btnList=document.getElementById('btnList'),btnGrid=document.getElementById('btnGrid'),listView=document.getElementById('listView'),gridView=document.getElementById('gridView');
+  function setView(v){
+    if(v==='list'){listView.classList.remove('view-hidden');gridView.classList.add('view-hidden');btnList.classList.add('active');btnGrid.classList.remove('active');}
+    else{gridView.classList.remove('view-hidden');listView.classList.add('view-hidden');btnGrid.classList.add('active');btnList.classList.remove('active');}
+    document.querySelectorAll('.reveal').forEach(el=>{if(el.getBoundingClientRect().top<window.innerHeight)el.classList.add('visible');});
+  }
+  btnList.addEventListener('click',()=>setView('list'));
+  btnGrid.addEventListener('click',()=>setView('grid'));
+})();
+
+// IMAGE LOCK + SWAP + MAGNETIC SCROLL
+(function(){
+  const imgPanel = document.getElementById('imgPanel');
+  const stickyImg = document.getElementById('stickyImg');
+  const rows = Array.from(document.querySelectorAll('.project-row-entry'));
+  if (!imgPanel || !rows.length) return;
+  if (window.innerWidth <= 768) return; // No magnetic scroll on mobile
+
+  let locked = false;
+  let lockScrollY = 0;
+  let snapIdx = 0;
+  let isAnimating = false;
+  let wheelBlocked = false;
+  let imgNaturalTop = 0;
+  let imgH = 0;
+
+  function measure() {
+    // Unlock temporarily to get true position
+    if (locked) { imgPanel.classList.remove('locked'); imgPanel.style.top = ''; }
+    const r = imgPanel.getBoundingClientRect();
+    imgH = r.height;
+    imgNaturalTop = r.top + window.scrollY;
+    lockScrollY = imgNaturalTop - (window.innerHeight / 2 - imgH / 2);
+    if (locked) { imgPanel.classList.add('locked'); imgPanel.style.top = (window.innerHeight / 2 - imgH / 2) + 'px'; }
+  }
+
+  // Calculate where to scroll so row N center = viewport center
+  function calcTarget(idx) {
+    // Force lock image before calculating so layout is stable
+    if (!locked) {
+      locked = true;
+      imgPanel.classList.add('locked');
+      imgPanel.style.top = (window.innerHeight / 2 - imgH / 2) + 'px';
+    }
+    const row = rows[idx];
+    const rect = row.getBoundingClientRect();
+    const absCenterY = rect.top + rect.height / 2 + window.scrollY;
+    return absCenterY - window.innerHeight / 2;
+  }
+
+  let didInitialSnap = false;
+  function updateLock() {
+    const scrollY = window.scrollY;
+    const fixedTop = window.innerHeight / 2 - imgH / 2;
+    if (scrollY >= lockScrollY && !locked) {
+      locked = true;
+      imgPanel.classList.add('locked');
+      imgPanel.style.top = fixedTop + 'px';
+      // Snap to first row instantly on initial lock
+      if (!didInitialSnap) {
+        didInitialSnap = true;
+        snapIdx = 0;
+        requestAnimationFrame(() => {
+          const target = calcTarget(0);
+          window.scrollTo(0, Math.round(target));
+        });
+      }
+    } else if (scrollY < lockScrollY && locked && !isAnimating) {
+      locked = false;
+      didInitialSnap = false;
+      imgPanel.classList.remove('locked');
+      imgPanel.style.top = '';
+    }
+  }
+
+  // Update thumbnail based on closest row
+  let displayedIdx = -1;
+  function updateImage() {
+    const center = window.innerHeight / 2;
+    let best = 0, bestDist = Infinity;
+    rows.forEach((row, i) => {
+      const r = row.getBoundingClientRect();
+      const d = Math.abs(r.top + r.height / 2 - center);
+      if (d < bestDist) { bestDist = d; best = i; }
+    });
+    if (best !== displayedIdx) {
+      displayedIdx = best;
+      const bg = rows[best].getAttribute('data-img');
+      stickyImg.classList.add('fading');
+      setTimeout(() => {
+        stickyImg.style.background = bg;
+        stickyImg.style.backgroundSize = 'cover';
+        stickyImg.style.backgroundPosition = 'center';
+        stickyImg.classList.remove('fading');
+      }, 120);
+    }
+  }
+
+  function loop() {
+    updateLock();
+    updateImage();
+    requestAnimationFrame(loop);
+  }
+
+  function animateTo(targetY, done) {
+    isAnimating = true;
+    wheelBlocked = true;
+    const startY = window.scrollY;
+    const diff = targetY - startY;
+    if (Math.abs(diff) < 1) { isAnimating = false; wheelBlocked = false; if (done) done(); return; }
+    const dur = 550;
+    const t0 = performance.now();
+    function step(now) {
+      const t = Math.min((now - t0) / dur, 1);
+      const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      window.scrollTo(0, startY + diff * e);
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        window.scrollTo(0, Math.round(targetY));
+        isAnimating = false;
+        // Keep wheel blocked briefly after animation to prevent double-fire
+        setTimeout(() => { wheelBlocked = false; }, 150);
+        if (done) done();
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function snap(dir) {
+    if (isAnimating || wheelBlocked) return;
+    const next = snapIdx + dir;
+    if (next < 0) {
+      snapIdx = 0;
+      animateTo(0);
+      return;
+    }
+    if (next >= rows.length) return;
+    snapIdx = next;
+    isAnimating = true; // prevent unlock during calcTarget
+    const target = calcTarget(snapIdx);
+    animateTo(target);
+  }
+
+  // Wheel — single event = single snap, no accumulation
+  let lastWheelTime = 0;
+  window.addEventListener('wheel', (e) => {
+    if (!locked) return;
+    e.preventDefault();
+    if (isAnimating || wheelBlocked) return;
+
+    const now = performance.now();
+    if (now - lastWheelTime < 100) return;
+    lastWheelTime = now;
+
+    if (Math.abs(e.deltaY) > 5) {
+      snap(e.deltaY > 0 ? 1 : -1);
+    }
+  }, { passive: false });
+
+  // Touch
+  let ty0 = 0;
+  window.addEventListener('touchstart', (e) => { ty0 = e.touches[0].clientY; }, { passive: true });
+  window.addEventListener('touchend', (e) => {
+    if (!locked || isAnimating || wheelBlocked) return;
+    const diff = ty0 - e.changedTouches[0].clientY;
+    if (Math.abs(diff) < 40) return;
+    snap(diff > 0 ? 1 : -1);
+  }, { passive: true });
+
+  // Init
+  measure();
+  window.addEventListener('resize', measure);
+  requestAnimationFrame(loop);
+})();
+
+window.addEventListener('scroll',()=>{document.querySelector('nav').classList.toggle('scrolled',window.scrollY>40);});
+
+(function(){
+  const cursor=document.querySelector('.cursor'),dot=document.querySelector('.cursor-dot');
+  let mx=0,my=0,cx=0,cy=0,dx=0,dy=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function loop(){cx+=(mx-cx)*0.15;cy+=(my-cy)*0.15;dx+=(mx-dx)*0.45;dy+=(my-dy)*0.45;cursor.style.left=cx-9+'px';cursor.style.top=cy-9+'px';dot.style.left=dx-2+'px';dot.style.top=dy-2+'px';requestAnimationFrame(loop);})();
+  document.querySelectorAll('.hoverable').forEach(el=>{el.addEventListener('mouseenter',()=>cursor.classList.add('hovering'));el.addEventListener('mouseleave',()=>cursor.classList.remove('hovering'));});
+  if(window.innerWidth<=768){cursor.style.display='none';dot.style.display='none';}
+})();
+
+// ========================================================
+// VERTICAL FLUTED GLASS — Get in touch
+// ========================================================
+const vSrc = `attribute vec2 a_pos;varying vec2 v_uv;void main(){v_uv=a_pos*0.5+0.5;v_uv.y=1.0-v_uv.y;gl_Position=vec4(a_pos,0.0,1.0);}`;
+const fSrcV = `
+precision highp float;
+varying vec2 v_uv;
+uniform sampler2D u_tex;
+uniform float u_motionValue;
+uniform float u_segments;
+uniform vec2 u_mouse;
+uniform float u_hover;
+#define PI 3.14159265
+void main(){
+  vec2 uv = v_uv;
+  float distY = abs(uv.y - u_mouse.y);
+  float bandWidth = 0.25;
+  float falloff = smoothstep(bandWidth, 0.0, distY) * u_hover;
+  float amplitude = 0.25 * falloff;
+  float sliceProgress = fract(uv.y * u_segments + u_motionValue * falloff);
+  uv.y += amplitude * sin(sliceProgress * PI * 2.0) * (1.0 - 0.5 * abs(sliceProgress - 0.5));
+  vec2 tileIndex = floor(uv);
+  vec2 oddTile = mod(tileIndex, 2.0);
+  vec2 mirroredUV = mix(fract(uv), 1.0 - fract(uv), oddTile);
+  vec4 color = texture2D(u_tex, mirroredUV);
+  if (color.a > 0.01 && falloff > 0.01) {
+    float blackOverlayAlpha = 0.12 * (1.0 - abs(sin(sliceProgress * PI * 0.5 + 1.57))) * falloff;
+    color.rgb *= (1.0 - blackOverlayAlpha);
+    float whiteOverlayAlpha = 0.25 * (1.0 - abs(sin(sliceProgress * PI * 0.7 - 0.7))) * falloff;
+    color.rgb = mix(color.rgb, vec3(1.0), whiteOverlayAlpha);
+  }
+  gl_FragColor = color;
+}`;
+
+function createVerticalGlassEffect(canvasEl, textRenderer, heightDesktop, heightMobile) {
+  const gl = canvasEl.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+  if (!gl) return { resize(){}, render(){} };
+  const dpr = Math.max(window.devicePixelRatio || 1, 2) * 1.5;
+  const tc = document.createElement('canvas');
+  const tx = tc.getContext('2d');
+  function resize() {
+    const pad = window.innerWidth > 768 ? 96 : 48;
+    const W = window.innerWidth - pad;
+    const t = Math.min(1, Math.max(0, (window.innerWidth - 480) / (1200 - 480)));
+    const H = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
+    canvasEl.width = W * dpr; canvasEl.height = H * dpr;
+    canvasEl.style.width = '100%'; canvasEl.style.height = H + 'px';
+    gl.viewport(0, 0, canvasEl.width, canvasEl.height);
+    tc.width = canvasEl.width; tc.height = canvasEl.height;
+    tx.clearRect(0, 0, tc.width, tc.height);
+    textRenderer(tx, tc, dpr);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+  }
+  function mkS(t,s){const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);return sh;}
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mkS(gl.VERTEX_SHADER,vSrc));
+  gl.attachShader(prog,mkS(gl.FRAGMENT_SHADER,fSrcV));
+  gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const aP=gl.getAttribLocation(prog,'a_pos');gl.enableVertexAttribArray(aP);gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
+  const uMotion=gl.getUniformLocation(prog,'u_motionValue');
+  const uSegs=gl.getUniformLocation(prog,'u_segments');
+  const uMouse=gl.getUniformLocation(prog,'u_mouse');
+  const uHover=gl.getUniformLocation(prog,'u_hover');
+  const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  let motionValue=0.5,targetMotion=0.5;
+  let mouseUVx=0.5,mouseUVy=0.5,tMouseUVx=0.5,tMouseUVy=0.5;
+  let hoverStr=0,tHoverStr=0;
+  const motionFactor=-8;
+  canvasEl.addEventListener('mousemove',(e)=>{
+    const r=canvasEl.getBoundingClientRect();
+    tMouseUVx=(e.clientX-r.left)/r.width;tMouseUVy=(e.clientY-r.top)/r.height;
+    targetMotion=0.5+tMouseUVy*motionFactor*0.1;tHoverStr=1.0;
+  });
+  canvasEl.addEventListener('mouseleave',()=>{targetMotion=0.5;tHoverStr=0;});
+  function handleTouch(e){e.preventDefault();const t=e.touches[0];const r=canvasEl.getBoundingClientRect();tMouseUVx=(t.clientX-r.left)/r.width;tMouseUVy=(t.clientY-r.top)/r.height;mouseUVx=tMouseUVx;mouseUVy=tMouseUVy;targetMotion=0.5+tMouseUVy*motionFactor*0.1;tHoverStr=1.0;hoverStr=0.5;}
+  canvasEl.addEventListener('touchstart',handleTouch,{passive:false});
+  canvasEl.addEventListener('touchmove',handleTouch,{passive:false});
+  canvasEl.addEventListener('touchend',()=>{targetMotion=0.5;tHoverStr=0;});
+  function render(){
+    motionValue+=(targetMotion-motionValue)*0.035;mouseUVx+=(tMouseUVx-mouseUVx)*0.06;mouseUVy+=(tMouseUVy-mouseUVy)*0.06;hoverStr+=(tHoverStr-hoverStr)*0.04;
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(uMotion,motionValue);gl.uniform1f(uSegs,1.0);gl.uniform2f(uMouse,mouseUVx,mouseUVy);gl.uniform1f(uHover,hoverStr);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(render);
+  }
+  window.addEventListener('resize', resize);
+  return { resize, render };
+}
+
+const gitInstance = createVerticalGlassEffect(
+  document.getElementById('getInTouchCanvas'),
+  (tx, tc, dpr) => {
+    const maxWidth = tc.width;
+    let fs = Math.floor(300 * dpr);
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    let measured = tx.measureText('Get in touch').width;
+    fs = Math.floor(fs * (maxWidth / measured));
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    tx.textAlign = 'center'; tx.textBaseline = 'middle';
+    tx.fillStyle = '#0a0a0a';
+    tx.fillText('Get in touch', tc.width / 2, tc.height * 0.5);
+  },
+  320, 110
+);
+
+document.fonts.ready.then(() => {
+  gitInstance.resize();
+  gitInstance.render();
+});
+
+// AUTO-SWEEP — simulate slow cursor top-to-bottom when visible
+(function(){
+  const canvas = document.getElementById('getInTouchCanvas');
+  if (!canvas) return;
+  let triggered = false;
+
+  const sweepObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !triggered) {
+        triggered = true;
+        sweepObs.unobserve(canvas);
+
+        const duration = 1800;
+        const holdStart = 200;
+        const holdEnd = 400;
+        const totalDuration = holdStart + duration + holdEnd;
+        const startTime = performance.now();
+
+        function step() {
+          const elapsed = performance.now() - startTime;
+          
+          if (elapsed < holdStart) {
+            // Hold at top briefly
+            const rect = canvas.getBoundingClientRect();
+            canvas.dispatchEvent(new MouseEvent('mousemove', {
+              clientX: rect.left + rect.width * 0.5,
+              clientY: rect.top + rect.height * 0.05,
+              bubbles: true
+            }));
+            requestAnimationFrame(step);
+          } else if (elapsed < holdStart + duration) {
+            // Sweep top to bottom
+            const progress = (elapsed - holdStart) / duration;
+            const eased = progress * progress * (3 - 2 * progress); // smoothstep
+            const rect = canvas.getBoundingClientRect();
+            const y = rect.top + rect.height * (0.05 + eased * 0.9);
+            canvas.dispatchEvent(new MouseEvent('mousemove', {
+              clientX: rect.left + rect.width * 0.5,
+              clientY: y,
+              bubbles: true
+            }));
+            requestAnimationFrame(step);
+          } else if (elapsed < totalDuration) {
+            // Hold at bottom briefly
+            requestAnimationFrame(step);
+          } else {
+            // Release
+            canvas.dispatchEvent(new MouseEvent('mouseleave'));
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+    });
+  }, { threshold: 0.4 });
+
+  sweepObs.observe(canvas);
+})();
+
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+function splitIntoChars(el){const text=el.textContent;el.textContent='';const segments=text.split('/');segments.forEach((seg,si)=>{const wrapper=document.createElement('span');wrapper.style.whiteSpace='nowrap';for(let i=0;i<seg.length;i++){const span=document.createElement('span');span.className='char';span.textContent=seg[i]===' '?'\u00A0':seg[i];wrapper.appendChild(span);}el.appendChild(wrapper);if(si<segments.length-1){const slash=document.createElement('span');slash.className='char';slash.textContent='/';el.appendChild(slash);}});}
+document.querySelectorAll('.terminal-link').forEach(link=>{splitIntoChars(link);const chars=link.querySelectorAll('.char');let ht;link.addEventListener('mouseenter',()=>{let i=0;clearInterval(ht);ht=setInterval(()=>{if(i>0)chars[i-1].classList.remove('active');if(i<chars.length){chars[i].classList.add('active');i++;}else{clearInterval(ht);setTimeout(()=>chars[chars.length-1].classList.remove('active'),70);}},70);});link.addEventListener('mouseleave',()=>{clearInterval(ht);chars.forEach(c=>c.classList.remove('active'));});});
+
+// MOBILE CONTINUOUS SLIDESHOW
+if (window.innerWidth <= 768) {
+  // Wait for layout to settle
+  setTimeout(() => {
+    document.querySelectorAll('.carousel-track-inner').forEach((track, idx) => {
+      // Measure original width before cloning
+      const originalWidth = track.scrollWidth;
+      
+      // Clone content for seamless loop
+      const originalHTML = track.innerHTML;
+      track.innerHTML = originalHTML + originalHTML;
+      
+      const speed = 1.2 + (idx % 3) * 0.4;
+      let pos = 0;
+      
+      function animate() {
+        pos -= speed;
+        if (Math.abs(pos) >= originalWidth) {
+          pos += originalWidth;
+        }
+        track.style.transform = `translateX(${pos}px)`;
+        requestAnimationFrame(animate);
+      }
+      
+      requestAnimationFrame(animate);
+    });
+  }, 100);
+}
+
+// DOT GRID — Figma-style with subtle random pulse
+(function(){
+  const canvas = document.getElementById('dotGrid');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const spacing = 24;
+  const baseSize = 1.5;
+  let cols, rows, pulses = [];
+  let currentDpr = 1;
+  
+  function resize() {
+    currentDpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * currentDpr;
+    canvas.height = window.innerHeight * currentDpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    cols = Math.ceil(window.innerWidth / spacing) + 1;
+    rows = Math.ceil(window.innerHeight / spacing) + 1;
+    pulses = [];
+    const totalDots = cols * rows;
+    const pulseCount = Math.floor(totalDots * 0.02);
+    for (let i = 0; i < pulseCount; i++) {
+      pulses.push({
+        col: Math.floor(Math.random() * cols),
+        row: Math.floor(Math.random() * rows),
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.15 + Math.random() * 0.25,
+        maxScale: 1.15 + Math.random() * 0.35
+      });
+    }
+  }
+  
+  // Build a lookup map for fast pulse checking
+  let pulseMap = {};
+  function buildPulseMap() {
+    pulseMap = {};
+    for (let i = 0; i < pulses.length; i++) {
+      pulseMap[pulses[i].col + ',' + pulses[i].row] = pulses[i];
+    }
+  }
+  
+  let lastShuffle = 0;
+  function shufflePulses(time) {
+    if (time - lastShuffle > 5000) {
+      lastShuffle = time;
+      for (let i = 0; i < pulses.length; i++) {
+        if (Math.random() < 0.25) {
+          pulses[i].col = Math.floor(Math.random() * cols);
+          pulses[i].row = Math.floor(Math.random() * rows);
+          pulses[i].phase = Math.random() * Math.PI * 2;
+        }
+      }
+      buildPulseMap();
+    }
+  }
+  
+  function render(time) {
+    ctx.setTransform(currentDpr, 0, 0, currentDpr, 0, 0);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    const t = time * 0.001;
+    shufflePulses(time);
+    
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = c * spacing;
+        const y = r * spacing;
+        const p = pulseMap[c + ',' + r];
+        let size = baseSize;
+        if (p) {
+          const wave = (Math.sin(t * p.speed + p.phase) + 1) * 0.5;
+          size = baseSize * (1 + (p.maxScale - 1) * wave);
+        }
+        const half = size * 0.5;
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        ctx.fillRect(Math.round(x - half), Math.round(y - half), Math.round(size), Math.round(size));
+      }
+    }
+    requestAnimationFrame(render);
+  }
+  
+  resize();
+  buildPulseMap();
+  window.addEventListener('resize', () => { resize(); buildPulseMap(); });
+  requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>

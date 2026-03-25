@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>Leonard Semmler — Portfolio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+  @font-face{font-family:'Montreal';src:url('montreal.woff2') format('woff2');font-weight:700;font-display:swap;}
+  @font-face{font-family:'MontrealBook';src:url('montrealbook.woff2') format('woff2');font-weight:400;font-display:swap;}
+
+  :root{--bg:#f5f4f0;--text:#0a0a0a;--grey-light:#b5b2ac;--grey-dark:#e8e6e2;--grey-mid:#8a8884;--font-head:'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,Arial,sans-serif;--font-body:'MontrealBook','Plus Jakarta Sans',-apple-system,Helvetica Neue,Arial,sans-serif;--font-mono:'Space Mono',monospace;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;overflow-x:hidden;color-scheme:light;background-color:#f5f4f0;}
+  body{background:#f5f4f0;color:#0a0a0a;font-family:var(--font-body);overflow-x:hidden;-webkit-font-smoothing:antialiased;color-scheme:light;}
+  @media(prefers-color-scheme:dark){html,body{background:#f5f4f0 !important;color:#0a0a0a !important;}}
+
+  /* Loading screen */
+  .loader{position:fixed;inset:0;z-index:99999;background:var(--text);display:flex;align-items:center;justify-content:center;}
+  .loader-content{text-align:center;transition:opacity .6s ease;position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+  .loader-counter{font-family:var(--font-head);font-size:min(65vw, 55vh);font-weight:700;color:var(--bg);line-height:1;transition:transform 1.2s cubic-bezier(.76,0,.24,1),opacity .8s ease;}
+  .loader-type{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--bg);position:absolute;bottom:28px;left:0;right:0;text-align:center;transition:opacity .4s ease;}
+  .loader-type .typewriter-cursor{display:inline-block;width:8px;height:1.1em;background:var(--bg);vertical-align:text-bottom;margin-left:1px;animation:blink .8s step-end infinite;}
+
+  .loader.phase2{transform:translateY(-100%);transition:transform 1s cubic-bezier(.76,0,.24,1);}
+  .loader.done{visibility:hidden;pointer-events:none;}
+
+  /* Dot grid pattern */
+  #dotGrid{position:fixed;inset:0;pointer-events:none;z-index:2;mix-blend-mode:difference;}
+  .cursor,.cursor-dot{display:none;}
+  .cursor{width:18px;height:18px;border:1.5px solid var(--text);border-radius:50%;position:fixed;pointer-events:none;z-index:10000;transition:transform .15s ease,background .15s ease;mix-blend-mode:difference;}
+  .cursor-dot{width:4px;height:4px;background:var(--text);border-radius:50%;position:fixed;pointer-events:none;z-index:10001;mix-blend-mode:difference;}
+  .cursor.hovering{transform:scale(3);background:var(--text);opacity:.12;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:flex;justify-content:space-between;align-items:baseline;transition:padding .4s cubic-bezier(.25,.46,.45,.94),background .4s ease,backdrop-filter .4s ease,-webkit-backdrop-filter .4s ease;}
+  nav.scrolled{padding:16px 48px;background:rgba(245,244,240,.4);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+  .nav-logo{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;color:var(--text);text-transform:uppercase;line-height:1.6;}
+  .nav-links{display:flex;gap:20px 32px;list-style:none;align-items:baseline;flex-wrap:wrap;justify-content:flex-end;line-height:1.6;}
+  .nav-links a,.terminal-link{color:var(--text);text-decoration:none;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;position:relative;display:inline-block;}
+
+  .terminal-link .char{display:inline-block;position:relative;}
+  .terminal-link .char.active{color:#f5f4f0;background:#0a0a0a;}
+  .footer .terminal-link .char.active{color:#0a0a0a;background:#f5f4f0;}
+
+  .hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;z-index:3;}
+  .hero-liquid-container{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;width:100%;padding-left:30vw;padding-right:48px;}
+  .hero-inner{text-align:left;}
+  .hero-canvas-wrap{display:block;line-height:0;margin-top:-4vw;}
+  .hero-canvas-wrap:first-child{margin-top:0;}
+  #leonardCanvas,#semmlerCanvas{display:block;}
+  .hero-name{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--grey-mid);text-align:left;line-height:1.6;margin:16px 0 0;padding-left:calc(min(90vw, 1100px) * 0.03);opacity:0;animation:fadeUp 1s ease 2.4s forwards;}
+  .hero-name .typewriter-cursor{display:inline-block;width:10px;height:1.1em;background:var(--grey-mid);vertical-align:text-bottom;margin-left:2px;animation:blink 0.8s step-end infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+  /* Scroll to explore — terminal sweep looping */
+  .scroll-explore{position:absolute;bottom:0;left:0;right:0;padding:28px 48px;display:flex;align-items:flex-end;justify-content:center;}
+  .hero-social{position:absolute;right:48px;bottom:28px;display:flex;gap:28px;line-height:1.6;}
+  .hero-social a{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none;line-height:1.6;}
+  .scroll-explore-text{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);display:inline-block;line-height:1.6;}
+  .scroll-explore-text .char{display:inline-block;position:relative;}
+  .scroll-explore-text .char.active{color:#f5f4f0;background:#0a0a0a;}
+
+  .section-title{font-family:var(--font-head);font-size:clamp(32px,4.5vw,68px);font-weight:700;color:var(--text);line-height:1.1;}
+  .section-title-light{color:#f0eee9;}
+
+  .featured-works{padding:120px 48px 40px;position:relative;z-index:3;}
+
+  .projects-section{padding:40px 48px clamp(100px, 15vh, 200px);position:relative;z-index:3;}
+  .projects-editorial{}
+  .project-row{display:grid;grid-template-columns:55% 40%;gap:5%;align-items:start;margin-bottom:80px;}
+  .project-row-offset{grid-template-columns:1fr;max-width:55%;margin-left:auto;margin-right:10%;}
+  .project-item{display:block;text-decoration:none;color:var(--text);overflow:hidden;}
+  .project-item .project-img{width:100%;aspect-ratio:4/3;background-size:cover;background-position:center;transition:transform .6s cubic-bezier(.25,.46,.45,.94);overflow:hidden;position:relative;}
+  .project-right .project-img{aspect-ratio:3/4;}
+  .project-right{margin-top:120px;}
+  .project-img-wide{aspect-ratio:16/9 !important;}
+  .project-item:hover .project-img{transform:scale(1.03);}
+  .project-meta{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0;}
+  .project-cat{font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);}
+  .project-name{font-family:var(--font-head);font-size:clamp(14px,1.5vw,22px);font-weight:700;color:var(--text);}
+  .projects-more{margin-top:20px;margin-bottom:120px;}
+  .projects-more a{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none;background:var(--bg);padding:2px 8px;display:inline-block;}
+
+  .about-teaser{padding:160px 48px 200px;background:var(--text);position:relative;z-index:1;}
+  .about-teaser::before{content:'';position:absolute;top:clamp(-600px, -60vh, -400px);left:-50%;right:-50%;height:clamp(500px, 65vh, 700px);background:radial-gradient(ellipse 120% 40% at 50% 100%, var(--text) 0%, var(--text) 35%, rgba(10,10,10,0.95) 45%, rgba(10,10,10,0.7) 55%, rgba(10,10,10,0.3) 65%, rgba(10,10,10,0.08) 78%, transparent 90%);pointer-events:none;transform:scaleY(var(--curve-scale, 1));transform-origin:bottom center;z-index:0;}
+  .about-teaser .section-title{margin-bottom:28px;}
+  .about-teaser-text{font-family:var(--font-mono);font-size:11px;font-weight:400;line-height:1.8;color:#f0eee9;letter-spacing:1px;max-width:500px;margin-bottom:40px;margin-top:28px;text-transform:uppercase;}
+  .about-teaser a.terminal-link{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--text);text-decoration:none;background:var(--bg);padding:2px 8px;display:inline-block;}
+  .about-teaser .terminal-link .char.active{color:#0a0a0a;background:rgba(240,238,233,.8);}
+
+  /* Get in touch section */
+  .get-in-touch{background:var(--text);padding:40px 48px 120px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;min-height:60vh;z-index:1;}
+  #getInTouchCanvas{display:block;width:100%;}
+  .get-in-touch-links{display:flex;justify-content:center;gap:36px;margin-top:20px;list-style:none;}
+  .get-in-touch-links a{color:#f0eee9;text-decoration:none;font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;position:relative;display:inline-block;transition:color .3s ease;}
+  .get-in-touch-links a:hover{color:rgba(240,238,233,.9);}
+  .get-in-touch-links .terminal-link .char.active{color:#0a0a0a;background:rgba(240,238,233,.9);}
+
+  .footer{padding:40px 48px;background:var(--text);position:relative;z-index:1;}
+  .footer-bottom{text-align:center;font-family:var(--font-mono);font-size:11px;font-weight:400;color:rgba(240,238,233,.5);letter-spacing:1px;text-transform:uppercase;}
+
+  .reveal{opacity:0;transform:translateY(44px);transition:all 1s cubic-bezier(.25,.46,.45,.94);}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .reveal-delay-1{transition-delay:.1s;}.reveal-delay-2{transition-delay:.2s;}.reveal-delay-3{transition-delay:.3s;}.reveal-delay-4{transition-delay:.4s;}
+
+  @media(max-width:1024px){
+    .hero-liquid-container{padding-left:20vw;}
+  }
+  @media(max-width:768px){
+    nav{padding:20px 24px;align-items:baseline;}
+    nav.scrolled{padding:14px 24px;}
+    .nav-logo{font-size:10px;max-width:40vw;}
+    .nav-links{gap:0;max-width:50vw;flex-direction:column;align-items:flex-end;}
+    .nav-links a{font-size:10px;letter-spacing:1px;line-height:1.6;display:block;}
+    .hero-liquid-container{padding-left:12vw;padding-right:24px;}
+    .hero-name{font-size:15px;}
+    .scroll-explore{padding:20px 24px;justify-content:flex-start;}
+    .hero-social{position:absolute;right:24px;bottom:20px;gap:0;flex-direction:column;align-items:flex-end;}
+    .hero-social a{font-size:10px;line-height:1.6;display:block;}
+    .scroll-explore-text{font-size:10px;padding:0;margin:0;}
+    .projects-section{padding:40px 24px 60px;}
+    .project-row{grid-template-columns:1fr;gap:40px;}
+    .project-right{margin-top:0;}
+    .project-row-offset{max-width:100%;margin-right:0;}
+    .about-teaser{padding:40px 24px 80px;}
+    .featured-works{padding:80px 24px 24px;}
+    .get-in-touch{padding:40px 24px 80px;}
+    .get-in-touch-links{gap:24px;flex-wrap:wrap;justify-content:center;}
+    .footer{padding:40px 24px 30px;}
+    .cursor,.cursor-dot{display:none;}
+    body{cursor:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="loader" id="loader">
+  <div class="loader-content">
+    <div class="loader-counter" id="loaderCounter">0</div>
+    <div class="loader-type"><span id="loaderTypeText"></span><span class="typewriter-cursor"></span></div>
+  </div>
+</div>
+<canvas id="dotGrid"></canvas>
+<div class="cursor"></div>
+<div class="cursor-dot"></div>
+<nav>
+  <div class="nav-logo terminal-link hoverable" id="navLogo"></div>
+  <ul class="nav-links"><li><a href="#projects" class="hoverable terminal-link">Projects</a></li><li><a href="about.html" class="hoverable terminal-link">About</a></li><li><a href="#contact" class="hoverable terminal-link">Get in Touch</a></li></ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-liquid-container">
+    <div class="hero-inner">
+      <div class="hero-canvas-wrap"><canvas id="leonardCanvas"></canvas></div>
+      <div class="hero-canvas-wrap"><canvas id="semmlerCanvas"></canvas></div>
+      <div class="hero-name"><span id="typewriterText"></span><span class="typewriter-cursor"></span></div>
+    </div>
+  </div>
+  <div class="scroll-explore">
+    <div class="hero-social">
+      <a href="#" class="hoverable terminal-link">Instagram ↗</a>
+      <a href="#" class="hoverable terminal-link">LinkedIn ↗</a>
+    </div>
+    <div class="scroll-explore-text" id="scrollExplore">[SCROLL TO EXPLORE]</div>
+  </div>
+</section>
+
+<section class="featured-works" id="projects">
+  <h2 class="section-title reveal">Selected work</h2>
+</section>
+
+<section class="projects-section">
+  <div class="projects-editorial">
+    <div class="project-row">
+      <a href="#" class="project-item project-left reveal hoverable">
+        <div class="project-img" style="background:linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4);"></div>
+        <div class="project-meta">
+          <span class="project-name">001&nbsp;&nbsp;&nbsp;&nbsp;Zalazium GmbH</span>
+          <span class="project-cat">UX · Branding · Motion</span>
+        </div>
+      </a>
+      <a href="#" class="project-item project-right reveal reveal-delay-2 hoverable">
+        <div class="project-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);"></div>
+        <div class="project-meta">
+          <span class="project-name">002&nbsp;&nbsp;&nbsp;&nbsp;Daily Grind Coffee</span>
+          <span class="project-cat">Branding · Packaging</span>
+        </div>
+      </a>
+    </div>
+    <div class="project-row project-row-offset">
+      <a href="#" class="project-item project-center reveal hoverable">
+        <div class="project-img project-img-wide" style="background:linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604);"></div>
+        <div class="project-meta">
+          <span class="project-name">003&nbsp;&nbsp;&nbsp;&nbsp;Donata Jan Trio</span>
+          <span class="project-cat">Album Artwork</span>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div class="projects-more reveal"><a href="#" class="hoverable terminal-link">More Projects ↗</a></div>
+</section>
+
+
+<section class="about-teaser" id="about">
+  <h2 class="section-title section-title-light reveal">Bridging Design & Strategy</h2>
+  <div class="reveal reveal-delay-1"><p class="about-teaser-text">Designer based in Hamburg with a B.Sc. in Human-Computer Interaction. Crafting brand identities, conceptualizing packaging design, and spearheading visual direction for music events — always telling a compelling story through diverse materials and formats.</p><a href="about.html" class="hoverable terminal-link">More About Me ↗</a></div>
+</section>
+
+<section class="get-in-touch">
+  <div class="reveal"><canvas id="getInTouchCanvas"></canvas></div>
+  <ul class="get-in-touch-links reveal reveal-delay-2"><li><a href="#" class="hoverable terminal-link">Instagram ↗</a></li><li><a href="#" class="hoverable terminal-link">LinkedIn ↗</a></li><li><a href="#" class="hoverable terminal-link">Email ↗</a></li></ul>
+</section>
+
+<footer class="footer">
+  <div class="footer-bottom">© 2026 Leonard Semmler. All Rights Reserved.</div>
+</footer>
+
+<script>
+// ========================================================
+// SHARED FLUTED GLASS SHADER — used for both canvases
+// ========================================================
+const vSrc = `
+attribute vec2 a_pos;
+varying vec2 v_uv;
+void main(){
+  v_uv = a_pos * 0.5 + 0.5;
+  v_uv.y = 1.0 - v_uv.y;
+  gl_Position = vec4(a_pos, 0.0, 1.0);
+}`;
+
+const fSrc = `
+precision highp float;
+varying vec2 v_uv;
+uniform sampler2D u_tex;
+uniform float u_motionValue;
+uniform float u_segments;
+uniform vec2 u_mouse;
+uniform float u_hover;
+
+#define PI 3.14159265
+
+void main(){
+  vec2 uv = v_uv;
+  float numSlices = u_segments;
+
+  // Horizontal-only distance from mouse X — forms a vertical band, not a circle
+  float distX = abs(uv.x - u_mouse.x);
+  float bandWidth = 0.2;
+  float falloff = smoothstep(bandWidth, 0.0, distX) * u_hover;
+
+  // Extreme amplitude — breaks/tears the letters
+  float baseAmplitude = 0.25;
+  float amplitude = baseAmplitude * falloff;
+
+  float sliceProgress = fract(uv.x * numSlices + u_motionValue * falloff);
+  uv.x += amplitude * sin(sliceProgress * PI * 2.0) * (1.0 - 0.5 * abs(sliceProgress - 0.5));
+
+  vec2 tileIndex = floor(uv);
+  vec2 oddTile = mod(tileIndex, 2.0);
+  vec2 mirroredUV = mix(fract(uv), 1.0 - fract(uv), oddTile);
+  vec4 color = texture2D(u_tex, mirroredUV);
+
+  if (color.a > 0.01 && falloff > 0.01) {
+    float blackOverlayAlpha = 0.1 * (1.0 - abs(sin(sliceProgress * PI * 0.5 + 1.57))) * falloff;
+    color.rgb *= (1.0 - blackOverlayAlpha);
+    float whiteOverlayAlpha = 0.25 * (1.0 - abs(sin(sliceProgress * PI * 0.7 - 0.7))) * falloff;
+    color.rgb = mix(color.rgb, vec3(1.0), whiteOverlayAlpha);
+  }
+  gl_FragColor = color;
+}`;
+
+// ========================================================
+// GLASS INSTANCE FACTORY
+// ========================================================
+function createGlassEffect(canvasEl, textRenderer, heightDesktop, heightMobile) {
+  const gl = canvasEl.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+  const dpr = Math.max(window.devicePixelRatio || 1, 2) * 1.5;
+  const tc = document.createElement('canvas');
+  const tx = tc.getContext('2d');
+
+  function resize() {
+    const W = Math.min(window.innerWidth * 0.9, 1100);
+    const t = Math.min(1, Math.max(0, (window.innerWidth - 480) / (1200 - 480)));
+    const H = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
+    canvasEl.width = W * dpr; canvasEl.height = H * dpr;
+    canvasEl.style.width = W + 'px'; canvasEl.style.height = H + 'px';
+    gl.viewport(0, 0, canvasEl.width, canvasEl.height);
+    tc.width = canvasEl.width; tc.height = canvasEl.height;
+    tx.clearRect(0, 0, tc.width, tc.height);
+    textRenderer(tx, tc, dpr);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+  }
+
+  function mkS(t,s){const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(sh));return sh;}
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mkS(gl.VERTEX_SHADER,vSrc));
+  gl.attachShader(prog,mkS(gl.FRAGMENT_SHADER,fSrc));
+  gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const aP=gl.getAttribLocation(prog,'a_pos');gl.enableVertexAttribArray(aP);gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
+  const uMotion=gl.getUniformLocation(prog,'u_motionValue');
+  const uSegs=gl.getUniformLocation(prog,'u_segments');
+  const uMouse=gl.getUniformLocation(prog,'u_mouse');
+  const uHover=gl.getUniformLocation(prog,'u_hover');
+  const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  let motionValue=0.5,targetMotion=0.5;
+  let mouseUVx=0.5,mouseUVy=0.5,tMouseUVx=0.5,tMouseUVy=0.5;
+  let hoverStr=0,tHoverStr=0;
+  const motionFactor=-8;
+
+  canvasEl.addEventListener('mousemove',(e)=>{
+    const r=canvasEl.getBoundingClientRect();
+    tMouseUVx=(e.clientX-r.left)/r.width;
+    tMouseUVy=(e.clientY-r.top)/r.height;
+    targetMotion=0.5+tMouseUVx*motionFactor*0.1;
+    tHoverStr=1.0;
+  });
+  canvasEl.addEventListener('mouseleave',()=>{targetMotion=0.5;tHoverStr=0;});
+  function handleTouch(e){
+    e.preventDefault();
+    const t=e.touches[0];
+    const r=canvasEl.getBoundingClientRect();
+    tMouseUVx=(t.clientX-r.left)/r.width;
+    tMouseUVy=(t.clientY-r.top)/r.height;
+    // Snap mouse position instantly on touch for immediate response
+    mouseUVx=tMouseUVx;
+    mouseUVy=tMouseUVy;
+    targetMotion=0.5+tMouseUVx*motionFactor*0.1;
+    tHoverStr=1.0;
+    hoverStr=0.5; // Kick-start visibility
+  }
+  canvasEl.addEventListener('touchstart',handleTouch,{passive:false});
+  canvasEl.addEventListener('touchmove',handleTouch,{passive:false});
+  canvasEl.addEventListener('touchend',()=>{targetMotion=0.5;tHoverStr=0;});
+
+  function render(){
+    motionValue+=(targetMotion-motionValue)*0.035;
+    mouseUVx+=(tMouseUVx-mouseUVx)*0.06;
+    mouseUVy+=(tMouseUVy-mouseUVy)*0.06;
+    hoverStr+=(tHoverStr-hoverStr)*0.04;
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(uMotion,motionValue);
+    gl.uniform1f(uSegs,1.0);
+    gl.uniform2f(uMouse,mouseUVx,mouseUVy);
+    gl.uniform1f(uHover,hoverStr);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    requestAnimationFrame(render);
+  }
+
+  window.addEventListener('resize', resize);
+  return { resize, render };
+}
+
+// ========================================================
+// VERTICAL FLUTED GLASS SHADER — slices top-to-bottom
+// ========================================================
+const fSrcV = `
+precision highp float;
+varying vec2 v_uv;
+uniform sampler2D u_tex;
+uniform float u_motionValue;
+uniform float u_segments;
+uniform vec2 u_mouse;
+uniform float u_hover;
+
+#define PI 3.14159265
+
+void main(){
+  vec2 uv = v_uv;
+  float numSlices = u_segments;
+
+  // Vertical-only distance from mouse Y — forms a horizontal band, not a circle
+  float distY = abs(uv.y - u_mouse.y);
+  float bandWidth = 0.25;
+  float falloff = smoothstep(bandWidth, 0.0, distY) * u_hover;
+
+  // Extreme amplitude — tears the letters apart vertically
+  float baseAmplitude = 0.25;
+  float amplitude = baseAmplitude * falloff;
+
+  float sliceProgress = fract(uv.y * numSlices + u_motionValue * falloff);
+  uv.y += amplitude * sin(sliceProgress * PI * 2.0) * (1.0 - 0.5 * abs(sliceProgress - 0.5));
+
+  vec2 tileIndex = floor(uv);
+  vec2 oddTile = mod(tileIndex, 2.0);
+  vec2 mirroredUV = mix(fract(uv), 1.0 - fract(uv), oddTile);
+  vec4 color = texture2D(u_tex, mirroredUV);
+
+  if (color.a > 0.01 && falloff > 0.01) {
+    float blackOverlayAlpha = 0.12 * (1.0 - abs(sin(sliceProgress * PI * 0.5 + 1.57))) * falloff;
+    color.rgb *= (1.0 - blackOverlayAlpha);
+    float whiteOverlayAlpha = 0.25 * (1.0 - abs(sin(sliceProgress * PI * 0.7 - 0.7))) * falloff;
+    color.rgb = mix(color.rgb, vec3(1.0), whiteOverlayAlpha);
+  }
+  gl_FragColor = color;
+}`;
+
+// Factory for vertical glass
+function createVerticalGlassEffect(canvasEl, textRenderer, heightDesktop, heightMobile) {
+  const gl = canvasEl.getContext('webgl', { alpha: true, premultipliedAlpha: false });
+  const dpr = Math.max(window.devicePixelRatio || 1, 2) * 1.5;
+  const tc = document.createElement('canvas');
+  const tx = tc.getContext('2d');
+
+  function resize() {
+    const pad = window.innerWidth > 768 ? 96 : 48;
+    const W = window.innerWidth - pad;
+    const t = Math.min(1, Math.max(0, (window.innerWidth - 480) / (1200 - 480)));
+    const H = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
+    canvasEl.width = W * dpr; canvasEl.height = H * dpr;
+    canvasEl.style.width = '100%'; canvasEl.style.height = H + 'px';
+    gl.viewport(0, 0, canvasEl.width, canvasEl.height);
+    tc.width = canvasEl.width; tc.height = canvasEl.height;
+    tx.clearRect(0, 0, tc.width, tc.height);
+    textRenderer(tx, tc, dpr);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tc);
+  }
+
+  function mkS(t,s){const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(sh));return sh;}
+  const prog=gl.createProgram();
+  gl.attachShader(prog,mkS(gl.VERTEX_SHADER,vSrc));
+  gl.attachShader(prog,mkS(gl.FRAGMENT_SHADER,fSrcV));
+  gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const aP=gl.getAttribLocation(prog,'a_pos');gl.enableVertexAttribArray(aP);gl.vertexAttribPointer(aP,2,gl.FLOAT,false,0,0);
+  const uMotion=gl.getUniformLocation(prog,'u_motionValue');
+  const uSegs=gl.getUniformLocation(prog,'u_segments');
+  const uMouse=gl.getUniformLocation(prog,'u_mouse');
+  const uHover=gl.getUniformLocation(prog,'u_hover');
+  const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+  let motionValue=0.5,targetMotion=0.5;
+  let mouseUVx=0.5,mouseUVy=0.5,tMouseUVx=0.5,tMouseUVy=0.5;
+  let hoverStr=0,tHoverStr=0;
+  const motionFactor=-8;
+
+  canvasEl.addEventListener('mousemove',(e)=>{
+    const r=canvasEl.getBoundingClientRect();
+    tMouseUVx=(e.clientX-r.left)/r.width;
+    tMouseUVy=(e.clientY-r.top)/r.height;
+    targetMotion=0.5+tMouseUVy*motionFactor*0.1;
+    tHoverStr=1.0;
+  });
+  canvasEl.addEventListener('mouseleave',()=>{targetMotion=0.5;tHoverStr=0;});
+  function handleTouch(e){
+    e.preventDefault();
+    const t=e.touches[0];
+    const r=canvasEl.getBoundingClientRect();
+    tMouseUVx=(t.clientX-r.left)/r.width;
+    tMouseUVy=(t.clientY-r.top)/r.height;
+    mouseUVx=tMouseUVx;
+    mouseUVy=tMouseUVy;
+    targetMotion=0.5+tMouseUVy*motionFactor*0.1;
+    tHoverStr=1.0;
+    hoverStr=0.5;
+  }
+  canvasEl.addEventListener('touchstart',handleTouch,{passive:false});
+  canvasEl.addEventListener('touchmove',handleTouch,{passive:false});
+  canvasEl.addEventListener('touchend',()=>{targetMotion=0.5;tHoverStr=0;});
+
+  function render(){
+    motionValue+=(targetMotion-motionValue)*0.035;
+    mouseUVx+=(tMouseUVx-mouseUVx)*0.06;
+    mouseUVy+=(tMouseUVy-mouseUVy)*0.06;
+    hoverStr+=(tHoverStr-hoverStr)*0.04;
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(uMotion,motionValue);
+    gl.uniform1f(uSegs,1.0);
+    gl.uniform2f(uMouse,mouseUVx,mouseUVy);
+    gl.uniform1f(uHover,hoverStr);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    requestAnimationFrame(render);
+  }
+
+  window.addEventListener('resize', resize);
+  return { resize, render };
+}
+
+// ========================================================
+// HERO — "Leonard" canvas (independent effect)
+// ========================================================
+const leonardInstance = createGlassEffect(
+  document.getElementById('leonardCanvas'),
+  (tx, tc, dpr) => {
+    const vw = window.innerWidth;
+    const fs = Math.floor(Math.min(220, Math.max(56, vw * 0.14)) * dpr);
+    const padding = tc.width * 0.03;
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    tx.textAlign = 'left'; tx.textBaseline = 'middle';
+    tx.fillStyle = '#0a0a0a';
+    tx.fillText('Leonard', padding, tc.height * 0.55);
+  },
+  260, 75
+);
+
+// ========================================================
+// HERO — "Semmler" canvas (independent effect)
+// ========================================================
+const semmlerInstance = createGlassEffect(
+  document.getElementById('semmlerCanvas'),
+  (tx, tc, dpr) => {
+    const vw = window.innerWidth;
+    const fs = Math.floor(Math.min(220, Math.max(56, vw * 0.14)) * dpr);
+    const padding = tc.width * 0.03;
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    tx.textAlign = 'left'; tx.textBaseline = 'middle';
+    tx.fillStyle = '#0a0a0a';
+    tx.fillText('Semmler', padding, tc.height * 0.55);
+  },
+  260, 75
+);
+
+// ========================================================
+// GET IN TOUCH — vertical glass, 1 segment, extreme
+// ========================================================
+const getInTouchInstance = createVerticalGlassEffect(
+  document.getElementById('getInTouchCanvas'),
+  (tx, tc, dpr) => {
+    // Auto-size: measure text and scale font to fill canvas width with padding
+    const maxWidth = tc.width;
+    let fs = Math.floor(300 * dpr);
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    let measured = tx.measureText('Get in touch').width;
+    // Scale down until it fits
+    fs = Math.floor(fs * (maxWidth / measured));
+    tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
+    tx.textAlign = 'center'; tx.textBaseline = 'middle';
+    tx.fillStyle = '#f0eee9';
+    tx.fillText('Get in touch', tc.width / 2, tc.height * 0.5);
+  },
+  320, 110
+);
+
+// Start all after fonts load
+document.fonts.ready.then(() => {
+  leonardInstance.resize();
+  leonardInstance.render();
+  semmlerInstance.resize();
+  semmlerInstance.render();
+  getInTouchInstance.resize();
+  getInTouchInstance.render();
+});
+
+// AUTO-SWEEP — simulate slow cursor top-to-bottom on Get in touch
+(function(){
+  const canvas = document.getElementById('getInTouchCanvas');
+  if (!canvas) return;
+  let triggered = false;
+
+  const sweepObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !triggered) {
+        triggered = true;
+        sweepObs.unobserve(canvas);
+
+        const duration = 1800;
+        const holdStart = 200;
+        const holdEnd = 400;
+        const totalDuration = holdStart + duration + holdEnd;
+        const startTime = performance.now();
+
+        function step() {
+          const elapsed = performance.now() - startTime;
+
+          if (elapsed < holdStart) {
+            const rect = canvas.getBoundingClientRect();
+            canvas.dispatchEvent(new MouseEvent('mousemove', {
+              clientX: rect.left + rect.width * 0.5,
+              clientY: rect.top + rect.height * 0.05,
+              bubbles: true
+            }));
+            requestAnimationFrame(step);
+          } else if (elapsed < holdStart + duration) {
+            const progress = (elapsed - holdStart) / duration;
+            const eased = progress * progress * (3 - 2 * progress);
+            const rect = canvas.getBoundingClientRect();
+            const y = rect.top + rect.height * (0.05 + eased * 0.9);
+            canvas.dispatchEvent(new MouseEvent('mousemove', {
+              clientX: rect.left + rect.width * 0.5,
+              clientY: y,
+              bubbles: true
+            }));
+            requestAnimationFrame(step);
+          } else if (elapsed < totalDuration) {
+            requestAnimationFrame(step);
+          } else {
+            canvas.dispatchEvent(new MouseEvent('mouseleave'));
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+    });
+  }, { threshold: 0.4 });
+
+  sweepObs.observe(canvas);
+})();
+
+// NAV LOGO — LEONARDSEMMLER/PORTFOLIO/YEAR/MONTH
+(function(){
+  const el = document.getElementById('navLogo');
+  const months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  const now = new Date();
+  el.textContent = `LEONARDSEMMLER/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
+})();
+(function(){
+  const text = 'Visual Storytelling';
+  const el = document.getElementById('typewriterText');
+  let i = 0;
+  function type() {
+    if (i <= text.length) {
+      el.textContent = text.slice(0, i);
+      i++;
+      setTimeout(type, 80 + Math.random() * 60);
+    }
+  }
+  // Start after fadeUp animation completes
+  setTimeout(type, 2600);
+})();
+
+// ========================================================
+// SCROLL-DRIVEN CURVED TRANSITION
+// ========================================================
+(function(){
+  const about = document.getElementById('about');
+  
+  function update() {
+    const rect = about.getBoundingClientRect();
+    const viewH = window.innerHeight;
+    const raw = (viewH - rect.top) / (viewH + rect.height);
+    const progress = Math.max(0, Math.min(1, raw * 3.5));
+    
+    const scale = 1 + progress * 4.0;
+    about.style.setProperty('--curve-scale', scale);
+    
+    requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+})();
+
+
+// ========================================================
+// SIMULATED GLASS SWEEP — hint at interactivity on load
+// ========================================================
+function simulateGlassSweep() {
+  const canvases = [
+    document.getElementById('leonardCanvas'),
+    document.getElementById('semmlerCanvas')
+  ];
+  const duration = 350;
+  const steps = 25;
+  const stepTime = duration / steps;
+  let step = 0;
+
+  function tick() {
+    if (step > steps + 4) {
+      canvases.forEach(c => {
+        c.dispatchEvent(new MouseEvent('mouseleave'));
+      });
+      return;
+    }
+
+    const progress = Math.min(step / steps, 1);
+    // Quick cubic ease-out — fast start, gentle end
+    const eased = 1 - Math.pow(1 - progress, 3);
+
+    canvases.forEach(c => {
+      const rect = c.getBoundingClientRect();
+      const x = rect.left + rect.width * (0.03 + eased * 0.8);
+      const y = rect.top + rect.height * 0.5;
+      c.dispatchEvent(new MouseEvent('mousemove', {
+        clientX: x,
+        clientY: y,
+        bubbles: true
+      }));
+    });
+
+    step++;
+    setTimeout(tick, stepTime);
+  }
+
+  setTimeout(tick, 50);
+}
+
+// ========================================================
+// LOADING SCREEN
+// ========================================================
+(function(){
+  const loader = document.getElementById('loader');
+  const counter = document.getElementById('loaderCounter');
+  let current = 0;
+  let target = 0;
+
+  document.body.style.overflow = 'hidden';
+
+  const totalDuration = 1500;
+
+  function simulateProgress() {
+    const phases = [
+      { to: 40, duration: 300 },
+      { to: 75, duration: 500 },
+      { to: 100, duration: 300 },
+    ];
+    let delay = 100;
+    phases.forEach(phase => {
+      setTimeout(() => { target = phase.to; }, delay);
+      delay += phase.duration;
+    });
+    setTimeout(() => {
+      // Brief hold showing 100, then curtain slides up
+      setTimeout(() => {
+        loader.classList.add('phase2');
+        setTimeout(() => {
+          loader.classList.add('done');
+          document.body.style.overflow = '';
+          simulateGlassSweep();
+        }, 800);
+      }, 400);
+    }, delay + 50);
+  }
+
+  // Typewriter synced to total duration
+  const months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  const now = new Date();
+  const loaderText = `LEONARDSEMMLER/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
+  const typeEl = document.getElementById('loaderTypeText');
+  const charDelay = (totalDuration - 400) / loaderText.length;
+  let ti = 0;
+  function typeLoader() {
+    if (ti <= loaderText.length) {
+      typeEl.textContent = loaderText.slice(0, ti);
+      ti++;
+      setTimeout(typeLoader, charDelay);
+    }
+  }
+  setTimeout(typeLoader, 300);
+
+  function animate() {
+    current += (target - current) * 0.08;
+    const rounded = Math.round(current);
+    counter.textContent = rounded;
+    if (rounded < 100 || !loader.classList.contains('done')) {
+      requestAnimationFrame(animate);
+    }
+  }
+
+  simulateProgress();
+  requestAnimationFrame(animate);
+})();
+
+// CURSOR
+const navEl = document.querySelector('nav');
+function updateNav() {
+  if (window.scrollY > 50) {
+    navEl.classList.add('scrolled');
+  } else {
+    navEl.classList.remove('scrolled');
+  }
+  requestAnimationFrame(updateNav);
+}
+updateNav();
+
+const cur=document.querySelector('.cursor'),dot=document.querySelector('.cursor-dot');
+let cx2=0,cy2=0,dx2=0,dy2=0;
+document.addEventListener('mousemove',(e)=>{cx2=e.clientX;cy2=e.clientY;});
+function ac(){dx2+=(cx2-dx2)*.12;dy2+=(cy2-dy2)*.12;cur.style.left=dx2-9+'px';cur.style.top=dy2-9+'px';dot.style.left=cx2-2+'px';dot.style.top=cy2-2+'px';requestAnimationFrame(ac);}ac();
+document.querySelectorAll('.hoverable,.project-card,.btn,a').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('hovering'));el.addEventListener('mouseleave',()=>cur.classList.remove('hovering'));});
+
+// TILT
+document.querySelectorAll('[data-tilt]').forEach(c=>{
+  c.addEventListener('mousemove',(e)=>{const r=c.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;c.querySelector('.project-card-inner').style.transform=`perspective(1000px) rotateY(${x*5}deg) rotateX(${-y*5}deg)`;});
+  c.addEventListener('mouseleave',()=>{c.querySelector('.project-card-inner').style.transform='perspective(1000px) rotateY(0) rotateX(0)';});
+});
+
+// REVEAL
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+
+
+// ========================================================
+// TERMINAL BLOCK SWEEP EFFECT
+// ========================================================
+
+// Split text into individual char spans
+function splitIntoChars(el) {
+  const text = el.textContent;
+  el.textContent = '';
+  // Check if text contains slashes — if so, group into nowrap segments
+  if (text.includes('/')) {
+    const segments = text.split('/');
+    segments.forEach((seg, idx) => {
+      const wrapper = document.createElement('span');
+      wrapper.style.whiteSpace = 'nowrap';
+      const fullSeg = idx < segments.length - 1 ? seg + '/' : seg;
+      for (let i = 0; i < fullSeg.length; i++) {
+        const span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = fullSeg[i] === ' ' ? '\u00A0' : fullSeg[i];
+        wrapper.appendChild(span);
+      }
+      el.appendChild(wrapper);
+    });
+  } else {
+    for (let i = 0; i < text.length; i++) {
+      const span = document.createElement('span');
+      span.className = 'char';
+      span.textContent = text[i] === ' ' ? '\u00A0' : text[i];
+      el.appendChild(span);
+    }
+  }
+}
+
+// Sweep animation: activate chars one by one left-to-right
+function sweepTerminal(el, speed, onComplete) {
+  const chars = el.querySelectorAll('.char');
+  let i = 0;
+  function step() {
+    if (i > 0) chars[i - 1].classList.remove('active');
+    if (i < chars.length) {
+      chars[i].classList.add('active');
+      i++;
+      setTimeout(step, speed);
+    } else {
+      // Remove last
+      if (chars.length > 0) chars[chars.length - 1].classList.remove('active');
+      if (onComplete) onComplete();
+    }
+  }
+  step();
+}
+
+// Apply to all terminal-link elements (hover triggered)
+document.querySelectorAll('.terminal-link').forEach(el => {
+  splitIntoChars(el);
+  let isAnimating = false;
+  el.addEventListener('mouseenter', () => {
+    if (isAnimating) return;
+    isAnimating = true;
+    sweepTerminal(el, 70, () => { isAnimating = false; });
+  });
+});
+
+// Scroll to explore — looping terminal sweep
+const scrollEl = document.getElementById('scrollExplore');
+splitIntoChars(scrollEl);
+function loopScrollSweep() {
+  sweepTerminal(scrollEl, 80, () => {
+    setTimeout(loopScrollSweep, 5000);
+  });
+}
+setTimeout(loopScrollSweep, 5000);
+
+// DOT GRID — Figma-style with subtle random pulse
+(function(){
+  const canvas = document.getElementById('dotGrid');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const spacing = 24;
+  const baseSize = 1.5;
+  let cols, rows, pulses = [];
+  let currentDpr = 1;
+  
+  function resize() {
+    currentDpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * currentDpr;
+    canvas.height = window.innerHeight * currentDpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    cols = Math.ceil(window.innerWidth / spacing) + 1;
+    rows = Math.ceil(window.innerHeight / spacing) + 1;
+    pulses = [];
+    const totalDots = cols * rows;
+    const pulseCount = Math.floor(totalDots * 0.02);
+    for (let i = 0; i < pulseCount; i++) {
+      pulses.push({
+        col: Math.floor(Math.random() * cols),
+        row: Math.floor(Math.random() * rows),
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.15 + Math.random() * 0.25,
+        maxScale: 1.15 + Math.random() * 0.35
+      });
+    }
+  }
+  
+  // Build a lookup map for fast pulse checking
+  let pulseMap = {};
+  function buildPulseMap() {
+    pulseMap = {};
+    for (let i = 0; i < pulses.length; i++) {
+      pulseMap[pulses[i].col + ',' + pulses[i].row] = pulses[i];
+    }
+  }
+  
+  let lastShuffle = 0;
+  function shufflePulses(time) {
+    if (time - lastShuffle > 5000) {
+      lastShuffle = time;
+      for (let i = 0; i < pulses.length; i++) {
+        if (Math.random() < 0.25) {
+          pulses[i].col = Math.floor(Math.random() * cols);
+          pulses[i].row = Math.floor(Math.random() * rows);
+          pulses[i].phase = Math.random() * Math.PI * 2;
+        }
+      }
+      buildPulseMap();
+    }
+  }
+  
+  function render(time) {
+    ctx.setTransform(currentDpr, 0, 0, currentDpr, 0, 0);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    const t = time * 0.001;
+    shufflePulses(time);
+    
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = c * spacing;
+        const y = r * spacing;
+        const p = pulseMap[c + ',' + r];
+        let size = baseSize;
+        if (p) {
+          const wave = (Math.sin(t * p.speed + p.phase) + 1) * 0.5;
+          size = baseSize * (1 + (p.maxScale - 1) * wave);
+        }
+        const half = size * 0.5;
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        ctx.fillRect(Math.round(x - half), Math.round(y - half), Math.round(size), Math.round(size));
+      }
+    }
+    requestAnimationFrame(render);
+  }
+  
+  resize();
+  buildPulseMap();
+  window.addEventListener('resize', () => { resize(); buildPulseMap(); });
+  requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>
