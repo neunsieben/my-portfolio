@@ -374,12 +374,11 @@ export default function AboutPage() {
         </div>
         <div className="about-detail-block reveal reveal-delay-1">
           <div className="about-detail-label">Favourite Tools</div>
-          <div className="about-detail-item">Adobe Creative Cloud</div>
-          <div className="about-detail-item about-detail-indent">Photoshop</div>
-          <div className="about-detail-item about-detail-indent">Illustrator</div>
-          <div className="about-detail-item about-detail-indent">XD</div>
-          <div className="about-detail-item about-detail-indent">After Effects</div>
-          <div className="about-detail-item about-detail-indent">Firefly</div>
+          <div className="about-detail-item">Photoshop</div>
+          <div className="about-detail-item">Illustrator</div>
+          <div className="about-detail-item">XD</div>
+          <div className="about-detail-item">After Effects</div>
+          <div className="about-detail-item">Firefly</div>
           <div className="about-detail-item">Figma</div>
           <div className="about-detail-item">Axure RP</div>
           <div className="about-detail-item">Wordpress</div>

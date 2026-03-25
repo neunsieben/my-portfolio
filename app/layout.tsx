@@ -48,8 +48,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${montreal.variable} ${montrealBook.variable} ${plusJakarta.variable} ${spaceMono.variable}`}
+      suppressHydrationWarning
     >
-      <body className="antialiased">{children}</body>
+      <body className="antialiased" suppressHydrationWarning>{children}</body>
     </html>
   );
 }
