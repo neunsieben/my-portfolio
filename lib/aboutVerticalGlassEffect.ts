@@ -88,12 +88,13 @@ export function createAboutVerticalGlassEffect(
   const tcx = tx;
 
   function resize() {
-    const W = Math.min(window.innerWidth * 0.85, 1100);
+    const pad = window.innerWidth > 768 ? 96 : 48;
+    const W = window.innerWidth - pad;
     const t = Math.min(1, Math.max(0, (window.innerWidth - 480) / (1200 - 480)));
     const H = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
     canvasEl.width = W * dpr;
     canvasEl.height = H * dpr;
-    canvasEl.style.width = W + "px";
+    canvasEl.style.width = "100%";
     canvasEl.style.height = H + "px";
     glc.viewport(0, 0, canvasEl.width, canvasEl.height);
     tc.width = canvasEl.width;
