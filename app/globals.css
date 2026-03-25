@@ -1221,6 +1221,7 @@ nav.scrolled {
 .about-page .about-photo {
   position: sticky;
   top: 120px;
+  z-index: 3;
 }
 
 .about-page .about-photo img {
