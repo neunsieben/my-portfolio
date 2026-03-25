@@ -305,7 +305,11 @@ export default function AboutPage() {
 
       <section className="about-content">
         <div className="about-photo reveal">
-          <div className="about-photo-placeholder">[ Your Photo ]</div>
+          <img
+            src="/images/leonard-semmler.png"
+            alt="Leonard Semmler"
+            className="about-photo-img"
+          />
         </div>
         <div className="about-text-col">
           <p className="about-text-para reveal">
