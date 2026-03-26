@@ -783,8 +783,7 @@ void main(){
               <div
                 className="project-img project-img-wide"
                 style={{
-                  background:
-                    "linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604)",
+                  background: "url(/images/donata-jan-trio.png) center/cover no-repeat",
                 }}
               ></div>
               <div className="project-meta">

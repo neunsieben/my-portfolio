@@ -39,12 +39,12 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-2",
-    dataImg: "linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604)",
+    dataImg: "url(/images/donata-jan-trio.png)",
     num: "003",
     name: "Donata Jan Trio",
     desc: "Album artwork and visual identity for a contemporary jazz trio, capturing the essence of their sound through design.",
     slides: [
-      "linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604)",
+      "url(/images/donata-jan-trio.png)",
       "linear-gradient(160deg,#0a0604,#2a1a0e,#1a0e06)",
       "linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604)",
       "linear-gradient(160deg,#0a0604,#2a1a0e,#1a0e06)",
@@ -108,7 +108,7 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-2",
-    bg: "linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604)",
+    bg: "url(/images/donata-jan-trio.png) center/cover no-repeat",
     cat: "Album Artwork",
     num: "003",
     name: "Donata Jan Trio",
