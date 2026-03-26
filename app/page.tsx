@@ -797,9 +797,9 @@ void main(){
           </div>
         </div>
         <div className="projects-more reveal">
-          <a href="#" className="hoverable terminal-link">
+          <Link href="/projects" className="hoverable terminal-link">
             More Projects ↗
-          </a>
+          </Link>
         </div>
       </section>
 
