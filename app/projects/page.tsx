@@ -39,12 +39,12 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-2",
-    dataImg: "url(/images/home-thumbnail.png)",
+    dataImg: "url(/images/projects/home/home-thumbnail.png)",
     num: "003",
     name: "Donata Jan Trio",
     desc: "Album artwork and visual identity for a contemporary jazz trio, capturing the essence of their sound through design.",
     slides: [
-      "url(/images/home-thumbnail.png)",
+      "url(/images/projects/home/home-thumbnail.png)",
       "linear-gradient(160deg,#0a0604,#2a1a0e,#1a0e06)",
       "linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604)",
       "linear-gradient(160deg,#0a0604,#2a1a0e,#1a0e06)",
@@ -52,12 +52,12 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-3",
-    dataImg: "linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba)",
+    dataImg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.png)",
     num: "004",
     name: "Studio Liebe",
     desc: "Visual branding and digital presence for a Hamburg-based design studio focused on culture and music.",
     slides: [
-      "linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba)",
+      "url(/images/projects/studio_liebe/studio_liebe_thumbnail.png)",
       "linear-gradient(160deg,#c0beba,#cccac6,#d4d2ce)",
       "linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba)",
       "linear-gradient(160deg,#c0beba,#cccac6,#d4d2ce)",
@@ -108,14 +108,14 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-2",
-    bg: "url(/images/home-thumbnail.png) center/cover no-repeat",
+    bg: "url(/images/projects/home/home-thumbnail.png) center/cover no-repeat",
     cat: "Album Artwork",
     num: "003",
     name: "Donata Jan Trio",
   },
   {
     reveal: "reveal reveal-delay-3",
-    bg: "linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba)",
+    bg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.png) center/cover no-repeat",
     cat: "Branding · Web Design",
     num: "004",
     name: "Studio Liebe",

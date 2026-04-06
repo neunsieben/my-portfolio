@@ -306,7 +306,7 @@ export default function AboutPage() {
       <section className="about-content">
         <div className="about-photo reveal">
           <img
-            src="/images/leo_press_portfolio.png"
+            src="/images/about/leo_press_portfolio.png"
             alt="Leonard Semmler"
             className="about-photo-img"
           />

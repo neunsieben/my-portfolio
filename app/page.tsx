@@ -783,7 +783,7 @@ void main(){
               <div
                 className="project-img project-img-wide"
                 style={{
-                  background: "url(/images/home-thumbnail.png) center/cover no-repeat",
+                  background: "url(/images/projects/home/home-thumbnail.png) center/cover no-repeat",
                 }}
               ></div>
               <div className="project-meta">
