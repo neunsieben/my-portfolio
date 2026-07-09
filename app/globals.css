@@ -299,7 +299,7 @@ nav.scrolled {
 
 .hero-name {
   font-family: var(--font-head);
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--grey-mid);
   text-align: left;
@@ -705,7 +705,7 @@ nav.scrolled {
   }
 
   .hero-name {
-    font-size: 15px;
+    font-size: 20px;
   }
 
   .scroll-explore {
