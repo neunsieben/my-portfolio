@@ -12,6 +12,7 @@ import { useEffect } from "react";
 const LIST_ROWS = [
   {
     reveal: "reveal",
+    slug: "zalazium-gmbh",
     dataImg:
       "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)",
     num: "001",
@@ -26,6 +27,7 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-1",
+    slug: "daily-grind-coffee",
     dataImg: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)",
     num: "002",
     name: "Daily Grind Coffee",
@@ -39,6 +41,7 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-2",
+    slug: "donata-jan-trio",
     dataImg: "url(/images/projects/home/home-thumbnail.jpg)",
     num: "003",
     name: "Donata Jan Trio",
@@ -52,6 +55,7 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-3",
+    slug: "studio-liebe",
     dataImg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.jpg)",
     num: "004",
     name: "Studio Liebe",
@@ -65,6 +69,7 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-4",
+    slug: "nordlicht-festival",
     dataImg: "linear-gradient(135deg,#8a7e72,#a09488,#b8aca0)",
     num: "005",
     name: "Nordlicht Festival",
@@ -78,6 +83,7 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-5",
+    slug: "hafenklang-visuals",
     dataImg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)",
     num: "006",
     name: "Hafenklang Visuals",
@@ -94,6 +100,7 @@ const LIST_ROWS = [
 const GRID_ITEMS = [
   {
     reveal: "reveal",
+    slug: "zalazium-gmbh",
     bg: "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)",
     cat: "UX · Branding · Motion",
     num: "001",
@@ -101,6 +108,7 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-1",
+    slug: "daily-grind-coffee",
     bg: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)",
     cat: "Branding · Packaging",
     num: "002",
@@ -108,6 +116,7 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-2",
+    slug: "donata-jan-trio",
     bg: "url(/images/projects/home/home-thumbnail.jpg) center/cover no-repeat",
     cat: "Album Artwork",
     num: "003",
@@ -115,6 +124,7 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-3",
+    slug: "studio-liebe",
     bg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.jpg) center/cover no-repeat",
     cat: "Branding · Web Design",
     num: "004",
@@ -122,6 +132,7 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-4",
+    slug: "nordlicht-festival",
     bg: "linear-gradient(135deg,#8a7e72,#a09488,#b8aca0)",
     cat: "Event Branding",
     num: "005",
@@ -129,6 +140,7 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-5",
+    slug: "hafenklang-visuals",
     bg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)",
     cat: "Motion · Live Visuals",
     num: "006",
@@ -719,9 +731,9 @@ export default function ProjectsPage() {
                 <div className="project-row-info">
                   <div className="project-row-name">{row.name}</div>
                   <div className="project-row-desc">{row.desc}</div>
-                  <a href="#" className="project-row-link hoverable">
+                  <Link href={`/projects/${row.slug}`} className="project-row-link hoverable">
                     See More
-                  </a>
+                  </Link>
                 </div>
                 <div className="project-row-carousel">
                   <div className="carousel-track">
@@ -743,9 +755,9 @@ export default function ProjectsPage() {
 
         <div className="projects-grid view-hidden" id="gridView">
           {GRID_ITEMS.map((g) => (
-            <a
+            <Link
               key={g.name}
-              href="#"
+              href={`/projects/${g.slug}`}
               className={`project-grid-item ${g.reveal} hoverable`}
             >
               <div className="project-grid-img-wrap">
@@ -760,7 +772,7 @@ export default function ProjectsPage() {
                 </span>
                 <span className="project-grid-cat">{g.cat}</span>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
