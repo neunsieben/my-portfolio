@@ -7,7 +7,8 @@ import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 const LIST_ROWS = [
   {
@@ -149,6 +150,10 @@ const GRID_ITEMS = [
 ] as const;
 
 export default function ProjectsPage() {
+  const router = useRouter();
+  const routerRef = useRef(router);
+  routerRef.current = router;
+
   useEffect(() => {
     const prevScroll = document.documentElement.style.scrollBehavior;
     document.documentElement.style.scrollBehavior = "auto";
@@ -218,6 +223,7 @@ export default function ProjectsPage() {
     let onTouchStart: ((e: TouchEvent) => void) | null = null;
     let onTouchEnd: ((e: TouchEvent) => void) | null = null;
     let onResizeMeasure: (() => void) | null = null;
+    let onPanelClick: (() => void) | null = null;
 
     const imgPanel = document.getElementById("imgPanel");
     const stickyImg = document.getElementById("stickyImg");
@@ -409,6 +415,15 @@ export default function ProjectsPage() {
       onResizeMeasure = measure;
       window.addEventListener("resize", measure);
       rafMagnetic = requestAnimationFrame(tick);
+
+      // Make the sticky image panel navigate to the active project on click
+      const slugs = LIST_ROWS.map((r) => r.slug);
+      onPanelClick = () => {
+        const slug = slugs[displayedImg];
+        if (slug) routerRef.current.push(`/projects/${slug}`);
+      };
+      panel.addEventListener("click", onPanelClick);
+      panel.style.cursor = "pointer";
 
       magneticUnlock = () => {
         magneticEnabled = false;
@@ -653,6 +668,10 @@ export default function ProjectsPage() {
       if (onTouchStart)
         window.removeEventListener("touchstart", onTouchStart);
       if (onTouchEnd) window.removeEventListener("touchend", onTouchEnd);
+      if (onPanelClick) {
+        const panelEl = document.getElementById("imgPanel");
+        if (panelEl) panelEl.removeEventListener("click", onPanelClick);
+      }
       if (gitInstance) {
         window.removeEventListener("resize", gitInstance.resize);
       }
