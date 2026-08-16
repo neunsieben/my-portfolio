@@ -1090,12 +1090,6 @@ nav.scrolled {
   max-width: 500px;
 }
 
-/* Row entry is now an <a> — reset link styles */
-a.project-row-entry {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-}
 
 .projects-page .project-row-link {
   font-family: var(--font-mono);

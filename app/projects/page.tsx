@@ -651,6 +651,26 @@ export default function ProjectsPage() {
     }
     window.addEventListener("resize", onResizeCarousels);
 
+    // ROW / GRID CLICK NAVIGATION
+    // Attach click handlers to every [data-slug] element so the full row is
+    // navigable. This is done in JS rather than <Link> to avoid any conflicts
+    // with the magnetic scroll mechanism.
+    const slugEls = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-slug]"),
+    );
+    const slugClickHandlers: Array<{ el: HTMLElement; fn: EventListener }> = [];
+    slugEls.forEach((el) => {
+      const slug = el.getAttribute("data-slug");
+      if (!slug) return;
+      el.style.cursor = "pointer";
+      const fn: EventListener = () => {
+        if (window.getSelection()?.toString()) return;
+        routerRef.current.push(`/projects/${slug}`);
+      };
+      el.addEventListener("click", fn);
+      slugClickHandlers.push({ el, fn });
+    });
+
     return () => {
       pageDisposed = true;
       cancelAnimationFrame(rafMagnetic);
@@ -678,6 +698,9 @@ export default function ProjectsPage() {
       sweepObs?.disconnect();
       obs.disconnect();
       terminalCleanups.forEach((fn) => fn());
+      slugClickHandlers.forEach(({ el, fn }) =>
+        el.removeEventListener("click", fn),
+      );
     };
   }, []);
 
@@ -741,11 +764,11 @@ export default function ProjectsPage() {
           </div>
           <div className="projects-list-rows" id="listRows">
             {LIST_ROWS.map((row) => (
-              <Link
+              <div
                 key={row.num}
-                href={`/projects/${row.slug}`}
                 className={`project-row-entry ${row.reveal} hoverable`}
                 data-img={row.dataImg}
+                data-slug={row.slug}
               >
                 <div className="project-row-num">{row.num}</div>
                 <div className="project-row-info">
@@ -765,17 +788,17 @@ export default function ProjectsPage() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
 
         <div className="projects-grid view-hidden" id="gridView">
           {GRID_ITEMS.map((g) => (
-            <Link
+            <div
               key={g.name}
-              href={`/projects/${g.slug}`}
               className={`project-grid-item ${g.reveal} hoverable`}
+              data-slug={g.slug}
             >
               <div className="project-grid-img-wrap">
                 <div
@@ -789,7 +812,7 @@ export default function ProjectsPage() {
                 </span>
                 <span className="project-grid-cat">{g.cat}</span>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
