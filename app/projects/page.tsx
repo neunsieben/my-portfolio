@@ -722,18 +722,16 @@ export default function ProjectsPage() {
           </div>
           <div className="projects-list-rows" id="listRows">
             {LIST_ROWS.map((row) => (
-              <div
+              <Link
                 key={row.num}
-                className={`project-row-entry ${row.reveal}`}
+                href={`/projects/${row.slug}`}
+                className={`project-row-entry ${row.reveal} hoverable`}
                 data-img={row.dataImg}
               >
                 <div className="project-row-num">{row.num}</div>
                 <div className="project-row-info">
                   <div className="project-row-name">{row.name}</div>
                   <div className="project-row-desc">{row.desc}</div>
-                  <Link href={`/projects/${row.slug}`} className="project-row-link hoverable">
-                    See More
-                  </Link>
                 </div>
                 <div className="project-row-carousel">
                   <div className="carousel-track">
@@ -748,7 +746,7 @@ export default function ProjectsPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
