@@ -36,7 +36,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     role: "UX Design, Visual Identity, Motion Design",
     visitUrl: "https://zalazium.de",
     description:
-      "Zalazium is a German startup that combines artificial intelligence with GDPR compliance. It offers large language models and other AI applications for businesses that perform tasks in compliance with data protection regulations.\n\nIn 2025, I designed the website, created animations, revised the logo's word mark, and created a figurative mark.",
+      "Zalazium is a German startup that combines artificial intelligence with GDPR compliance. It offers large language models and other AI applications for businesses that perform tasks in compliance with data protection regulations.\n\nIn 2025, I designed the company's website, created animations, revised the logo's word mark, and created a figurative mark.",
     media: [
       { type: "image", bg: "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)" },
       { type: "image", bg: "linear-gradient(160deg,#d0ceca,#bab8b4,#c8c6c2)" },
