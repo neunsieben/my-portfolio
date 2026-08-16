@@ -1,5 +1,6 @@
 "use client";
 
+import { initTerminalLinks } from "@/lib/terminalAnimation";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -28,20 +29,31 @@ export function SiteNav({
   children: React.ReactNode;
 }) {
   useEffect(() => {
-    const el = document.getElementById("navLogo");
-    if (el) {
+    let disposed = false;
+
+    const navEl = document.querySelector("nav");
+
+    // Set logo text (must happen before splitIntoChars runs on it)
+    const logoEl = document.getElementById("navLogo");
+    if (logoEl) {
       const n = new Date();
-      el.textContent = `LEONARDSEMMLER/PORTFOLIO/${n.getFullYear()}/${MONTHS[n.getMonth()]}`;
+      logoEl.textContent = `LEONARDSEMMLER/PORTFOLIO/${n.getFullYear()}/${MONTHS[n.getMonth()]}`;
     }
 
+    // Typewriter animation scoped to the nav — works on every page
+    const cleanupLinks = navEl ? initTerminalLinks(() => disposed, navEl) : () => {};
+
     const onScroll = () => {
-      document
-        .querySelector("nav")
-        ?.classList.toggle("scrolled", window.scrollY > scrolledThreshold);
+      navEl?.classList.toggle("scrolled", window.scrollY > scrolledThreshold);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    return () => {
+      disposed = true;
+      cleanupLinks();
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [scrolledThreshold]);
 
   return (

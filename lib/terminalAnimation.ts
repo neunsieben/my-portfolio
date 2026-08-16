@@ -59,15 +59,17 @@ function sweepTarget(link: HTMLElement): HTMLElement {
 }
 
 /**
- * Attach the typewriter block animation to every .terminal-link on the page.
+ * Attach the typewriter block animation to every .terminal-link found within
+ * `root` (defaults to the whole document).
  * Returns a cleanup function that removes all listeners.
  */
 export function initTerminalLinks(
   disposed: () => boolean,
+  root: ParentNode = document,
 ): () => void {
   const cleanups: Array<() => void> = [];
 
-  document.querySelectorAll<HTMLElement>(".terminal-link").forEach((link) => {
+  root.querySelectorAll<HTMLElement>(".terminal-link").forEach((link) => {
     const target = sweepTarget(link);
     splitIntoChars(target);
     let isAnimating = false;
