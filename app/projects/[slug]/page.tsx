@@ -62,7 +62,11 @@ export default function ProjectDetailPage() {
 
         <div className="pd-right">
           <h1 className="pd-title reveal">{project.name}</h1>
-          <p className="pd-desc reveal reveal-delay-1">{project.description}</p>
+          <div className="pd-desc reveal reveal-delay-1">
+            {project.description.split("\n\n").map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
 
           <div className="pd-meta reveal reveal-delay-2">
             <div className="pd-meta-row">

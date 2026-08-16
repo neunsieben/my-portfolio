@@ -1528,6 +1528,12 @@ nav.scrolled {
   max-width: 500px;
   margin-bottom: 0;
 }
+.pd-desc p {
+  margin: 0 0 1.4em;
+}
+.pd-desc p:last-child {
+  margin-bottom: 0;
+}
 
 .pd-meta {
   display: flex;

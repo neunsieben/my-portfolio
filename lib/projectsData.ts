@@ -31,10 +31,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     num: "001",
     name: "Zalazium GmbH",
     category: "UX · Branding · Motion",
-    year: "2024",
+    year: "2025",
     client: "Zalazium GmbH",
     role: "UX Design, Visual Identity, Motion Design",
-    description: LOREM,
+    description:
+      "Zalazium is a German startup that combines artificial intelligence with GDPR compliance. It offers large language models and other AI applications for businesses that perform tasks in compliance with data protection regulations.\n\nIn 2025, I designed the website, revised the word mark, and created a figurative mark.",
     media: [
       { type: "image", bg: "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)" },
       { type: "image", bg: "linear-gradient(160deg,#d0ceca,#bab8b4,#c8c6c2)" },
