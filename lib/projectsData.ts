@@ -99,19 +99,31 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     ],
   },
   {
-    slug: "nordlicht-festival",
+    slug: "resort-13",
     num: "005",
-    name: "Nordlicht Festival",
-    category: "Event Branding",
-    year: "2023",
-    client: "Nordlicht Festival",
-    role: "Event Branding, Visual Direction",
-    description: LOREM,
+    name: "Resort 13",
+    category: "Branding · Social Media",
+    year: "2025",
+    client: "Resort 13",
+    role: "Logo & Brand Identity, Social Media Design",
+    description:
+      "Resort 13 is a house music DJ and live performance event series. I created the branding and logo for the collective and design their social media advertisements — building a visual language that captures the energy and aesthetic of their events.",
     media: [
-      { type: "image", bg: "linear-gradient(135deg,#8a7e72,#a09488,#b8aca0)" },
-      { type: "image", bg: "linear-gradient(160deg,#b8aca0,#8a7e72,#a09488)" },
-      { type: "image", bg: "linear-gradient(135deg,#8a7e72,#a09488,#b8aca0)" },
-      { type: "image", bg: "linear-gradient(160deg,#b8aca0,#8a7e72,#a09488)" },
+      {
+        type: "image",
+        src: "/images/projects/resort13/resort13_thumbnail.jpg",
+        alt: "Resort 13 — social media advertisement",
+      },
+      {
+        type: "image",
+        src: "/images/projects/resort13/resort13_july_bg.jpg",
+        alt: "Resort 13 — July event poster",
+      },
+      {
+        type: "video",
+        src: "/images/projects/resort13/resort13_firefly.mp4",
+        alt: "Resort 13 — motion design",
+      },
     ],
   },
   {
@@ -138,6 +150,6 @@ export const NUM_TO_SLUG: Record<string, string> = {
   "002": "daily-grind-coffee",
   "003": "donata-jan-trio",
   "004": "studio-liebe",
-  "005": "nordlicht-festival",
+  "005": "resort-13",
   "006": "hafenklang-visuals",
 };
