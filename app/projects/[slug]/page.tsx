@@ -89,6 +89,19 @@ export default function ProjectDetailPage() {
                 <span className="pd-meta-value">{project.role}</span>
               </div>
             )}
+            {project.visitUrl && (
+              <div className="pd-meta-row">
+                <span className="pd-meta-label">Website</span>
+                <a
+                  href={project.visitUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pd-meta-link hoverable"
+                >
+                  {project.visitUrl.replace(/^https?:\/\//, "")} ↗
+                </a>
+              </div>
+            )}
             {project.collaborators && (
               <div className="pd-meta-row">
                 <span className="pd-meta-label">In Collaboration With</span>
@@ -96,17 +109,6 @@ export default function ProjectDetailPage() {
               </div>
             )}
           </div>
-
-          {project.visitUrl && (
-            <a
-              href={project.visitUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="pd-visit hoverable reveal reveal-delay-3"
-            >
-              Visit Site ↗
-            </a>
-          )}
         </div>
       </section>
 

@@ -34,6 +34,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     year: "2025",
     client: "Zalazium GmbH",
     role: "UX Design, Visual Identity, Motion Design",
+    visitUrl: "https://zalazium.de",
     description:
       "Zalazium is a German startup that combines artificial intelligence with GDPR compliance. It offers large language models and other AI applications for businesses that perform tasks in compliance with data protection regulations.\n\nIn 2025, I designed the website, created animations, revised the logo's word mark, and created a figurative mark.",
     media: [
