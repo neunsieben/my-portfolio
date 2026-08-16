@@ -1564,16 +1564,6 @@ nav.scrolled {
   color: var(--text);
 }
 
-.pd-meta-link {
-  color: var(--text);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(10, 10, 10, 0.25);
-  padding-bottom: 1px;
-  transition: border-color 0.2s ease;
-}
-.pd-meta-link:hover {
-  border-color: var(--text);
-}
 
 .pd-visit {
   font-family: var(--font-mono);

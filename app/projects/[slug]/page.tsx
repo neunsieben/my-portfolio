@@ -5,6 +5,7 @@ import { SiteCursor } from "@/components/SiteCursor";
 import { SiteNav } from "@/components/SiteNav";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
 import { PROJECT_DETAILS } from "@/lib/projectsData";
+import { initTerminalLinks } from "@/lib/terminalAnimation";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
@@ -15,6 +16,8 @@ export default function ProjectDetailPage() {
   const project = PROJECT_DETAILS.find((p) => p.slug === slug);
 
   useEffect(() => {
+    let disposed = false;
+
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -24,7 +27,14 @@ export default function ProjectDetailPage() {
       { threshold: 0.05 },
     );
     document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
+
+    const cleanupLinks = initTerminalLinks(() => disposed);
+
+    return () => {
+      disposed = true;
+      obs.disconnect();
+      cleanupLinks();
+    };
   }, []);
 
   if (!project) return notFound();
@@ -96,9 +106,11 @@ export default function ProjectDetailPage() {
                   href={project.visitUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="pd-meta-link hoverable"
+                  className="terminal-link hoverable"
                 >
-                  {project.visitUrl.replace(/^https?:\/\//, "")} ↗
+                  <span className="terminal-link-label">
+                    {project.visitUrl.replace(/^https?:\/\//, "")} ↗
+                  </span>
                 </a>
               </div>
             )}
