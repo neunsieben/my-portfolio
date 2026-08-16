@@ -124,6 +124,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: "/images/projects/resort13/resort13_firefly.mp4",
         alt: "Resort 13 — motion design",
       },
+      {
+        type: "video",
+        src: "/images/projects/resort13/resort13_making_of.mp4",
+        alt: "Resort 13 — making of",
+      },
     ],
   },
   {
