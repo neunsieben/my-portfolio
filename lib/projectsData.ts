@@ -113,7 +113,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     media: [
       {
         type: "video",
-        src: "/images/projects/resort13/Resort13_Inspo_Process_4.mp4",
+        src: "/images/projects/resort13/resort13_inspo_process.mp4",
         alt: "Resort 13 — inspo process",
       },
       {
