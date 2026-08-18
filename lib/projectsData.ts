@@ -112,6 +112,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       "Resort 13 is a house music DJ and live performance event series. I created the branding and logo for the collective and design their social media advertisements — building a visual language that captures the energy and aesthetic of their events.",
     media: [
       {
+        type: "video",
+        src: "/images/projects/resort13/Resort13_Inspo_Process_4.mp4",
+        alt: "Resort 13 — inspo process",
+      },
+      {
         type: "image",
         src: "/images/projects/resort13/resort13_thumbnail.jpg",
         alt: "Resort 13 — social media advertisement",
