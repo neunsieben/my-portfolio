@@ -71,14 +71,14 @@ const LIST_ROWS = [
   {
     reveal: "reveal reveal-delay-4",
     slug: "resort-13",
-    dataImg: "url(/images/projects/resort13/resort13_thumbnail.jpg)",
+    dataImg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg)",
     num: "005",
     name: "Resort 13",
     desc: "Logo, brand identity and social media design for a house music DJ and live performance event series.",
     slides: [
-      "url(/images/projects/resort13/resort13_thumbnail.jpg)",
+      "url(/images/projects/resort13/resort13_thumbnail_new.jpg)",
       "url(/images/projects/resort13/resort13_july_bg.jpg)",
-      "url(/images/projects/resort13/resort13_thumbnail.jpg)",
+      "url(/images/projects/resort13/resort13_thumbnail_new.jpg)",
       "url(/images/projects/resort13/resort13_july_bg.jpg)",
     ],
   },
@@ -148,7 +148,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-4",
     slug: "resort-13",
-    bg: "url(/images/projects/resort13/resort13_thumbnail.jpg) center/cover",
+    bg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg) center/cover",
     cat: "Branding · Social Media",
     num: "005",
     name: "Resort 13",
