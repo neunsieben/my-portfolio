@@ -98,16 +98,16 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-6",
-    slug: "hafenklang-visuals",
-    dataImg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)",
+    slug: "carlitoz-way",
+    dataImg: "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)",
     num: "007",
-    name: "Hafenklang Visuals",
-    desc: "Motion design and live visuals for a renowned Hamburg music venue and cultural space.",
+    name: "Carlitoz Way",
+    desc: "Packaging design for a food catering brand.",
     slides: [
-      "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)",
-      "linear-gradient(160deg,#4c4c5a,#2c2c3a,#3c3c4a)",
-      "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)",
-      "linear-gradient(160deg,#4c4c5a,#2c2c3a,#3c3c4a)",
+      "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)",
+      "linear-gradient(160deg,#c8946a,#d4a96a,#e8c48a)",
+      "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)",
+      "linear-gradient(160deg,#c8946a,#d4a96a,#e8c48a)",
     ],
   },
 ] as const;
@@ -163,11 +163,11 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-6",
-    slug: "hafenklang-visuals",
-    bg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)",
-    cat: "Motion · Live Visuals",
+    slug: "carlitoz-way",
+    bg: "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)",
+    cat: "Packaging Design",
     num: "007",
-    name: "Hafenklang Visuals",
+    name: "Carlitoz Way",
   },
 ] as const;
 

@@ -144,20 +144,17 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     ],
   },
   {
-    slug: "hafenklang-visuals",
+    slug: "carlitoz-way",
     num: "007",
-    name: "Hafenklang Visuals",
-    category: "Motion Design",
-    year: "2023",
-    client: "Hafenklang",
-    role: "Motion Design, Live Visuals",
+    name: "Carlitoz Way",
+    category: "Packaging Design",
+    year: "2026",
+    client: "Carlitoz Way",
+    role: "Packaging Design",
     description: LOREM,
-
     media: [
-      { type: "image", bg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)" },
-      { type: "image", bg: "linear-gradient(160deg,#4c4c5a,#2c2c3a,#3c3c4a)" },
-      { type: "image", bg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)" },
-      { type: "image", bg: "linear-gradient(160deg,#4c4c5a,#2c2c3a,#3c3c4a)" },
+      { type: "image", bg: "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)" },
+      { type: "image", bg: "linear-gradient(160deg,#c8946a,#d4a96a,#e8c48a)" },
     ],
   },
 ];
@@ -170,5 +167,5 @@ export const NUM_TO_SLUG: Record<string, string> = {
   "004": "studio-liebe",
   "005": "resort-13",
   "006": "forbes-cpxart",
-  "007": "hafenklang-visuals",
+  "007": "carlitoz-way",
 };
