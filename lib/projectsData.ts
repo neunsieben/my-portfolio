@@ -119,14 +119,40 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     ],
   },
   {
-    slug: "hafenklang-visuals",
+    slug: "forbes-cpxart",
     num: "006",
+    name: "Forbes x CPxArt",
+    category: "Art · Fashion",
+    year: "2017",
+    client: "CPxArt",
+    role: "Artist",
+    collaborators: "Donaldson Sackey (reference)",
+    visitUrl: "https://www.forbes.com/sites/kristenphilipkoski/2017/11/19/cpxart/",
+    description:
+      "In 2017, I hand-painted bomber jackets for the brand CPxArt — each piece a one-of-a-kind wearable artwork.\n\nThe project was featured in the Forbes article \"Wear A Masterpiece On Your Back With These One-of-a-Kind Bomber Jackets\" by Kristen Philipkoski.",
+    media: [
+      {
+        type: "image",
+        src: "/images/projects/cpxart/cpxart_1.jpg",
+        alt: "Forbes x CPxArt — hand-painted bomber jacket",
+      },
+      {
+        type: "image",
+        src: "/images/projects/cpxart/cpxart_2.jpg",
+        alt: "Forbes x CPxArt — hand-painted bomber jacket detail",
+      },
+    ],
+  },
+  {
+    slug: "hafenklang-visuals",
+    num: "007",
     name: "Hafenklang Visuals",
     category: "Motion Design",
     year: "2023",
     client: "Hafenklang",
     role: "Motion Design, Live Visuals",
     description: LOREM,
+
     media: [
       { type: "image", bg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)" },
       { type: "image", bg: "linear-gradient(160deg,#4c4c5a,#2c2c3a,#3c3c4a)" },
@@ -143,5 +169,6 @@ export const NUM_TO_SLUG: Record<string, string> = {
   "003": "donata-jan-trio",
   "004": "studio-liebe",
   "005": "resort-13",
-  "006": "hafenklang-visuals",
+  "006": "forbes-cpxart",
+  "007": "hafenklang-visuals",
 };

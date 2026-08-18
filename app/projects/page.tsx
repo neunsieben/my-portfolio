@@ -84,9 +84,23 @@ const LIST_ROWS = [
   },
   {
     reveal: "reveal reveal-delay-5",
+    slug: "forbes-cpxart",
+    dataImg: "url(/images/projects/cpxart/cpxart_1.jpg)",
+    num: "006",
+    name: "Forbes x CPxArt",
+    desc: "Hand-painted bomber jackets for CPxArt, featured in Forbes — wearable art merging painting and fashion.",
+    slides: [
+      "url(/images/projects/cpxart/cpxart_1.jpg)",
+      "url(/images/projects/cpxart/cpxart_2.jpg)",
+      "url(/images/projects/cpxart/cpxart_1.jpg)",
+      "url(/images/projects/cpxart/cpxart_2.jpg)",
+    ],
+  },
+  {
+    reveal: "reveal reveal-delay-6",
     slug: "hafenklang-visuals",
     dataImg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)",
-    num: "006",
+    num: "007",
     name: "Hafenklang Visuals",
     desc: "Motion design and live visuals for a renowned Hamburg music venue and cultural space.",
     slides: [
@@ -141,10 +155,18 @@ const GRID_ITEMS = [
   },
   {
     reveal: "reveal reveal-delay-5",
+    slug: "forbes-cpxart",
+    bg: "url(/images/projects/cpxart/cpxart_1.jpg) center/cover",
+    cat: "Art · Fashion",
+    num: "006",
+    name: "Forbes x CPxArt",
+  },
+  {
+    reveal: "reveal reveal-delay-6",
     slug: "hafenklang-visuals",
     bg: "linear-gradient(135deg,#2c2c3a,#3c3c4a,#4c4c5a)",
     cat: "Motion · Live Visuals",
-    num: "006",
+    num: "007",
     name: "Hafenklang Visuals",
   },
 ] as const;
