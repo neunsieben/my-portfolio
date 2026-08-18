@@ -147,6 +147,22 @@ body {
   mix-blend-mode: difference;
 }
 
+/* On light pages the wrapper creates its own stacking context so the
+   canvas sits behind all content (z-index: -1 within the context)
+   and uses normal blend mode with a dark dot colour passed via JS. */
+.about-page,
+.projects-page,
+.pd-page {
+  isolation: isolate;
+}
+
+.about-page #dotGrid,
+.projects-page #dotGrid,
+.pd-page #dotGrid {
+  z-index: -1;
+  mix-blend-mode: normal;
+}
+
 .cursor,
 .cursor-dot {
   display: none;

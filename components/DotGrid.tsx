@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 /** Figma-style dot grid with subtle random pulse (same logic as homepage). */
-export function DotGrid() {
+export function DotGrid({ dotColor = "rgba(255,255,255,0.12)" }: { dotColor?: string } = {}) {
   useEffect(() => {
     let pageDisposed = false;
 
@@ -89,7 +89,7 @@ export function DotGrid() {
             size = baseSize * (1 + (p.maxScale - 1) * wave);
           }
           const half = size * 0.5;
-          dotCtx.fillStyle = "rgba(255,255,255,0.12)";
+          dotCtx.fillStyle = dotColor;
           dotCtx.fillRect(
             Math.round(x - half),
             Math.round(y - half),
@@ -115,7 +115,7 @@ export function DotGrid() {
       pageDisposed = true;
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [dotColor]);
 
   return <canvas id="dotGrid" />;
 }

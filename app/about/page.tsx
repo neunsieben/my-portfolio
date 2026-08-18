@@ -274,7 +274,7 @@ export default function AboutPage() {
 
   return (
     <div className="about-page">
-      <DotGrid />
+      <DotGrid dotColor="rgba(10,10,10,0.05)" />
       <SiteCursor variant="home" />
       <SiteNav scrolledThreshold={50}>
         <li>

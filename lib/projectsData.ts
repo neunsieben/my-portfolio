@@ -116,26 +116,6 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: "/images/projects/resort13/resort13_inspo_process.mp4",
         alt: "Resort 13 — inspo process",
       },
-      {
-        type: "image",
-        src: "/images/projects/resort13/resort13_thumbnail.jpg",
-        alt: "Resort 13 — social media advertisement",
-      },
-      {
-        type: "image",
-        src: "/images/projects/resort13/resort13_july_bg.jpg",
-        alt: "Resort 13 — July event poster",
-      },
-      {
-        type: "video",
-        src: "/images/projects/resort13/resort13_firefly.mp4",
-        alt: "Resort 13 — motion design",
-      },
-      {
-        type: "video",
-        src: "/images/projects/resort13/resort13_making_of.mp4",
-        alt: "Resort 13 — making of",
-      },
     ],
   },
   {
