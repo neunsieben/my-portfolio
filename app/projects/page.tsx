@@ -124,6 +124,20 @@ const LIST_ROWS = [
       "linear-gradient(160deg,#3d1a6e,#1a0a2e,#2d1054)",
     ],
   },
+  {
+    reveal: "reveal reveal-delay-8",
+    slug: "kolsch-ipso",
+    dataImg: "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)",
+    num: "009",
+    name: "Kölsch / IPSO",
+    desc: "Album cover artwork for the album \"Kinema\" and Europe Tour design for \"Kölsch and the Machine\".",
+    slides: [
+      "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)",
+      "linear-gradient(160deg,#1a1a2e,#0a0a12,#0d0d1a)",
+      "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)",
+      "linear-gradient(160deg,#1a1a2e,#0a0a12,#0d0d1a)",
+    ],
+  },
 ] as const;
 
 const GRID_ITEMS = [
@@ -190,6 +204,14 @@ const GRID_ITEMS = [
     cat: "Branding",
     num: "008",
     name: "Magic Mansion",
+  },
+  {
+    reveal: "reveal reveal-delay-8",
+    slug: "kolsch-ipso",
+    bg: "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)",
+    cat: "Album Artwork · Tour Design",
+    num: "009",
+    name: "Kölsch / IPSO",
   },
 ] as const;
 

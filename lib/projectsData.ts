@@ -171,6 +171,21 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       { type: "image", bg: "linear-gradient(160deg,#3d1a6e,#1a0a2e,#2d1054)" },
     ],
   },
+  {
+    slug: "kolsch-ipso",
+    num: "009",
+    name: "Kölsch / IPSO",
+    category: "Album Artwork · Tour Design",
+    year: "2025",
+    client: "Kölsch / IPSO",
+    role: "Album Cover Artwork, Tour Design",
+    description:
+      "In 2025, I created the album cover artwork for Kölsch's album \"Kinema\".\n\nI also designed the visual identity for his Europe Tour, titled \"Kölsch and the Machine\".",
+    media: [
+      { type: "image", bg: "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)" },
+      { type: "image", bg: "linear-gradient(160deg,#1a1a2e,#0a0a12,#0d0d1a)" },
+    ],
+  },
 ];
 
 /** Quick lookup: project number → slug */
@@ -183,4 +198,5 @@ export const NUM_TO_SLUG: Record<string, string> = {
   "006": "forbes-cpxart",
   "007": "carlitoz-way",
   "008": "magic-mansion",
+  "009": "kolsch-ipso",
 };
