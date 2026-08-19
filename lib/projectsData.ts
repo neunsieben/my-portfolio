@@ -157,6 +157,20 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       { type: "image", bg: "linear-gradient(160deg,#c8946a,#d4a96a,#e8c48a)" },
     ],
   },
+  {
+    slug: "magic-mansion",
+    num: "008",
+    name: "Magic Mansion",
+    category: "Branding",
+    year: "2025",
+    client: "Magic Mansion",
+    role: "Rebranding",
+    description: LOREM,
+    media: [
+      { type: "image", bg: "linear-gradient(135deg,#1a0a2e,#2d1054,#3d1a6e)" },
+      { type: "image", bg: "linear-gradient(160deg,#3d1a6e,#1a0a2e,#2d1054)" },
+    ],
+  },
 ];
 
 /** Quick lookup: project number → slug */
@@ -168,4 +182,5 @@ export const NUM_TO_SLUG: Record<string, string> = {
   "005": "resort-13",
   "006": "forbes-cpxart",
   "007": "carlitoz-way",
+  "008": "magic-mansion",
 };

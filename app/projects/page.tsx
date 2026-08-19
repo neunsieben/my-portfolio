@@ -110,6 +110,20 @@ const LIST_ROWS = [
       "linear-gradient(160deg,#c8946a,#d4a96a,#e8c48a)",
     ],
   },
+  {
+    reveal: "reveal reveal-delay-7",
+    slug: "magic-mansion",
+    dataImg: "linear-gradient(135deg,#1a0a2e,#2d1054,#3d1a6e)",
+    num: "008",
+    name: "Magic Mansion",
+    desc: "Rebranding for a Hamburg-based event series.",
+    slides: [
+      "linear-gradient(135deg,#1a0a2e,#2d1054,#3d1a6e)",
+      "linear-gradient(160deg,#3d1a6e,#1a0a2e,#2d1054)",
+      "linear-gradient(135deg,#1a0a2e,#2d1054,#3d1a6e)",
+      "linear-gradient(160deg,#3d1a6e,#1a0a2e,#2d1054)",
+    ],
+  },
 ] as const;
 
 const GRID_ITEMS = [
@@ -168,6 +182,14 @@ const GRID_ITEMS = [
     cat: "Packaging Design",
     num: "007",
     name: "Carlitoz Way",
+  },
+  {
+    reveal: "reveal reveal-delay-7",
+    slug: "magic-mansion",
+    bg: "linear-gradient(135deg,#1a0a2e,#2d1054,#3d1a6e)",
+    cat: "Branding",
+    num: "008",
+    name: "Magic Mansion",
   },
 ] as const;
 
