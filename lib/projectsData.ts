@@ -103,13 +103,13 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   {
     slug: "resort-13",
     num: "005",
-    name: "Resort 13",
+    name: "Resort 13 x PALLAS",
     category: "Branding · Social Media",
     year: "2025",
-    client: "Resort 13",
+    client: "Resort 13 x PALLAS",
     role: "Logo & Brand Identity, Social Media Design",
     description:
-      "Resort 13 is a house music DJ and live performance event series. I created the branding and logo for the collective and design their social media advertisements — building a visual language that captures the energy and aesthetic of their events.",
+      "Resort 13 x PALLAS is a house music DJ and live performance event series. I created the branding and logo for the collective and design their social media advertisements — building a visual language that captures the energy and aesthetic of their events.",
     media: [
       {
         type: "video",
@@ -140,6 +140,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         type: "image",
         src: "/images/projects/cpxart/cpxart_2.jpg",
         alt: "Forbes x CPxArt — hand-painted bomber jacket detail",
+      },
+      {
+        type: "image",
+        src: "/images/projects/cpxart/cpxart_3.jpg",
+        alt: "Forbes x CPxArt — hand-painted bomber jacket",
       },
     ],
   },

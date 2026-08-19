@@ -73,7 +73,7 @@ const LIST_ROWS = [
     slug: "resort-13",
     dataImg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg)",
     num: "005",
-    name: "Resort 13",
+    name: "Resort 13 x PALLAS",
     desc: "Logo, brand identity and social media design for a house music DJ and live performance event series.",
     slides: [
       "url(/images/projects/resort13/resort13_thumbnail_new.jpg)",
@@ -179,7 +179,7 @@ const GRID_ITEMS = [
     bg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg) center/cover",
     cat: "Branding · Social Media",
     num: "005",
-    name: "Resort 13",
+    name: "Resort 13 x PALLAS",
   },
   {
     reveal: "reveal reveal-delay-5",
