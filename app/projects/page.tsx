@@ -772,7 +772,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="projects-page">
-      <DotGrid dotColor="rgba(10,10,10,0.05)" />
+      <DotGrid dotColor="rgba(10,10,10,0.12)" />
       <SiteCursor variant="projects" />
       <SiteNav scrolledThreshold={40}>
         <li>

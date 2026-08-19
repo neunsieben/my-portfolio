@@ -45,7 +45,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="pd-page">
-      <DotGrid dotColor="rgba(10,10,10,0.05)" />
+      <DotGrid dotColor="rgba(10,10,10,0.12)" />
       <SiteCursor variant="home" />
       <SiteNav scrolledThreshold={40}>
         <li>
