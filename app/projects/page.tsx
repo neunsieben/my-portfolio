@@ -85,15 +85,15 @@ const LIST_ROWS = [
   {
     reveal: "reveal reveal-delay-5",
     slug: "forbes-cpxart",
-    dataImg: "url(/images/projects/cpxart/cpxart_1.jpg)",
+    dataImg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg)",
     num: "006",
     name: "Forbes x CPxArt",
     desc: "Hand-painted bomber jackets for CPxArt, featured in Forbes — wearable art merging painting and fashion.",
     slides: [
-      "url(/images/projects/cpxart/cpxart_1.jpg)",
-      "url(/images/projects/cpxart/cpxart_2.jpg)",
-      "url(/images/projects/cpxart/cpxart_1.jpg)",
-      "url(/images/projects/cpxart/cpxart_2.jpg)",
+      "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg)",
+      "url(/images/projects/cpxart/cpxart_red_jacket.jpg)",
+      "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg)",
+      "url(/images/projects/cpxart/cpxart_red_jacket.jpg)",
     ],
   },
   {
@@ -184,7 +184,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-5",
     slug: "forbes-cpxart",
-    bg: "url(/images/projects/cpxart/cpxart_1.jpg) center/cover",
+    bg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg) center/cover",
     cat: "Art · Fashion",
     num: "006",
     name: "Forbes x CPxArt",
