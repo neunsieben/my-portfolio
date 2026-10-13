@@ -99,15 +99,15 @@ const LIST_ROWS = [
   {
     reveal: "reveal reveal-delay-6",
     slug: "carlitoz-way",
-    dataImg: "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)",
+    dataImg: "url(/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg)",
     num: "007",
     name: "Carlitoz Way",
     desc: "Packaging design for a food catering brand.",
     slides: [
-      "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)",
-      "linear-gradient(160deg,#c8946a,#d4a96a,#e8c48a)",
-      "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)",
-      "linear-gradient(160deg,#c8946a,#d4a96a,#e8c48a)",
+      "url(/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg)",
+      "url(/images/projects/carlitoz_way/carlitoz_close_up.jpg)",
+      "url(/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg)",
+      "url(/images/projects/carlitoz_way/carlitoz_close_up.jpg)",
     ],
   },
   {
@@ -192,7 +192,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-6",
     slug: "carlitoz-way",
-    bg: "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)",
+    bg: "url(/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg) center/cover",
     cat: "Packaging Design",
     num: "007",
     name: "Carlitoz Way",

@@ -168,8 +168,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     role: "Packaging Design",
     description: LOREM,
     media: [
-      { type: "image", bg: "linear-gradient(135deg,#d4a96a,#e8c48a,#c8946a)" },
-      { type: "image", bg: "linear-gradient(160deg,#c8946a,#d4a96a,#e8c48a)" },
+      {
+        type: "image",
+        src: "/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg",
+        alt: "Carlitoz Way — papeleta packaging",
+      },
+      {
+        type: "image",
+        src: "/images/projects/carlitoz_way/carlitoz_close_up.jpg",
+        alt: "Carlitoz Way — close up box papeleta",
+      },
     ],
   },
   {
