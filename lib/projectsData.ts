@@ -146,6 +146,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: "/images/projects/cpxart/cpxart_3.jpg",
         alt: "Forbes x CPxArt — hand-painted bomber jacket",
       },
+      {
+        type: "image",
+        src: "/images/projects/cpxart/cpxart_red_jacket.jpg",
+        alt: "Forbes x CPxArt — studio shot, red jacket",
+      },
+      {
+        type: "image",
+        src: "/images/projects/cpxart/cpxart_yellow_jacket.jpg",
+        alt: "Forbes x CPxArt — studio shot, yellow jacket",
+      },
     ],
   },
   {
