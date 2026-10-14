@@ -170,6 +170,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     media: [
       {
         type: "image",
+        src: "/images/projects/carlitoz_way/carlitoz_box_top.jpg",
+        alt: "Carlitoz Way — box top view",
+      },
+      {
+        type: "image",
+        src: "/images/projects/carlitoz_way/carlitoz_close_up.jpg",
+        alt: "Carlitoz Way — close up box papeleta",
+      },
+      {
+        type: "image",
         src: "/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg",
         alt: "Carlitoz Way — papeleta packaging",
       },
@@ -178,11 +188,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: "/images/projects/carlitoz_way/carlitoz_papeleta_left.jpg",
         alt: "Carlitoz Way — papeleta left",
       },
-      {
-        type: "image",
-        src: "/images/projects/carlitoz_way/carlitoz_close_up.jpg",
-        alt: "Carlitoz Way — close up box papeleta",
-      },
+
     ],
   },
   {

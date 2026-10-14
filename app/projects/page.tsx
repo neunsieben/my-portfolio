@@ -99,14 +99,14 @@ const LIST_ROWS = [
   {
     reveal: "reveal reveal-delay-6",
     slug: "carlitoz-way",
-    dataImg: "url(/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg)",
+    dataImg: "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg)",
     num: "007",
     name: "Carlitoz Way",
     desc: "Packaging design for a food catering brand.",
     slides: [
-      "url(/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg)",
+      "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg)",
       "url(/images/projects/carlitoz_way/carlitoz_close_up.jpg)",
-      "url(/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg)",
+      "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg)",
       "url(/images/projects/carlitoz_way/carlitoz_close_up.jpg)",
     ],
   },
@@ -192,7 +192,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-6",
     slug: "carlitoz-way",
-    bg: "url(/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg) center/cover",
+    bg: "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg) center/cover",
     cat: "Packaging Design",
     num: "007",
     name: "Carlitoz Way",
