@@ -200,13 +200,13 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       },
       {
         type: "image",
-        src: "/images/projects/carlitoz_way/carlitoz_shirt_folded_closer.jpg",
-        alt: "Carlitoz Way — shirt folded closer",
+        src: "/images/projects/carlitoz_way/carlitoz_shirt_frontal.jpg",
+        alt: "Carlitoz Way — shirt frontal",
       },
       {
         type: "image",
-        src: "/images/projects/carlitoz_way/carlitoz_shirt_frontal.jpg",
-        alt: "Carlitoz Way — shirt frontal",
+        src: "/images/projects/carlitoz_way/carlitoz_shirt_folded_closer.jpg",
+        alt: "Carlitoz Way — shirt folded closer",
       },
       {
         type: "image",
