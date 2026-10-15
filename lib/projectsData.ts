@@ -205,6 +205,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       },
       {
         type: "image",
+        src: "/images/projects/carlitoz_way/carlitoz_shirt_folded.jpg",
+        alt: "Carlitoz Way — shirt folded",
+      },
+      {
+        type: "image",
         src: "/images/projects/carlitoz_way/carlitoz_shirt_label.jpg",
         alt: "Carlitoz Way — shirt label close up",
       },
