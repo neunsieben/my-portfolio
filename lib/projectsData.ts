@@ -198,7 +198,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: "/images/projects/carlitoz_way/carlitoz_papeleta_left.jpg",
         alt: "Carlitoz Way — papeleta left",
       },
-
+      {
+        type: "image",
+        src: "/images/projects/carlitoz_way/carlitoz_shirt_frontal.jpg",
+        alt: "Carlitoz Way — shirt frontal",
+      },
+      {
+        type: "image",
+        src: "/images/projects/carlitoz_way/carlitoz_shirt_label.jpg",
+        alt: "Carlitoz Way — shirt label close up",
+      },
     ],
   },
   {
