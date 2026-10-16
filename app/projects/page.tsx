@@ -160,7 +160,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-2",
     slug: "donata-jan-trio",
-    bg: "url(/images/projects/home/home-thumbnail.jpg) center/cover no-repeat",
+    bg: "url(/images/projects/home/home-thumbnail.jpg) center/contain no-repeat",
     cat: "Album Artwork",
     num: "003",
     name: "Donata Jan Trio",
@@ -168,7 +168,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-3",
     slug: "studio-liebe",
-    bg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.jpg) center/cover no-repeat",
+    bg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.jpg) center/contain no-repeat",
     cat: "Branding · Web Design",
     num: "004",
     name: "Studio Liebe",
@@ -176,7 +176,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-4",
     slug: "resort-13",
-    bg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg) center/cover",
+    bg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg) center/contain no-repeat",
     cat: "Branding · Social Media",
     num: "005",
     name: "Resort 13 x PALLAS",
@@ -184,7 +184,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-5",
     slug: "forbes-cpxart",
-    bg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg) center/cover",
+    bg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg) center/contain no-repeat",
     cat: "Art · Fashion",
     num: "006",
     name: "Forbes x CPxArt",
@@ -192,7 +192,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-6",
     slug: "carlitoz-way",
-    bg: "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg) center/cover",
+    bg: "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg) center/contain no-repeat",
     cat: "Packaging Design",
     num: "007",
     name: "Carlitoz Way",
@@ -365,8 +365,9 @@ export default function ProjectsPage() {
           setTimeout(() => {
             if (bg) {
               stickyEl.style.background = bg;
-              stickyEl.style.backgroundSize = "cover";
+              stickyEl.style.backgroundSize = "contain";
               stickyEl.style.backgroundPosition = "center";
+              stickyEl.style.backgroundRepeat = "no-repeat";
             }
             stickyEl.classList.remove("fading");
           }, 120);
