@@ -1581,9 +1581,9 @@ nav.scrolled {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 400;
-  line-height: 1.8;
+  line-height: 1.9;
   color: var(--text);
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   max-width: 500px;
   margin-bottom: 0;
@@ -1593,6 +1593,10 @@ nav.scrolled {
 }
 .pd-desc p:last-child {
   margin-bottom: 0;
+}
+.pd-desc-de {
+  color: var(--grey-mid);
+  margin-top: 28px;
 }
 
 .pd-meta {
@@ -1710,22 +1714,18 @@ nav.scrolled {
   }
 
   .pd-desc {
-    font-size: 15px;
-    letter-spacing: 0.2px;
-    line-height: 1.7;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    line-height: 1.9;
     max-width: 100%;
     overflow-wrap: anywhere;
     word-wrap: break-word;
   }
 
-  .pd-meta {
-    font-size: 13px;
-  }
-
   .pd-meta-row {
     flex-direction: column;
     gap: 4px;
-    font-size: 13px;
+    font-size: 11px;
     overflow-wrap: anywhere;
     word-wrap: break-word;
   }

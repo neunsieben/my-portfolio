@@ -81,6 +81,11 @@ export default function ProjectDetailPage() {
               <p key={i}>{para}</p>
             ))}
           </div>
+          <div className="pd-desc pd-desc-de reveal reveal-delay-1" lang="de">
+            {project.descriptionDe.split("\n\n").map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
 
           <div className="pd-meta reveal reveal-delay-2">
             <div className="pd-meta-row">

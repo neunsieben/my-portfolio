@@ -15,6 +15,7 @@ export type ProjectDetail = {
   category: string;
   year: string;
   description: string;
+  descriptionDe: string;
   client?: string;
   role?: string;
   collaborators?: string;
@@ -24,6 +25,9 @@ export type ProjectDetail = {
 
 const LOREM =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+const LOREM_DE =
+  "Dies ist ein Blindtext als Platzhalter für die deutsche Projektbeschreibung. Er dient dazu, Satzlänge, Zeilenumbruch und Lesefluss darzustellen, bis der eigentliche Text vorliegt. Sobald die englische Fassung final ist, wird dieser Absatz durch die deutsche Übersetzung ersetzt.";
 
 export const PROJECT_DETAILS: ProjectDetail[] = [
   {
@@ -37,6 +41,8 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     visitUrl: "https://zalazium.de",
     description:
       "Zalazium is a German startup that combines artificial intelligence with GDPR compliance. It offers large language models and other AI applications for businesses that perform tasks in compliance with data protection regulations.\n\nIn 2025, I designed the company's website, created animations, revised the logo's word mark, and created a figurative mark.",
+    descriptionDe:
+      "Zalazium ist ein deutsches Startup, das künstliche Intelligenz mit DSGVO-Konformität verbindet. Es bietet große Sprachmodelle und weitere KI-Anwendungen für Unternehmen, die Aufgaben datenschutzkonform ausführen.\n\n2025 habe ich die Website des Unternehmens gestaltet, Animationen erstellt, den Wortmarkenteil des Logos überarbeitet und eine Bildmarke entworfen.",
     media: [
       { type: "image", bg: "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)" },
       { type: "image", bg: "linear-gradient(160deg,#d0ceca,#bab8b4,#c8c6c2)" },
@@ -53,6 +59,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     client: "Daily Grind Coffee",
     role: "Brand Identity, Packaging Design",
     description: LOREM,
+    descriptionDe: LOREM_DE,
     media: [
       { type: "image", bg: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)" },
       { type: "image", bg: "linear-gradient(160deg,#0f3460,#1a1a2e,#16213e)" },
@@ -69,6 +76,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     client: "Donata Jan Trio",
     role: "Art Direction, Album Artwork",
     description: LOREM,
+    descriptionDe: LOREM_DE,
     media: [
       {
         type: "image",
@@ -89,6 +97,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     client: "Studio Liebe",
     role: "Visual Branding, Web Design",
     description: LOREM,
+    descriptionDe: LOREM_DE,
     media: [
       {
         type: "image",
@@ -110,6 +119,8 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     role: "Logo & Brand Identity, Social Media Design",
     description:
       "Resort 13 x PALLAS is a house music DJ and live performance event series. I created the branding and logo for the collective and design their social media advertisements — building a visual language that captures the energy and aesthetic of their events.",
+    descriptionDe:
+      "Resort 13 x PALLAS ist eine Eventreihe für House-Music-DJs und Live-Performances. Ich habe Branding und Logo für das Kollektiv entwickelt und gestalte ihre Social-Media-Anzeigen — und baue damit eine visuelle Sprache, die die Energie und Ästhetik ihrer Events einfängt.",
     media: [
       {
         type: "video",
@@ -130,6 +141,8 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     visitUrl: "https://www.forbes.com/sites/kristenphilipkoski/2017/11/19/cpxart/",
     description:
       "In 2017, I hand-painted bomber jackets for the brand CPxArt — each piece a one-of-a-kind wearable artwork.\n\nThe project was featured in the Forbes article \"Wear A Masterpiece On Your Back With These One-of-a-Kind Bomber Jackets\" by Kristen Philipkoski.",
+    descriptionDe:
+      "2017 habe ich Bomberjacken für die Marke CPxArt von Hand bemalt — jedes Stück ein Unikat und tragbares Kunstwerk.\n\nDas Projekt wurde im Forbes-Artikel „Wear A Masterpiece On Your Back With These One-of-a-Kind Bomber Jackets“ von Kristen Philipkoski vorgestellt.",
     media: [
       {
         type: "image",
@@ -172,6 +185,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     client: "Carlitoz Way",
     role: "Packaging Design",
     description: LOREM,
+    descriptionDe: LOREM_DE,
     media: [
       {
         type: "image",
@@ -224,6 +238,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     client: "Magic Mansion",
     role: "Rebranding",
     description: LOREM,
+    descriptionDe: LOREM_DE,
     media: [
       { type: "image", bg: "linear-gradient(135deg,#1a0a2e,#2d1054,#3d1a6e)" },
       { type: "image", bg: "linear-gradient(160deg,#3d1a6e,#1a0a2e,#2d1054)" },
@@ -239,6 +254,8 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     role: "Album Cover Artwork, Tour Design",
     description:
       "In 2025, I created the album cover artwork for Kölsch's album \"Kinema\".\n\nI also designed the visual identity for his Europe Tour, titled \"Kölsch and the Machine\".",
+    descriptionDe:
+      "2025 habe ich das Albumcover für Kölschs Album „Kinema“ gestaltet.\n\nAußerdem habe ich die visuelle Identität für seine Europatournee „Kölsch and the Machine“ entworfen.",
     media: [
       { type: "image", bg: "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)" },
       { type: "image", bg: "linear-gradient(160deg,#1a1a2e,#0a0a12,#0d0d1a)" },
