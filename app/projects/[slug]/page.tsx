@@ -3,9 +3,11 @@
 import { DotGrid } from "@/components/DotGrid";
 import { SiteCursor } from "@/components/SiteCursor";
 import { SiteNav } from "@/components/SiteNav";
+import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
 import { PROJECT_DETAILS } from "@/lib/projectsData";
 import { initTerminalLinks } from "@/lib/terminalAnimation";
+import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
@@ -29,15 +31,109 @@ export default function ProjectDetailPage() {
     document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
 
     // Animate terminal-links in page content (nav links are handled by SiteNav)
-    const content = document.querySelector(".pd-page");
-    const cleanupLinks = content
-      ? initTerminalLinks(() => disposed, content.querySelector(".pd-intro") ?? content)
+    const intro = document.querySelector(".pd-intro");
+    const gitSection = document.querySelector(".pd-page .get-in-touch");
+    const cleanupIntro = intro
+      ? initTerminalLinks(() => disposed, intro)
       : () => {};
+    const cleanupGitLinks = gitSection
+      ? initTerminalLinks(() => disposed, gitSection)
+      : () => {};
+
+    const getInTouchEl = document.getElementById("getInTouchCanvas");
+    let gitInstance: ReturnType<typeof createVerticalGlassEffect> | null = null;
+    let sweepObs: IntersectionObserver | null = null;
+
+    if (getInTouchEl instanceof HTMLCanvasElement) {
+      gitInstance = createVerticalGlassEffect(
+        getInTouchEl,
+        (tx, tc, dpr) => {
+          const maxWidth = tc.width;
+          let fs = Math.floor(300 * dpr);
+          const ff = getCanvasHeadFontStack();
+          tx.font = `700 ${fs}px ${ff}`;
+          const measured = tx.measureText("Get in touch").width;
+          fs = Math.floor(fs * (maxWidth / measured));
+          tx.font = `700 ${fs}px ${ff}`;
+          tx.textAlign = "center";
+          tx.textBaseline = "middle";
+          tx.fillStyle = "#0a0a0a";
+          tx.fillText("Get in touch", tc.width / 2, tc.height * 0.5);
+        },
+        320,
+        110,
+        { shouldStop: () => disposed },
+      );
+
+      document.fonts.ready.then(() => {
+        if (disposed) return;
+        gitInstance?.resize();
+        gitInstance?.render();
+      });
+
+      const touchCanvas = getInTouchEl;
+      let triggered = false;
+      sweepObs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting && !triggered) {
+              triggered = true;
+              sweepObs?.unobserve(touchCanvas);
+              const duration = 1800;
+              const holdStart = 200;
+              const holdEnd = 400;
+              const totalDuration = holdStart + duration + holdEnd;
+              const startTime = performance.now();
+              function step() {
+                if (disposed) return;
+                const elapsed = performance.now() - startTime;
+                if (elapsed < holdStart) {
+                  const rect = touchCanvas.getBoundingClientRect();
+                  touchCanvas.dispatchEvent(
+                    new MouseEvent("mousemove", {
+                      clientX: rect.left + rect.width * 0.5,
+                      clientY: rect.top + rect.height * 0.05,
+                      bubbles: true,
+                    }),
+                  );
+                  requestAnimationFrame(step);
+                } else if (elapsed < holdStart + duration) {
+                  const progress = (elapsed - holdStart) / duration;
+                  const eased = progress * progress * (3 - 2 * progress);
+                  const rect = touchCanvas.getBoundingClientRect();
+                  const y = rect.top + rect.height * (0.05 + eased * 0.9);
+                  touchCanvas.dispatchEvent(
+                    new MouseEvent("mousemove", {
+                      clientX: rect.left + rect.width * 0.5,
+                      clientY: y,
+                      bubbles: true,
+                    }),
+                  );
+                  requestAnimationFrame(step);
+                } else if (elapsed < totalDuration) {
+                  requestAnimationFrame(step);
+                } else {
+                  touchCanvas.dispatchEvent(new MouseEvent("mouseleave"));
+                }
+              }
+              requestAnimationFrame(step);
+            }
+          });
+        },
+        { threshold: 0.4 },
+      );
+      sweepObs.observe(touchCanvas);
+    }
 
     return () => {
       disposed = true;
       obs.disconnect();
-      cleanupLinks();
+      sweepObs?.disconnect();
+      cleanupIntro();
+      cleanupGitLinks();
+      if (gitInstance) {
+        window.removeEventListener("resize", gitInstance.resize);
+      }
     };
   }, []);
 
@@ -152,6 +248,33 @@ export default function ProjectDetailPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="get-in-touch">
+        <a
+          href={CONTACT_MAILTO}
+          className="get-in-touch-headline-link reveal"
+          aria-label="Send email to Leonard Semmler"
+        >
+          <canvas id="getInTouchCanvas" />
+        </a>
+        <ul className="get-in-touch-links reveal reveal-delay-2">
+          <li>
+            <a href="#" className="hoverable terminal-link">
+              Instagram ↗
+            </a>
+          </li>
+          <li>
+            <a href="#" className="hoverable terminal-link">
+              LinkedIn ↗
+            </a>
+          </li>
+          <li>
+            <a href={CONTACT_MAILTO} className="hoverable terminal-link">
+              Email ↗
+            </a>
+          </li>
+        </ul>
       </section>
 
       <footer className="footer">
