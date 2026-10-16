@@ -20,6 +20,7 @@ export type ProjectDetail = {
   role?: string;
   collaborators?: string;
   visitUrl?: string;
+  visitLabel?: string;
   media: ProjectMedia[];
 };
 
@@ -39,6 +40,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     client: "Zalazium GmbH",
     role: "UX Design, Visual Identity, Motion Design",
     visitUrl: "https://zalazium.de",
+    visitLabel: "zalazium.de",
     description:
       "Zalazium is a German startup that combines artificial intelligence with GDPR compliance. It offers large language models and other AI applications for businesses that perform tasks in compliance with data protection regulations.\n\nIn 2025, I designed the company's website, created animations, revised the logo's word mark, and created a figurative mark.",
     descriptionDe:
@@ -139,6 +141,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     role: "Artist",
     collaborators: "Donaldson Sackey (reference)",
     visitUrl: "https://www.forbes.com/sites/kristenphilipkoski/2017/11/19/cpxart/",
+    visitLabel: "Forbes",
     description:
       "In 2017, I hand-painted bomber jackets for the brand CPxArt — each piece a one-of-a-kind wearable artwork.\n\nThe project was featured in the Forbes article \"Wear A Masterpiece On Your Back With These One-of-a-Kind Bomber Jackets\" by Kristen Philipkoski.",
     descriptionDe:

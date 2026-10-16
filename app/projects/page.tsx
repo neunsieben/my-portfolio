@@ -4,6 +4,7 @@ import { DotGrid } from "@/components/DotGrid";
 import { SiteCursor } from "@/components/SiteCursor";
 import { SiteNav } from "@/components/SiteNav";
 import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
+import { PROJECT_DETAILS } from "@/lib/projectsData";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import Link from "next/link";
@@ -143,6 +144,14 @@ const LIST_ROWS = [
 function bgSrc(bg: string) {
   const m = bg.match(/^url\((.+)\)/);
   return m?.[1] ?? null;
+}
+
+function previewSlides(slug: string, fallback: readonly string[]) {
+  const fromMedia =
+    PROJECT_DETAILS.find((p) => p.slug === slug)
+      ?.media.filter((m) => m.type === "image" && m.src)
+      .map((m) => `url(${m.src})`) ?? [];
+  return fromMedia.length ? fromMedia : [...fallback];
 }
 
 const GRID_ITEMS = [
@@ -854,7 +863,7 @@ export default function ProjectsPage() {
                 <div className="project-row-carousel">
                   <div className="carousel-track">
                     <div className="carousel-track-inner">
-                      {row.slides.map((bg, i) => {
+                      {previewSlides(row.slug, row.slides).map((bg, i) => {
                         const src = bgSrc(bg);
                         return src ? (
                           <img

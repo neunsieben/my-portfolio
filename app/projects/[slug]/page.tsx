@@ -118,7 +118,7 @@ export default function ProjectDetailPage() {
                   className="terminal-link hoverable"
                 >
                   <span className="terminal-link-label">
-                    {project.visitUrl.replace(/^https?:\/\//, "")} ↗
+                    {project.visitLabel ?? "Visit"} ↗
                   </span>
                 </a>
               </div>

@@ -1511,12 +1511,14 @@ nav.scrolled {
 .pd-page {
   background: var(--bg);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* Shared two-column grid wrapper */
 .pd-cols {
   display: grid;
   grid-template-columns: 30% 1fr;
+  min-width: 0;
 }
 
 /* ── Left column ─────────────────────────────────────────── */
@@ -1566,6 +1568,8 @@ nav.scrolled {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .pd-title {
@@ -1586,10 +1590,16 @@ nav.scrolled {
   letter-spacing: 0.8px;
   text-transform: uppercase;
   max-width: 500px;
+  width: 100%;
   margin-bottom: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .pd-desc p {
   margin: 0 0 1.4em;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .pd-desc p:last-child {
   margin-bottom: 0;
@@ -1616,6 +1626,13 @@ nav.scrolled {
   letter-spacing: 0.8px;
   text-transform: uppercase;
   line-height: 1.9;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pd-meta-row .terminal-link {
+  max-width: 100%;
+  white-space: normal;
 }
 
 .pd-meta-label {
@@ -1705,6 +1722,7 @@ nav.scrolled {
   .pd-right {
     padding: 48px 24px 64px;
     justify-content: flex-start;
+    overflow-x: hidden;
   }
 
   .pd-title {
@@ -1715,11 +1733,11 @@ nav.scrolled {
 
   .pd-desc {
     font-size: 11px;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.4px;
     line-height: 1.9;
     max-width: 100%;
     overflow-wrap: anywhere;
-    word-wrap: break-word;
+    word-break: break-word;
   }
 
   .pd-meta-row {
