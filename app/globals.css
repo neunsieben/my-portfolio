@@ -888,10 +888,9 @@ nav.scrolled {
 
   .projects-page .carousel-slide {
     width: 78vw;
+    aspect-ratio: 4 / 3;
     height: auto;
-    max-height: none;
-    aspect-ratio: auto;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     flex-shrink: 0;
     display: block;
@@ -899,7 +898,6 @@ nav.scrolled {
 
   .projects-page div.carousel-slide {
     aspect-ratio: 4 / 3;
-    height: auto;
   }
 
   .projects-page .projects-list {
@@ -995,8 +993,9 @@ nav.scrolled {
   .projects-page .projects-list-img {
     width: 100%;
     aspect-ratio: 4 / 3;
+    overflow: hidden;
     background-color: var(--bg);
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     transition: opacity 0.12s ease;
@@ -1005,7 +1004,7 @@ nav.scrolled {
   .projects-page .projects-list-img > img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     display: none;
   }
@@ -1067,10 +1066,10 @@ nav.scrolled {
   .projects-page .project-grid-img {
     width: 100%;
     aspect-ratio: 4 / 3;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     background-color: var(--bg);
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     display: block;
@@ -1159,7 +1158,7 @@ nav.scrolled {
 
 .projects-page .carousel-slide {
   background-color: var(--bg);
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   flex-shrink: 0;

@@ -379,7 +379,7 @@ export default function ProjectsPage() {
             } else {
               if (photo) photo.style.display = "none";
               stickyEl.style.backgroundImage = bg;
-              stickyEl.style.backgroundSize = "contain";
+              stickyEl.style.backgroundSize = "cover";
               stickyEl.style.backgroundPosition = "center";
               stickyEl.style.backgroundRepeat = "no-repeat";
             }
