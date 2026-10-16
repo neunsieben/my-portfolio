@@ -140,6 +140,11 @@ const LIST_ROWS = [
   },
 ] as const;
 
+function bgSrc(bg: string) {
+  const m = bg.match(/^url\((.+)\)/);
+  return m?.[1] ?? null;
+}
+
 const GRID_ITEMS = [
   {
     reveal: "reveal",
@@ -160,7 +165,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-2",
     slug: "donata-jan-trio",
-    bg: "url(/images/projects/home/home-thumbnail.jpg) center/contain no-repeat",
+    bg: "url(/images/projects/home/home-thumbnail.jpg)",
     cat: "Album Artwork",
     num: "003",
     name: "Donata Jan Trio",
@@ -168,7 +173,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-3",
     slug: "studio-liebe",
-    bg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.jpg) center/contain no-repeat",
+    bg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.jpg)",
     cat: "Branding · Web Design",
     num: "004",
     name: "Studio Liebe",
@@ -176,7 +181,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-4",
     slug: "resort-13",
-    bg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg) center/contain no-repeat",
+    bg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg)",
     cat: "Branding · Social Media",
     num: "005",
     name: "Resort 13 x PALLAS",
@@ -184,7 +189,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-5",
     slug: "forbes-cpxart",
-    bg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg) center/contain no-repeat",
+    bg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg)",
     cat: "Art · Fashion",
     num: "006",
     name: "Forbes x CPxArt",
@@ -192,7 +197,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-6",
     slug: "carlitoz-way",
-    bg: "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg) center/contain no-repeat",
+    bg: "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg)",
     cat: "Packaging Design",
     num: "007",
     name: "Carlitoz Way",
@@ -360,11 +365,20 @@ export default function ProjectsPage() {
         });
         if (best !== displayedImg) {
           displayedImg = best;
-          const bg = rows[best]?.getAttribute("data-img");
+          const bg = rows[best]?.getAttribute("data-img") ?? "";
+          const photo = stickyEl.querySelector(
+            "img",
+          ) as HTMLImageElement | null;
           stickyEl.classList.add("fading");
           setTimeout(() => {
-            if (bg) {
-              stickyEl.style.background = bg;
+            const src = bgSrc(bg);
+            if (photo && src) {
+              photo.src = src;
+              photo.style.display = "block";
+              stickyEl.style.backgroundImage = "";
+            } else {
+              if (photo) photo.style.display = "none";
+              stickyEl.style.backgroundImage = bg;
               stickyEl.style.backgroundSize = "contain";
               stickyEl.style.backgroundPosition = "center";
               stickyEl.style.backgroundRepeat = "no-repeat";
@@ -820,14 +834,9 @@ export default function ProjectsPage() {
       <section className="projects-container">
         <div className="projects-list" id="listView">
           <div className="projects-list-image" id="imgPanel">
-            <div
-              className="projects-list-img"
-              id="stickyImg"
-              style={{
-                background:
-                  "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)",
-              }}
-            />
+            <div className="projects-list-img" id="stickyImg">
+              <img alt="" />
+            </div>
           </div>
           <div className="projects-list-rows" id="listRows">
             {LIST_ROWS.map((row) => (
@@ -845,13 +854,23 @@ export default function ProjectsPage() {
                 <div className="project-row-carousel">
                   <div className="carousel-track">
                     <div className="carousel-track-inner">
-                      {row.slides.map((bg, i) => (
-                        <div
-                          key={i}
-                          className="carousel-slide"
-                          style={{ background: bg }}
-                        />
-                      ))}
+                      {row.slides.map((bg, i) => {
+                        const src = bgSrc(bg);
+                        return src ? (
+                          <img
+                            key={i}
+                            className="carousel-slide"
+                            src={src}
+                            alt=""
+                          />
+                        ) : (
+                          <div
+                            key={i}
+                            className="carousel-slide"
+                            style={{ backgroundImage: bg }}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -868,10 +887,18 @@ export default function ProjectsPage() {
               data-slug={g.slug}
             >
               <div className="project-grid-img-wrap">
-                <div
-                  className="project-grid-img"
-                  style={{ background: g.bg }}
-                />
+                {bgSrc(g.bg) ? (
+                  <img
+                    className="project-grid-img"
+                    src={bgSrc(g.bg) ?? ""}
+                    alt={g.name}
+                  />
+                ) : (
+                  <div
+                    className="project-grid-img"
+                    style={{ backgroundImage: g.bg }}
+                  />
+                )}
               </div>
               <div className="project-grid-meta">
                 <span className="project-grid-name">

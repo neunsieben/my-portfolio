@@ -839,11 +839,11 @@ nav.scrolled {
 
   .projects-page .project-row-desc {
     margin-bottom: 0;
-    font-size: 13px;
-    letter-spacing: 0.3px;
-    line-height: 1.75;
+    font-size: 15px;
+    letter-spacing: 0.2px;
+    line-height: 1.7;
     max-width: 100%;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
     word-wrap: break-word;
   }
 
@@ -887,9 +887,19 @@ nav.scrolled {
   }
 
   .projects-page .carousel-slide {
-    width: 85vw;
-    height: 60vw;
+    width: 78vw;
+    height: auto;
+    max-height: none;
+    aspect-ratio: auto;
+    object-fit: contain;
+    object-position: center;
     flex-shrink: 0;
+    display: block;
+  }
+
+  .projects-page div.carousel-slide {
+    aspect-ratio: 4 / 3;
+    height: auto;
   }
 
   .projects-page .projects-list {
@@ -992,6 +1002,14 @@ nav.scrolled {
     transition: opacity 0.12s ease;
   }
 
+  .projects-page .projects-list-img > img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: none;
+  }
+
   .projects-page .projects-list-img.fading {
     opacity: 0;
   }
@@ -1049,10 +1067,13 @@ nav.scrolled {
   .projects-page .project-grid-img {
     width: 100%;
     aspect-ratio: 4 / 3;
+    object-fit: contain;
+    object-position: center;
     background-color: var(--bg);
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
+    display: block;
     transition: transform 0.6s ease;
   }
 
@@ -1690,18 +1711,23 @@ nav.scrolled {
   }
 
   .pd-desc {
-    font-size: 13px;
-    letter-spacing: 0.3px;
-    line-height: 1.75;
+    font-size: 15px;
+    letter-spacing: 0.2px;
+    line-height: 1.7;
     max-width: 100%;
-    overflow-wrap: break-word;
+    overflow-wrap: anywhere;
     word-wrap: break-word;
+  }
+
+  .pd-meta {
+    font-size: 13px;
   }
 
   .pd-meta-row {
     flex-direction: column;
     gap: 4px;
-    overflow-wrap: break-word;
+    font-size: 13px;
+    overflow-wrap: anywhere;
     word-wrap: break-word;
   }
 
