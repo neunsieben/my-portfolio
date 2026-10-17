@@ -896,6 +896,10 @@ nav.scrolled {
     display: block;
   }
 
+  .projects-page video.carousel-slide {
+    background: #0a0a0a;
+  }
+
   .projects-page div.carousel-slide {
     aspect-ratio: 4 / 3;
   }
@@ -1001,7 +1005,8 @@ nav.scrolled {
     transition: opacity 0.12s ease;
   }
 
-  .projects-page .projects-list-img > img {
+  .projects-page .projects-list-img > img,
+  .projects-page .projects-list-img > video {
     width: 100%;
     height: 100%;
     object-fit: cover;

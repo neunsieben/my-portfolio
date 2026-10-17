@@ -146,12 +146,23 @@ function bgSrc(bg: string) {
   return m?.[1] ?? null;
 }
 
-function previewSlides(slug: string, fallback: readonly string[]) {
-  const fromMedia =
-    PROJECT_DETAILS.find((p) => p.slug === slug)
-      ?.media.filter((m) => m.type === "image" && m.src)
-      .map((m) => `url(${m.src})`) ?? [];
-  return fromMedia.length ? fromMedia : [...fallback];
+type PreviewItem =
+  | { kind: "image"; src: string }
+  | { kind: "video"; src: string }
+  | { kind: "bg"; bg: string };
+
+function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] {
+  const fromMedia: PreviewItem[] = [];
+  for (const m of PROJECT_DETAILS.find((p) => p.slug === slug)?.media ?? []) {
+    if (!m.src) continue;
+    if (m.type === "image") fromMedia.push({ kind: "image", src: m.src });
+    if (m.type === "video") fromMedia.push({ kind: "video", src: m.src });
+  }
+  if (fromMedia.length) return fromMedia;
+  return fallback.map((bg) => {
+    const src = bgSrc(bg);
+    return src ? { kind: "image" as const, src } : { kind: "bg" as const, bg };
+  });
 }
 
 const GRID_ITEMS = [
@@ -304,6 +315,7 @@ export default function ProjectsPage() {
     let onTouchEnd: ((e: TouchEvent) => void) | null = null;
     let onResizeMeasure: (() => void) | null = null;
     let onPanelClick: (() => void) | null = null;
+    let stopPreviewCycle: (() => void) | null = null;
 
     const imgPanel = document.getElementById("imgPanel");
     const stickyImg = document.getElementById("stickyImg");
@@ -323,6 +335,14 @@ export default function ProjectsPage() {
       let blocked = false;
       let mode: "free-top" | "locked" | "free-bottom" = "free-top";
       let magneticEnabled = true;
+      let previewCycleTimer: number | null = null;
+      let previewCycleIdx = 0;
+      stopPreviewCycle = () => {
+        if (previewCycleTimer !== null) window.clearInterval(previewCycleTimer);
+        previewCycleTimer = null;
+        const vid = stickyEl.querySelector("video") as HTMLVideoElement | null;
+        vid?.pause();
+      };
 
       function measure() {
         const wasLocked = mode === "locked";
@@ -360,6 +380,56 @@ export default function ProjectsPage() {
         return r.top + r.height / 2 + window.scrollY - window.innerHeight / 2;
       }
 
+      function showPreviewItem(item: PreviewItem) {
+        const photo = stickyEl.querySelector("img") as HTMLImageElement | null;
+        const vid = stickyEl.querySelector("video") as HTMLVideoElement | null;
+        stickyEl.style.backgroundImage = "";
+        if (item.kind === "image") {
+          if (vid) {
+            vid.pause();
+            vid.removeAttribute("src");
+            vid.style.display = "none";
+          }
+          if (photo) {
+            photo.src = item.src;
+            photo.style.display = "block";
+          }
+        } else if (item.kind === "video") {
+          if (photo) photo.style.display = "none";
+          if (vid) {
+            vid.src = item.src;
+            vid.style.display = "block";
+            void vid.play();
+          }
+        } else {
+          if (photo) photo.style.display = "none";
+          if (vid) {
+            vid.pause();
+            vid.removeAttribute("src");
+            vid.style.display = "none";
+          }
+          stickyEl.style.backgroundImage = item.bg;
+          stickyEl.style.backgroundSize = "cover";
+          stickyEl.style.backgroundPosition = "center";
+          stickyEl.style.backgroundRepeat = "no-repeat";
+        }
+      }
+
+      function startPreviewCycle(slug: string, fallback: string) {
+        if (previewCycleTimer !== null) window.clearInterval(previewCycleTimer);
+        previewCycleTimer = null;
+        const items = previewItems(slug, [fallback]);
+        previewCycleIdx = 0;
+        if (!items[0]) return;
+        showPreviewItem(items[0]);
+        if (items.length < 2) return;
+        previewCycleTimer = window.setInterval(() => {
+          previewCycleIdx = (previewCycleIdx + 1) % items.length;
+          const next = items[previewCycleIdx];
+          if (next) showPreviewItem(next);
+        }, 4000);
+      }
+
       function swapImage() {
         const cy = window.innerHeight / 2;
         let best = 0;
@@ -374,24 +444,11 @@ export default function ProjectsPage() {
         });
         if (best !== displayedImg) {
           displayedImg = best;
+          const slug = rows[best]?.getAttribute("data-slug") ?? "";
           const bg = rows[best]?.getAttribute("data-img") ?? "";
-          const photo = stickyEl.querySelector(
-            "img",
-          ) as HTMLImageElement | null;
           stickyEl.classList.add("fading");
           setTimeout(() => {
-            const src = bgSrc(bg);
-            if (photo && src) {
-              photo.src = src;
-              photo.style.display = "block";
-              stickyEl.style.backgroundImage = "";
-            } else {
-              if (photo) photo.style.display = "none";
-              stickyEl.style.backgroundImage = bg;
-              stickyEl.style.backgroundSize = "cover";
-              stickyEl.style.backgroundPosition = "center";
-              stickyEl.style.backgroundRepeat = "no-repeat";
-            }
+            startPreviewCycle(slug, bg);
             stickyEl.classList.remove("fading");
           }, 120);
         }
@@ -707,6 +764,13 @@ export default function ProjectsPage() {
         carouselInited.add(el);
         const originalHTML = el.innerHTML;
         el.innerHTML = originalHTML + originalHTML;
+        el.querySelectorAll("video").forEach((v) => {
+          const video = v as HTMLVideoElement;
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          void video.play();
+        });
         const speed = 1.2 + (idx % 3) * 0.4;
         let pos = 0;
         function animate() {
@@ -763,6 +827,7 @@ export default function ProjectsPage() {
 
     return () => {
       pageDisposed = true;
+      stopPreviewCycle?.();
       cancelAnimationFrame(rafMagnetic);
       carouselRafByIdx.forEach((id) => {
         if (id) cancelAnimationFrame(id);
@@ -845,6 +910,7 @@ export default function ProjectsPage() {
           <div className="projects-list-image" id="imgPanel">
             <div className="projects-list-img" id="stickyImg">
               <img alt="" />
+              <video muted loop playsInline />
             </div>
           </div>
           <div className="projects-list-rows" id="listRows">
@@ -863,20 +929,35 @@ export default function ProjectsPage() {
                 <div className="project-row-carousel">
                   <div className="carousel-track">
                     <div className="carousel-track-inner">
-                      {previewSlides(row.slug, row.slides).map((bg, i) => {
-                        const src = bgSrc(bg);
-                        return src ? (
-                          <img
-                            key={i}
-                            className="carousel-slide"
-                            src={src}
-                            alt=""
-                          />
-                        ) : (
+                      {previewItems(row.slug, row.slides).map((item, i) => {
+                        if (item.kind === "image") {
+                          return (
+                            <img
+                              key={i}
+                              className="carousel-slide"
+                              src={item.src}
+                              alt=""
+                            />
+                          );
+                        }
+                        if (item.kind === "video") {
+                          return (
+                            <video
+                              key={i}
+                              className="carousel-slide"
+                              src={item.src}
+                              autoPlay
+                              muted
+                              loop
+                              playsInline
+                            />
+                          );
+                        }
+                        return (
                           <div
                             key={i}
                             className="carousel-slide"
-                            style={{ backgroundImage: bg }}
+                            style={{ backgroundImage: item.bg }}
                           />
                         );
                       })}
