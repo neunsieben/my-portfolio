@@ -207,6 +207,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       },
       {
         type: "image",
+        src: "/images/projects/carlitoz_way/carlitoz_box_template.jpg",
+        alt: "Carlitoz Way — box template flat",
+      },
+      {
+        type: "image",
         src: "/images/projects/carlitoz_way/carlitoz_papeleta_total.jpg",
         alt: "Carlitoz Way — papeleta packaging",
       },
