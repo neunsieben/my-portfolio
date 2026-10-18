@@ -106,9 +106,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: "/images/projects/studio_liebe/studio_liebe_thumbnail.jpg",
         alt: "Studio Liebe",
       },
-      { type: "image", bg: "linear-gradient(160deg,#c0beba,#cccac6,#d4d2ce)" },
-      { type: "image", bg: "linear-gradient(135deg,#cccac6,#d4d2ce,#c0beba)" },
-      { type: "image", bg: "linear-gradient(160deg,#c0beba,#cccac6,#d4d2ce)" },
+      {
+        type: "video",
+        src: "/images/projects/studio_liebe/studio_liebe_logo_animation.mp4",
+        alt: "Studio Liebe — logo animation",
+      },
     ],
   },
   {
