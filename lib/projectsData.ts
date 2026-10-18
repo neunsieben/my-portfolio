@@ -82,8 +82,8 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     media: [
       {
         type: "image",
-        src: "/images/projects/donata_jan_trio/home-thumbnail.jpg",
-        alt: "Donata Jan Trio — HOME album artwork",
+        src: "/images/projects/donata_jan_trio/donata_cover_mockup.jpg",
+        alt: "Donata Jan Trio — HOME digipak and CD mockup",
       },
       {
         type: "image",

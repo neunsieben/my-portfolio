@@ -44,7 +44,7 @@ const LIST_ROWS = [
   {
     reveal: "reveal reveal-delay-2",
     slug: "donata-jan-trio",
-    dataImg: "url(/images/projects/donata_jan_trio/home-thumbnail.jpg)",
+    dataImg: "url(/images/projects/donata_jan_trio/donata_cover_mockup.jpg)",
     num: "003",
     name: "Donata Jan Trio",
     desc: "Album artwork and visual identity for a contemporary jazz trio, capturing the essence of their sound through design.",
@@ -185,7 +185,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-2",
     slug: "donata-jan-trio",
-    bg: "url(/images/projects/donata_jan_trio/home-thumbnail.jpg)",
+    bg: "url(/images/projects/donata_jan_trio/donata_cover_mockup.jpg)",
     cat: "Album Artwork",
     num: "003",
     name: "Donata Jan Trio",
