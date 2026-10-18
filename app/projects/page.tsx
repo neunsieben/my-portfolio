@@ -128,7 +128,7 @@ const LIST_ROWS = [
   {
     reveal: "reveal reveal-delay-8",
     slug: "kolsch-ipso",
-    dataImg: "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)",
+    dataImg: "url(/images/projects/koelsch/koelsch_kinema_spotify.jpg)",
     num: "009",
     name: "Kölsch / IPSO",
     desc: "Album cover artwork for the album \"Kinema\" and Europe Tour design for \"Kölsch and the Machine\".",
@@ -233,7 +233,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-8",
     slug: "kolsch-ipso",
-    bg: "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)",
+    bg: "url(/images/projects/koelsch/koelsch_kinema_spotify.jpg)",
     cat: "Album Artwork · Tour Design",
     num: "009",
     name: "Kölsch / IPSO",

@@ -274,8 +274,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     descriptionDe:
       "2025 habe ich das Albumcover für Kölschs Album „Kinema“ gestaltet.\n\nAußerdem habe ich die visuelle Identität für seine Europatournee „Kölsch and the Machine“ entworfen.",
     media: [
-      { type: "image", bg: "linear-gradient(135deg,#0a0a12,#1a1a2e,#0d0d1a)" },
-      { type: "image", bg: "linear-gradient(160deg,#1a1a2e,#0a0a12,#0d0d1a)" },
+      {
+        type: "image",
+        src: "/images/projects/koelsch/koelsch_kinema_spotify.jpg",
+        alt: "Kölsch — KINEMEA album on Spotify",
+      },
     ],
   },
 ];
