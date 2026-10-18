@@ -82,12 +82,19 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     media: [
       {
         type: "image",
-        src: "/images/projects/home/home-thumbnail.jpg",
+        src: "/images/projects/donata_jan_trio/home-thumbnail.jpg",
         alt: "Donata Jan Trio — HOME album artwork",
       },
-      { type: "image", bg: "linear-gradient(160deg,#0a0604,#2a1a0e,#1a0e06)" },
-      { type: "image", bg: "linear-gradient(135deg,#2a1a0e,#1a0e06,#0a0604)" },
-      { type: "image", bg: "linear-gradient(160deg,#0a0604,#2a1a0e,#1a0e06)" },
+      {
+        type: "image",
+        src: "/images/projects/donata_jan_trio/donata_cover.jpg",
+        alt: "Donata Jan Trio — cover outside and inside",
+      },
+      {
+        type: "image",
+        src: "/images/projects/donata_jan_trio/donata_bandcamp.jpg",
+        alt: "Donata Jan Trio — Bandcamp screenshot",
+      },
     ],
   },
   {
