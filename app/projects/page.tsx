@@ -343,11 +343,9 @@ export default function ProjectsPage() {
       const previewLayers = Array.from(
         stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
       );
-      const PREVIEW_IN_MS = 380;
-      const PREVIEW_OUT_MS = 180;
-      const PREVIEW_CYCLE_MS = 3000;
-      const PREVIEW_IN_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-      const PREVIEW_OUT_EASE = "cubic-bezier(0.4, 0, 1, 1)";
+      const PREVIEW_BLEND_MS = 560;
+      const PREVIEW_CYCLE_MS = 3400;
+      const PREVIEW_BLEND_EASE = "cubic-bezier(0.45, 0, 0.55, 1)";
       const reducePreviewMotion = () =>
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -486,14 +484,18 @@ export default function ProjectsPage() {
         });
       }
 
-      async function transitionPreview(item: PreviewItem) {
+      async function transitionPreview(
+        item: PreviewItem,
+        mode: "cut" | "blend",
+      ) {
         if (previewLayers.length < 2) return;
         const gen = ++previewGen;
         const incoming = previewLayers[1 - previewFront];
         const outgoing = previewLayers[previewFront];
         if (!incoming) return;
 
-        const instant = previewFirstPaint || reducePreviewMotion();
+        const instant =
+          mode === "cut" || previewFirstPaint || reducePreviewMotion();
         previewFirstPaint = false;
 
         hideLayer(incoming);
@@ -523,19 +525,18 @@ export default function ProjectsPage() {
         }
 
         incoming.style.opacity = "0";
-        incoming.style.transform = "scale(1.12)";
+        incoming.style.transform = "scale(1.035)";
         await nextFrame();
         if (gen !== previewGen) return;
 
         const inAnim = incoming.animate(
           [
-            { opacity: 0, transform: "scale(1.12)" },
-            { opacity: 1, transform: "scale(1.03)", offset: 0.42 },
+            { opacity: 0, transform: "scale(1.035)" },
             { opacity: 1, transform: "scale(1)" },
           ],
           {
-            duration: PREVIEW_IN_MS,
-            easing: PREVIEW_IN_EASE,
+            duration: PREVIEW_BLEND_MS,
+            easing: PREVIEW_BLEND_EASE,
             fill: "forwards",
           },
         );
@@ -545,11 +546,11 @@ export default function ProjectsPage() {
           outgoing.animate(
             [
               { opacity: 1, transform: "scale(1)" },
-              { opacity: 0, transform: "scale(0.985)" },
+              { opacity: 0, transform: "scale(1)" },
             ],
             {
-              duration: PREVIEW_OUT_MS,
-              easing: PREVIEW_OUT_EASE,
+              duration: PREVIEW_BLEND_MS,
+              easing: PREVIEW_BLEND_EASE,
               fill: "forwards",
             },
           );
@@ -583,12 +584,12 @@ export default function ProjectsPage() {
             preload.src = item.src;
           }
         });
-        void transitionPreview(items[0]);
+        void transitionPreview(items[0], "cut");
         if (items.length < 2) return;
         previewCycleTimer = window.setInterval(() => {
           previewCycleIdx = (previewCycleIdx + 1) % items.length;
           const next = items[previewCycleIdx];
-          if (next) void transitionPreview(next);
+          if (next) void transitionPreview(next, "blend");
         }, PREVIEW_CYCLE_MS);
       }
 
