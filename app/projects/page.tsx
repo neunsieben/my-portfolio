@@ -337,11 +337,35 @@ export default function ProjectsPage() {
       let magneticEnabled = true;
       let previewCycleTimer: number | null = null;
       let previewCycleIdx = 0;
+      let previewFront = 0;
+      let previewGen = 0;
+      let previewFirstPaint = true;
+      const previewLayers = Array.from(
+        stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
+      );
+      const PREVIEW_BLEND_MS = 2000;
+      const PREVIEW_CYCLE_MS = 5500;
+      const PREVIEW_BLEND_EASE = "linear";
+      const reducePreviewMotion = () =>
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function pauseLayer(layer: HTMLElement | undefined) {
+        const vid = layer?.querySelector("video");
+        vid?.pause();
+      }
+
+      function stopLayerAnims(layer: HTMLElement) {
+        layer.getAnimations().forEach((anim) => anim.cancel());
+      }
+
       stopPreviewCycle = () => {
         if (previewCycleTimer !== null) window.clearInterval(previewCycleTimer);
         previewCycleTimer = null;
-        const vid = stickyEl.querySelector("video") as HTMLVideoElement | null;
-        vid?.pause();
+        previewGen += 1;
+        previewLayers.forEach((layer) => {
+          stopLayerAnims(layer);
+          pauseLayer(layer);
+        });
       };
 
       function measure() {
@@ -380,14 +404,13 @@ export default function ProjectsPage() {
         return r.top + r.height / 2 + window.scrollY - window.innerHeight / 2;
       }
 
-      function showPreviewItem(item: PreviewItem) {
-        const photo = stickyEl.querySelector("img") as HTMLImageElement | null;
-        const vid = stickyEl.querySelector("video") as HTMLVideoElement | null;
-        stickyEl.style.backgroundImage = "";
+      function fillPreviewLayer(layer: HTMLElement, item: PreviewItem) {
+        const photo = layer.querySelector("img");
+        const vid = layer.querySelector("video");
+        layer.style.backgroundImage = "";
         if (item.kind === "image") {
           if (vid) {
             vid.pause();
-            vid.removeAttribute("src");
             vid.style.display = "none";
           }
           if (photo) {
@@ -405,13 +428,129 @@ export default function ProjectsPage() {
           if (photo) photo.style.display = "none";
           if (vid) {
             vid.pause();
-            vid.removeAttribute("src");
             vid.style.display = "none";
           }
-          stickyEl.style.backgroundImage = item.bg;
-          stickyEl.style.backgroundSize = "cover";
-          stickyEl.style.backgroundPosition = "center";
-          stickyEl.style.backgroundRepeat = "no-repeat";
+          layer.style.backgroundImage = item.bg;
+        }
+      }
+
+      function waitForPreviewMedia(layer: HTMLElement, item: PreviewItem) {
+        if (item.kind === "image") {
+          const photo = layer.querySelector("img");
+          if (!photo) return Promise.resolve();
+          const ready =
+            photo.complete && photo.naturalWidth > 0
+              ? photo.decode?.() ?? Promise.resolve()
+              : new Promise<void>((resolve) => {
+                  const done = () => resolve();
+                  photo.addEventListener("load", done, { once: true });
+                  photo.addEventListener("error", done, { once: true });
+                });
+          return Promise.race([
+            ready.catch(() => undefined),
+            new Promise<void>((resolve) => window.setTimeout(resolve, 600)),
+          ]);
+        }
+        if (item.kind === "video") {
+          const vid = layer.querySelector("video");
+          if (!vid || vid.readyState >= 2) return Promise.resolve();
+          return Promise.race([
+            new Promise<void>((resolve) => {
+              const done = () => resolve();
+              vid.addEventListener("loadeddata", done, { once: true });
+              vid.addEventListener("error", done, { once: true });
+            }),
+            new Promise<void>((resolve) => window.setTimeout(resolve, 700)),
+          ]);
+        }
+        return Promise.resolve();
+      }
+
+      function showLayerInstant(layer: HTMLElement, opacity: number, scale: string) {
+        stopLayerAnims(layer);
+        layer.style.opacity = String(opacity);
+        layer.style.transform = `scale(${scale})`;
+      }
+
+      async function transitionPreview(item: PreviewItem) {
+        if (previewLayers.length < 2) return;
+        const gen = ++previewGen;
+        const incoming = previewLayers[1 - previewFront];
+        const outgoing = previewLayers[previewFront];
+        if (!incoming) return;
+
+        const instant = previewFirstPaint || reducePreviewMotion();
+        previewFirstPaint = false;
+
+        showLayerInstant(incoming, 0, "1.08");
+        incoming.style.zIndex = "2";
+        fillPreviewLayer(incoming, item);
+
+        if (!instant) await waitForPreviewMedia(incoming, item);
+        if (gen !== previewGen) return;
+
+        const hasOutgoing =
+          !!outgoing &&
+          outgoing !== incoming &&
+          Number.parseFloat(getComputedStyle(outgoing).opacity) > 0.01;
+
+        if (outgoing && outgoing !== incoming) {
+          outgoing.style.zIndex = "1";
+        }
+
+        if (instant) {
+          showLayerInstant(incoming, 1, "1");
+          if (outgoing && outgoing !== incoming) {
+            showLayerInstant(outgoing, 0, "1");
+            pauseLayer(outgoing);
+          }
+          previewFront = 1 - previewFront;
+          return;
+        }
+
+        stopLayerAnims(incoming);
+        const inAnim = incoming.animate(
+          [
+            { opacity: 0, transform: "scale(1.08)" },
+            { opacity: 1, transform: "scale(1)" },
+          ],
+          {
+            duration: PREVIEW_BLEND_MS,
+            easing: PREVIEW_BLEND_EASE,
+            fill: "forwards",
+          },
+        );
+
+        let outAnim: Animation | null = null;
+        if (hasOutgoing && outgoing) {
+          stopLayerAnims(outgoing);
+          outAnim = outgoing.animate(
+            [
+              { opacity: 1, transform: "scale(1)" },
+              { opacity: 0, transform: "scale(1)" },
+            ],
+            {
+              duration: PREVIEW_BLEND_MS,
+              easing: PREVIEW_BLEND_EASE,
+              fill: "forwards",
+            },
+          );
+        }
+
+        previewFront = 1 - previewFront;
+
+        try {
+          await inAnim.finished;
+          if (outAnim) await outAnim.finished;
+        } catch {
+          /* superseded or cancelled */
+        }
+        if (gen !== previewGen) return;
+        incoming.style.opacity = "1";
+        incoming.style.transform = "scale(1)";
+        if (outgoing && outgoing !== incoming) {
+          outgoing.style.opacity = "0";
+          pauseLayer(outgoing);
         }
       }
 
@@ -421,13 +560,19 @@ export default function ProjectsPage() {
         const items = previewItems(slug, [fallback]);
         previewCycleIdx = 0;
         if (!items[0]) return;
-        showPreviewItem(items[0]);
+        items.forEach((item) => {
+          if (item.kind === "image") {
+            const preload = new Image();
+            preload.src = item.src;
+          }
+        });
+        void transitionPreview(items[0]);
         if (items.length < 2) return;
         previewCycleTimer = window.setInterval(() => {
           previewCycleIdx = (previewCycleIdx + 1) % items.length;
           const next = items[previewCycleIdx];
-          if (next) showPreviewItem(next);
-        }, 4000);
+          if (next) void transitionPreview(next);
+        }, PREVIEW_CYCLE_MS);
       }
 
       function swapImage() {
@@ -446,11 +591,7 @@ export default function ProjectsPage() {
           displayedImg = best;
           const slug = rows[best]?.getAttribute("data-slug") ?? "";
           const bg = rows[best]?.getAttribute("data-img") ?? "";
-          stickyEl.classList.add("fading");
-          setTimeout(() => {
-            startPreviewCycle(slug, bg);
-            stickyEl.classList.remove("fading");
-          }, 120);
+          startPreviewCycle(slug, bg);
         }
       }
 
@@ -909,8 +1050,14 @@ export default function ProjectsPage() {
         <div className="projects-list" id="listView">
           <div className="projects-list-image" id="imgPanel">
             <div className="projects-list-img" id="stickyImg">
-              <img alt="" />
-              <video muted loop playsInline />
+              <div className="preview-layer" data-preview-layer="0">
+                <img alt="" />
+                <video muted loop playsInline />
+              </div>
+              <div className="preview-layer" data-preview-layer="1">
+                <img alt="" />
+                <video muted loop playsInline />
+              </div>
             </div>
           </div>
           <div className="projects-list-rows" id="listRows">
