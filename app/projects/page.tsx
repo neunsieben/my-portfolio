@@ -343,9 +343,13 @@ export default function ProjectsPage() {
       const previewLayers = Array.from(
         stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
       );
-      const PREVIEW_BLEND_MS = 2000;
-      const PREVIEW_CYCLE_MS = 5500;
-      const PREVIEW_BLEND_EASE = "linear";
+      const PREVIEW_CLIP_MS = 680;
+      const PREVIEW_MEDIA_MS = 820;
+      const PREVIEW_CYCLE_MS = 4000;
+      const PREVIEW_CLIP_EASE = "cubic-bezier(0.77, 0, 0.175, 1)";
+      const PREVIEW_MEDIA_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+      const CLIP_HIDDEN = "inset(0% 100% 0% 0%)";
+      const CLIP_OPEN = "inset(0% 0% 0% 0%)";
       const reducePreviewMotion = () =>
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -354,8 +358,19 @@ export default function ProjectsPage() {
         vid?.pause();
       }
 
+      function layerMedia(layer: HTMLElement) {
+        const photo = layer.querySelector("img");
+        const vid = layer.querySelector("video");
+        if (photo && photo.style.display !== "none" && photo.src) return photo;
+        if (vid && vid.style.display !== "none" && vid.src) return vid;
+        return null;
+      }
+
       function stopLayerAnims(layer: HTMLElement) {
         layer.getAnimations().forEach((anim) => anim.cancel());
+        layer.querySelectorAll("img, video").forEach((el) => {
+          el.getAnimations().forEach((anim) => anim.cancel());
+        });
       }
 
       stopPreviewCycle = () => {
@@ -466,10 +481,22 @@ export default function ProjectsPage() {
         return Promise.resolve();
       }
 
-      function showLayerInstant(layer: HTMLElement, opacity: number, scale: string) {
+      function hideLayer(layer: HTMLElement) {
         stopLayerAnims(layer);
-        layer.style.opacity = String(opacity);
-        layer.style.transform = `scale(${scale})`;
+        layer.style.opacity = "0";
+        layer.style.clipPath = CLIP_HIDDEN;
+        layer.style.transform = "none";
+        const media = layerMedia(layer);
+        if (media) media.style.transform = "none";
+      }
+
+      function showLayerOpen(layer: HTMLElement) {
+        stopLayerAnims(layer);
+        layer.style.opacity = "1";
+        layer.style.clipPath = CLIP_OPEN;
+        layer.style.transform = "none";
+        const media = layerMedia(layer);
+        if (media) media.style.transform = "none";
       }
 
       async function transitionPreview(item: PreviewItem) {
@@ -482,7 +509,7 @@ export default function ProjectsPage() {
         const instant = previewFirstPaint || reducePreviewMotion();
         previewFirstPaint = false;
 
-        showLayerInstant(incoming, 0, "1.08");
+        hideLayer(incoming);
         incoming.style.zIndex = "2";
         fillPreviewLayer(incoming, item);
 
@@ -499,39 +526,50 @@ export default function ProjectsPage() {
         }
 
         if (instant) {
-          showLayerInstant(incoming, 1, "1");
+          showLayerOpen(incoming);
           if (outgoing && outgoing !== incoming) {
-            showLayerInstant(outgoing, 0, "1");
+            hideLayer(outgoing);
             pauseLayer(outgoing);
           }
           previewFront = 1 - previewFront;
           return;
         }
 
-        stopLayerAnims(incoming);
-        const inAnim = incoming.animate(
-          [
-            { opacity: 0, transform: "scale(1.08)" },
-            { opacity: 1, transform: "scale(1)" },
-          ],
+        incoming.style.opacity = "1";
+        incoming.style.clipPath = CLIP_HIDDEN;
+        incoming.style.transform = "none";
+        const media = layerMedia(incoming);
+        if (media) media.style.transform = "translate3d(-12%, 0, 0) scale(1.06)";
+
+        const clipAnim = incoming.animate(
+          [{ clipPath: CLIP_HIDDEN }, { clipPath: CLIP_OPEN }],
           {
-            duration: PREVIEW_BLEND_MS,
-            easing: PREVIEW_BLEND_EASE,
+            duration: PREVIEW_CLIP_MS,
+            easing: PREVIEW_CLIP_EASE,
             fill: "forwards",
           },
         );
-
-        let outAnim: Animation | null = null;
-        if (hasOutgoing && outgoing) {
-          stopLayerAnims(outgoing);
-          outAnim = outgoing.animate(
+        if (media) {
+          media.animate(
             [
-              { opacity: 1, transform: "scale(1)" },
-              { opacity: 0, transform: "scale(1)" },
+              { transform: "translate3d(-12%, 0, 0) scale(1.06)" },
+              { transform: "translate3d(0, 0, 0) scale(1)" },
             ],
             {
-              duration: PREVIEW_BLEND_MS,
-              easing: PREVIEW_BLEND_EASE,
+              duration: PREVIEW_MEDIA_MS,
+              easing: PREVIEW_MEDIA_EASE,
+              fill: "forwards",
+            },
+          );
+        }
+
+        if (hasOutgoing && outgoing) {
+          stopLayerAnims(outgoing);
+          outgoing.animate(
+            [{ transform: "scale(1)" }, { transform: "scale(1.04)" }],
+            {
+              duration: PREVIEW_CLIP_MS,
+              easing: PREVIEW_CLIP_EASE,
               fill: "forwards",
             },
           );
@@ -540,16 +578,16 @@ export default function ProjectsPage() {
         previewFront = 1 - previewFront;
 
         try {
-          await inAnim.finished;
-          if (outAnim) await outAnim.finished;
+          await clipAnim.finished;
         } catch {
           /* superseded or cancelled */
         }
         if (gen !== previewGen) return;
+        incoming.style.clipPath = CLIP_OPEN;
         incoming.style.opacity = "1";
-        incoming.style.transform = "scale(1)";
+        if (media) media.style.transform = "none";
         if (outgoing && outgoing !== incoming) {
-          outgoing.style.opacity = "0";
+          hideLayer(outgoing);
           pauseLayer(outgoing);
         }
       }

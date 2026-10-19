@@ -1007,15 +1007,16 @@ nav.scrolled {
     position: absolute;
     inset: 0;
     z-index: 0;
+    overflow: hidden;
     opacity: 0;
     pointer-events: none;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    transform: scale(1.08);
+    clip-path: inset(0% 100% 0% 0%);
     transform-origin: center center;
     backface-visibility: hidden;
-    will-change: opacity, transform;
+    will-change: clip-path, transform;
   }
 
   .projects-page .preview-layer img,
@@ -1025,6 +1026,8 @@ nav.scrolled {
     object-fit: cover;
     object-position: center;
     display: none;
+    transform-origin: center center;
+    will-change: transform;
   }
 
   .projects-page .projects-list-rows {
