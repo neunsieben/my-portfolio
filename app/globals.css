@@ -987,6 +987,7 @@ nav.scrolled {
     left: 0;
     width: 30vw;
     z-index: 4;
+    overflow: hidden;
   }
 
   .projects-page .projects-list-image.locked {
@@ -1001,6 +1002,22 @@ nav.scrolled {
     overflow: hidden;
     isolation: isolate;
     background-color: var(--bg);
+    transform-origin: center center;
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .projects-page .projects-list-image:hover .projects-list-img {
+    transform: scale(1.04);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .projects-page .projects-list-img {
+      transition: none;
+    }
+
+    .projects-page .projects-list-image:hover .projects-list-img {
+      transform: none;
+    }
   }
 
   .projects-page .preview-layer {
