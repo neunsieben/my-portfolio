@@ -343,13 +343,11 @@ export default function ProjectsPage() {
       const previewLayers = Array.from(
         stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
       );
-      const PREVIEW_CLIP_MS = 680;
-      const PREVIEW_MEDIA_MS = 820;
-      const PREVIEW_CYCLE_MS = 4000;
-      const PREVIEW_CLIP_EASE = "cubic-bezier(0.77, 0, 0.175, 1)";
-      const PREVIEW_MEDIA_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-      const CLIP_HIDDEN = "inset(0% 100% 0% 0%)";
-      const CLIP_OPEN = "inset(0% 0% 0% 0%)";
+      const PREVIEW_IN_MS = 380;
+      const PREVIEW_OUT_MS = 180;
+      const PREVIEW_CYCLE_MS = 3000;
+      const PREVIEW_IN_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+      const PREVIEW_OUT_EASE = "cubic-bezier(0.4, 0, 1, 1)";
       const reducePreviewMotion = () =>
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -358,19 +356,8 @@ export default function ProjectsPage() {
         vid?.pause();
       }
 
-      function layerMedia(layer: HTMLElement) {
-        const photo = layer.querySelector("img");
-        const vid = layer.querySelector("video");
-        if (photo && photo.style.display !== "none" && photo.src) return photo;
-        if (vid && vid.style.display !== "none" && vid.src) return vid;
-        return null;
-      }
-
       function stopLayerAnims(layer: HTMLElement) {
         layer.getAnimations().forEach((anim) => anim.cancel());
-        layer.querySelectorAll("img, video").forEach((el) => {
-          el.getAnimations().forEach((anim) => anim.cancel());
-        });
       }
 
       stopPreviewCycle = () => {
@@ -463,7 +450,7 @@ export default function ProjectsPage() {
                 });
           return Promise.race([
             ready.catch(() => undefined),
-            new Promise<void>((resolve) => window.setTimeout(resolve, 600)),
+            new Promise<void>((resolve) => window.setTimeout(resolve, 220)),
           ]);
         }
         if (item.kind === "video") {
@@ -475,7 +462,7 @@ export default function ProjectsPage() {
               vid.addEventListener("loadeddata", done, { once: true });
               vid.addEventListener("error", done, { once: true });
             }),
-            new Promise<void>((resolve) => window.setTimeout(resolve, 700)),
+            new Promise<void>((resolve) => window.setTimeout(resolve, 280)),
           ]);
         }
         return Promise.resolve();
@@ -484,19 +471,19 @@ export default function ProjectsPage() {
       function hideLayer(layer: HTMLElement) {
         stopLayerAnims(layer);
         layer.style.opacity = "0";
-        layer.style.clipPath = CLIP_HIDDEN;
-        layer.style.transform = "none";
-        const media = layerMedia(layer);
-        if (media) media.style.transform = "none";
+        layer.style.transform = "scale(1.1)";
       }
 
       function showLayerOpen(layer: HTMLElement) {
         stopLayerAnims(layer);
         layer.style.opacity = "1";
-        layer.style.clipPath = CLIP_OPEN;
-        layer.style.transform = "none";
-        const media = layerMedia(layer);
-        if (media) media.style.transform = "none";
+        layer.style.transform = "scale(1)";
+      }
+
+      function nextFrame() {
+        return new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        });
       }
 
       async function transitionPreview(item: PreviewItem) {
@@ -535,41 +522,34 @@ export default function ProjectsPage() {
           return;
         }
 
-        incoming.style.opacity = "1";
-        incoming.style.clipPath = CLIP_HIDDEN;
-        incoming.style.transform = "none";
-        const media = layerMedia(incoming);
-        if (media) media.style.transform = "translate3d(-12%, 0, 0) scale(1.06)";
+        incoming.style.opacity = "0";
+        incoming.style.transform = "scale(1.12)";
+        await nextFrame();
+        if (gen !== previewGen) return;
 
-        const clipAnim = incoming.animate(
-          [{ clipPath: CLIP_HIDDEN }, { clipPath: CLIP_OPEN }],
+        const inAnim = incoming.animate(
+          [
+            { opacity: 0, transform: "scale(1.12)" },
+            { opacity: 1, transform: "scale(1.03)", offset: 0.42 },
+            { opacity: 1, transform: "scale(1)" },
+          ],
           {
-            duration: PREVIEW_CLIP_MS,
-            easing: PREVIEW_CLIP_EASE,
+            duration: PREVIEW_IN_MS,
+            easing: PREVIEW_IN_EASE,
             fill: "forwards",
           },
         );
-        if (media) {
-          media.animate(
-            [
-              { transform: "translate3d(-12%, 0, 0) scale(1.06)" },
-              { transform: "translate3d(0, 0, 0) scale(1)" },
-            ],
-            {
-              duration: PREVIEW_MEDIA_MS,
-              easing: PREVIEW_MEDIA_EASE,
-              fill: "forwards",
-            },
-          );
-        }
 
         if (hasOutgoing && outgoing) {
           stopLayerAnims(outgoing);
           outgoing.animate(
-            [{ transform: "scale(1)" }, { transform: "scale(1.04)" }],
+            [
+              { opacity: 1, transform: "scale(1)" },
+              { opacity: 0, transform: "scale(0.985)" },
+            ],
             {
-              duration: PREVIEW_CLIP_MS,
-              easing: PREVIEW_CLIP_EASE,
+              duration: PREVIEW_OUT_MS,
+              easing: PREVIEW_OUT_EASE,
               fill: "forwards",
             },
           );
@@ -578,14 +558,13 @@ export default function ProjectsPage() {
         previewFront = 1 - previewFront;
 
         try {
-          await clipAnim.finished;
+          await inAnim.finished;
         } catch {
           /* superseded or cancelled */
         }
         if (gen !== previewGen) return;
-        incoming.style.clipPath = CLIP_OPEN;
         incoming.style.opacity = "1";
-        if (media) media.style.transform = "none";
+        incoming.style.transform = "scale(1)";
         if (outgoing && outgoing !== incoming) {
           hideLayer(outgoing);
           pauseLayer(outgoing);

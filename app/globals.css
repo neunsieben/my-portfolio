@@ -1013,10 +1013,10 @@ nav.scrolled {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    clip-path: inset(0% 100% 0% 0%);
+    transform: scale(1.1);
     transform-origin: center center;
     backface-visibility: hidden;
-    will-change: clip-path, transform;
+    will-change: opacity, transform;
   }
 
   .projects-page .preview-layer img,
@@ -1026,8 +1026,6 @@ nav.scrolled {
     object-fit: cover;
     object-position: center;
     display: none;
-    transform-origin: center center;
-    will-change: transform;
   }
 
   .projects-page .projects-list-rows {
