@@ -83,7 +83,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       {
         type: "image",
         src: "/images/projects/donata_jan_trio/donata_cover_mockup.jpg",
-        alt: "Donata Jan Trio — HOME digipak and CD mockup",
+        alt: "Donata Jan Trio — HOME digipak and CD mockup on wood",
       },
       {
         type: "image",
