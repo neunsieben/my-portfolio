@@ -387,6 +387,19 @@ export default function ProjectsPage() {
         }
       }
 
+      function enterFirstProject() {
+        if (!magneticEnabled || !rows[0]) return;
+        measure();
+        mode = "locked";
+        snapIdx = 0;
+        lock();
+        window.scrollTo(0, Math.max(0, Math.round(target(0))));
+        const slug = rows[0].getAttribute("data-slug") ?? "";
+        const bg = rows[0].getAttribute("data-img") ?? "";
+        displayedImg = 0;
+        startPreviewCycle(slug, bg);
+      }
+
       function lock() {
         panel.classList.add("locked");
         panel.style.top = window.innerHeight / 2 - imgH / 2 + "px";
@@ -717,9 +730,16 @@ export default function ProjectsPage() {
       window.addEventListener("touchstart", onTouchStart, { passive: true });
       window.addEventListener("touchend", onTouchEnd, { passive: true });
 
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
       measure();
       onResizeMeasure = measure;
       window.addEventListener("resize", measure);
+      enterFirstProject();
+      requestAnimationFrame(() => {
+        if (!pageDisposed && magneticEnabled) enterFirstProject();
+      });
       rafMagnetic = requestAnimationFrame(tick);
 
       // Make the sticky image panel navigate to the active project on click
@@ -739,9 +759,8 @@ export default function ProjectsPage() {
       };
       magneticRemeasure = () => {
         magneticEnabled = true;
-        mode = "free-top";
         panel.style.display = "";
-        measure();
+        enterFirstProject();
       };
     }
 
