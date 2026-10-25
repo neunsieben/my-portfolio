@@ -46,10 +46,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     descriptionDe:
       "Zalazium ist ein deutsches Startup, das künstliche Intelligenz mit DSGVO-Konformität verbindet. Es bietet große Sprachmodelle und weitere KI-Anwendungen für Unternehmen, die Aufgaben datenschutzkonform ausführen.\n\n2025 habe ich die Website des Unternehmens gestaltet, Animationen erstellt, den Wortmarkenteil des Logos überarbeitet und eine Bildmarke entworfen.",
     media: [
-      { type: "image", bg: "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)" },
-      { type: "image", bg: "linear-gradient(160deg,#d0ceca,#bab8b4,#c8c6c2)" },
-      { type: "image", bg: "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)" },
-      { type: "image", bg: "linear-gradient(160deg,#d0ceca,#bab8b4,#c8c6c2)" },
+      {
+        type: "video",
+        src: "/images/projects/zalazium/zalazium_intro.mp4",
+        alt: "Zalazium — intro animation",
+      },
     ],
   },
   {
