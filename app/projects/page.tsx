@@ -151,17 +151,30 @@ type PreviewItem =
   | { kind: "video"; src: string }
   | { kind: "bg"; bg: string };
 
+const PREVIEW_DIR = "/images/previews/";
+const ORIGINAL_DIR = "/images/projects/";
+
+/** Lightweight copy from scripts/make-previews.sh; falls back on error. */
+function previewSrc(src: string) {
+  return src.startsWith(ORIGINAL_DIR) && src.endsWith(".jpg")
+    ? PREVIEW_DIR + src.slice(ORIGINAL_DIR.length)
+    : src;
+}
+
 function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] {
   const fromMedia: PreviewItem[] = [];
   for (const m of PROJECT_DETAILS.find((p) => p.slug === slug)?.media ?? []) {
     if (!m.src) continue;
-    if (m.type === "image") fromMedia.push({ kind: "image", src: m.src });
+    if (m.type === "image")
+      fromMedia.push({ kind: "image", src: previewSrc(m.src) });
     if (m.type === "video") fromMedia.push({ kind: "video", src: m.src });
   }
   if (fromMedia.length) return fromMedia;
   return fallback.map((bg) => {
     const src = bgSrc(bg);
-    return src ? { kind: "image" as const, src } : { kind: "bg" as const, bg };
+    return src
+      ? { kind: "image" as const, src: previewSrc(src) }
+      : { kind: "bg" as const, bg };
   });
 }
 
@@ -348,6 +361,7 @@ export default function ProjectsPage() {
         stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
       );
       const PREVIEW_SLIDE_MS = 720;
+      const PREVIEW_SLIDE_OVERLAP_PX = 2;
       const PREVIEW_CYCLE_MS = 3400;
       const PREVIEW_SLIDE_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
       const reducePreviewMotion = () =>
@@ -370,6 +384,11 @@ export default function ProjectsPage() {
           stopLayerAnims(layer);
           pauseLayer(layer);
         });
+        warmVideos.forEach((v) => {
+          v.removeAttribute("src");
+          v.load();
+        });
+        warmVideos.length = 0;
       };
 
       function measure() {
@@ -443,7 +462,13 @@ export default function ProjectsPage() {
         return Math.min(centered, Math.max(0, maxScroll));
       }
 
-      function fillPreviewLayer(layer: HTMLElement, item: PreviewItem) {
+      // Setting the same src again would restart the download, so only
+      // assign when the layer holds something else.
+      function fillPreviewLayer(
+        layer: HTMLElement,
+        item: PreviewItem,
+        play = true,
+      ) {
         const photo = layer.querySelector("img");
         const vid = layer.querySelector("video");
         layer.style.backgroundImage = "";
@@ -453,15 +478,19 @@ export default function ProjectsPage() {
             vid.style.display = "none";
           }
           if (photo) {
-            photo.src = item.src;
+            if (photo.getAttribute("src") !== item.src) photo.src = item.src;
             photo.style.display = "block";
           }
         } else if (item.kind === "video") {
           if (photo) photo.style.display = "none";
           if (vid) {
-            vid.src = item.src;
+            if (vid.getAttribute("src") !== item.src) {
+              vid.src = item.src;
+              vid.load();
+            }
             vid.style.display = "block";
-            vid.play().catch(() => {});
+            if (play) vid.play().catch(() => {});
+            else vid.pause();
           }
         } else {
           if (photo) photo.style.display = "none";
@@ -473,22 +502,34 @@ export default function ProjectsPage() {
         }
       }
 
-      function waitForPreviewMedia(layer: HTMLElement, item: PreviewItem) {
+      // Resolves once the layer can paint a real frame (decoded image or
+      // first video frame), or after timeoutMs as a last resort.
+      function waitForPreviewMedia(
+        layer: HTMLElement,
+        item: PreviewItem,
+        timeoutMs: number,
+      ) {
+        const timeout = new Promise<void>((resolve) =>
+          window.setTimeout(resolve, timeoutMs),
+        );
         if (item.kind === "image") {
           const photo = layer.querySelector("img");
           if (!photo) return Promise.resolve();
-          const ready =
+          const loaded =
             photo.complete && photo.naturalWidth > 0
-              ? photo.decode?.() ?? Promise.resolve()
+              ? Promise.resolve()
               : new Promise<void>((resolve) => {
-                  const done = () => resolve();
-                  photo.addEventListener("load", done, { once: true });
-                  photo.addEventListener("error", done, { once: true });
+                  photo.addEventListener("load", () => resolve(), {
+                    once: true,
+                  });
+                  photo.addEventListener("error", () => resolve(), {
+                    once: true,
+                  });
                 });
-          return Promise.race([
-            ready.catch(() => undefined),
-            new Promise<void>((resolve) => window.setTimeout(resolve, 220)),
-          ]);
+          const ready = loaded
+            .then(() => photo.decode?.())
+            .catch(() => undefined);
+          return Promise.race([ready, timeout]);
         }
         if (item.kind === "video") {
           const vid = layer.querySelector("video");
@@ -499,10 +540,43 @@ export default function ProjectsPage() {
               vid.addEventListener("loadeddata", done, { once: true });
               vid.addEventListener("error", done, { once: true });
             }),
-            new Promise<void>((resolve) => window.setTimeout(resolve, 280)),
+            timeout,
           ]);
         }
         return Promise.resolve();
+      }
+
+      const warmed = new Set<string>();
+      const warmVideos: HTMLVideoElement[] = [];
+      function warm(item: PreviewItem | undefined) {
+        if (!item || item.kind === "bg" || warmed.has(item.src)) return;
+        warmed.add(item.src);
+        if (item.kind === "image") {
+          const im = new Image();
+          im.decoding = "async";
+          im.src = item.src;
+          im.decode?.().catch(() => {});
+        } else {
+          const v = document.createElement("video");
+          v.muted = true;
+          v.preload = "auto";
+          v.src = item.src;
+          v.load();
+          warmVideos.push(v);
+        }
+      }
+
+      function rowItems(idx: number) {
+        const row = rows[idx];
+        if (!row) return [];
+        return previewItems(row.getAttribute("data-slug") ?? "", [
+          row.getAttribute("data-img") ?? "",
+        ]);
+      }
+
+      function warmAround(idx: number) {
+        rowItems(idx).forEach(warm);
+        [idx + 1, idx - 1, idx + 2].forEach((i) => warm(rowItems(i)[0]));
       }
 
       function hideLayer(layer: HTMLElement) {
@@ -526,12 +600,18 @@ export default function ProjectsPage() {
       async function transitionPreview(
         item: PreviewItem,
         mode: "cut" | "slide",
-      ) {
-        if (previewLayers.length < 2) return;
+      ): Promise<boolean> {
+        if (previewLayers.length < 2) return false;
         const gen = ++previewGen;
         const incoming = previewLayers[1 - previewFront];
         const outgoing = previewLayers[previewFront];
-        if (!incoming) return;
+        if (!incoming) return false;
+
+        // A project switch can land mid-slide: settle that slide first so the
+        // back layer is free and no half-moved frame is left behind.
+        previewLayers.forEach((layer) =>
+          layer.getAnimations().forEach((a) => a.finish()),
+        );
 
         const instant =
           mode === "cut" || previewFirstPaint || reducePreviewMotion();
@@ -541,8 +621,10 @@ export default function ProjectsPage() {
         incoming.style.zIndex = "2";
         fillPreviewLayer(incoming, item);
 
-        if (!instant) await waitForPreviewMedia(incoming, item);
-        if (gen !== previewGen) return;
+        // The current frame stays on screen until the next one can paint,
+        // so the frame never flashes empty.
+        await waitForPreviewMedia(incoming, item, mode === "cut" ? 1500 : 900);
+        if (gen !== previewGen) return false;
 
         const hasOutgoing =
           !!outgoing &&
@@ -560,19 +642,20 @@ export default function ProjectsPage() {
             pauseLayer(outgoing);
           }
           previewFront = 1 - previewFront;
-          return;
+          return true;
         }
 
+        // Both layers travel the same distance with a constant overlap, so
+        // sub-pixel rounding can never open a seam between them.
+        const SEAM = PREVIEW_SLIDE_OVERLAP_PX;
+        const inFrom = `translate3d(calc(100% - ${SEAM}px), 0, 0)`;
         incoming.style.opacity = "1";
-        incoming.style.transform = "translateX(100%)";
+        incoming.style.transform = inFrom;
         await nextFrame();
-        if (gen !== previewGen) return;
+        if (gen !== previewGen) return false;
 
         const inAnim = incoming.animate(
-          [
-            { transform: "translateX(100%)" },
-            { transform: "translateX(0)" },
-          ],
+          [{ transform: inFrom }, { transform: "translate3d(0, 0, 0)" }],
           {
             duration: PREVIEW_SLIDE_MS,
             easing: PREVIEW_SLIDE_EASE,
@@ -584,8 +667,8 @@ export default function ProjectsPage() {
           stopLayerAnims(outgoing);
           outgoing.animate(
             [
-              { transform: "translateX(0)" },
-              { transform: "translateX(-100%)" },
+              { transform: "translate3d(0, 0, 0)" },
+              { transform: `translate3d(calc(-100% + ${SEAM}px), 0, 0)` },
             ],
             {
               duration: PREVIEW_SLIDE_MS,
@@ -602,13 +685,13 @@ export default function ProjectsPage() {
         } catch {
           /* superseded or cancelled */
         }
-        if (gen !== previewGen) return;
-        incoming.style.opacity = "1";
-        incoming.style.transform = "scale(1)";
+        if (gen !== previewGen) return false;
+        showLayerOpen(incoming);
         if (outgoing && outgoing !== incoming) {
           hideLayer(outgoing);
           pauseLayer(outgoing);
         }
+        return true;
       }
 
       function startPreviewCycle(slug: string, fallback: string) {
@@ -617,18 +700,26 @@ export default function ProjectsPage() {
         const items = previewItems(slug, [fallback]);
         previewCycleIdx = 0;
         if (!items[0]) return;
-        items.forEach((item) => {
-          if (item.kind === "image") {
-            const preload = new Image();
-            preload.src = item.src;
-          }
-        });
-        void transitionPreview(items[0], "cut");
+        const rowIdx = rows.findIndex(
+          (r) => r.getAttribute("data-slug") === slug,
+        );
+        if (rowIdx >= 0) warmAround(rowIdx);
+
+        // Load the upcoming item into the hidden back layer while the
+        // current one rests, so the next slide starts on a ready frame.
+        const prefillNext = (done: boolean) => {
+          if (!done || items.length < 2) return;
+          const next = items[(previewCycleIdx + 1) % items.length];
+          const back = previewLayers[1 - previewFront];
+          if (next && back) fillPreviewLayer(back, next, false);
+        };
+
+        void transitionPreview(items[0], "cut").then(prefillNext);
         if (items.length < 2) return;
         previewCycleTimer = window.setInterval(() => {
           previewCycleIdx = (previewCycleIdx + 1) % items.length;
           const next = items[previewCycleIdx];
-          if (next) void transitionPreview(next, "slide");
+          if (next) void transitionPreview(next, "slide").then(prefillNext);
         }, PREVIEW_CYCLE_MS);
       }
 
@@ -1051,8 +1142,18 @@ export default function ProjectsPage() {
       slugClickHandlers.push({ el, fn });
     });
 
+    const onPreviewImgError = (e: Event) => {
+      const img = e.target;
+      if (!(img instanceof HTMLImageElement)) return;
+      const src = img.getAttribute("src") ?? "";
+      if (!src.startsWith(PREVIEW_DIR)) return;
+      img.src = ORIGINAL_DIR + src.slice(PREVIEW_DIR.length);
+    };
+    document.addEventListener("error", onPreviewImgError, true);
+
     return () => {
       pageDisposed = true;
+      document.removeEventListener("error", onPreviewImgError, true);
       stopPreviewCycle?.();
       cancelAnimationFrame(rafMagnetic);
       carouselRafByIdx.forEach((id) => {
@@ -1137,11 +1238,11 @@ export default function ProjectsPage() {
             <div className="projects-list-img" id="stickyImg">
               <div className="preview-layer" data-preview-layer="0">
                 <img alt="" />
-                <video muted loop playsInline />
+                <video muted loop playsInline preload="auto" />
               </div>
               <div className="preview-layer" data-preview-layer="1">
                 <img alt="" />
-                <video muted loop playsInline />
+                <video muted loop playsInline preload="auto" />
               </div>
             </div>
           </div>
