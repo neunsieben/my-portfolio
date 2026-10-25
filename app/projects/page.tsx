@@ -347,9 +347,9 @@ export default function ProjectsPage() {
       const previewLayers = Array.from(
         stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
       );
-      const PREVIEW_BLEND_MS = 560;
+      const PREVIEW_SLIDE_MS = 720;
       const PREVIEW_CYCLE_MS = 3400;
-      const PREVIEW_BLEND_EASE = "cubic-bezier(0.45, 0, 0.55, 1)";
+      const PREVIEW_SLIDE_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
       const reducePreviewMotion = () =>
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -525,7 +525,7 @@ export default function ProjectsPage() {
 
       async function transitionPreview(
         item: PreviewItem,
-        mode: "cut" | "blend",
+        mode: "cut" | "slide",
       ) {
         if (previewLayers.length < 2) return;
         const gen = ++previewGen;
@@ -563,19 +563,19 @@ export default function ProjectsPage() {
           return;
         }
 
-        incoming.style.opacity = "0";
-        incoming.style.transform = "scale(1.035)";
+        incoming.style.opacity = "1";
+        incoming.style.transform = "translateX(100%)";
         await nextFrame();
         if (gen !== previewGen) return;
 
         const inAnim = incoming.animate(
           [
-            { opacity: 0, transform: "scale(1.035)" },
-            { opacity: 1, transform: "scale(1)" },
+            { transform: "translateX(100%)" },
+            { transform: "translateX(0)" },
           ],
           {
-            duration: PREVIEW_BLEND_MS,
-            easing: PREVIEW_BLEND_EASE,
+            duration: PREVIEW_SLIDE_MS,
+            easing: PREVIEW_SLIDE_EASE,
             fill: "forwards",
           },
         );
@@ -584,12 +584,12 @@ export default function ProjectsPage() {
           stopLayerAnims(outgoing);
           outgoing.animate(
             [
-              { opacity: 1, transform: "scale(1)" },
-              { opacity: 0, transform: "scale(1)" },
+              { transform: "translateX(0)" },
+              { transform: "translateX(-100%)" },
             ],
             {
-              duration: PREVIEW_BLEND_MS,
-              easing: PREVIEW_BLEND_EASE,
+              duration: PREVIEW_SLIDE_MS,
+              easing: PREVIEW_SLIDE_EASE,
               fill: "forwards",
             },
           );
@@ -628,7 +628,7 @@ export default function ProjectsPage() {
         previewCycleTimer = window.setInterval(() => {
           previewCycleIdx = (previewCycleIdx + 1) % items.length;
           const next = items[previewCycleIdx];
-          if (next) void transitionPreview(next, "blend");
+          if (next) void transitionPreview(next, "slide");
         }, PREVIEW_CYCLE_MS);
       }
 
