@@ -361,6 +361,9 @@ export default function ProjectsPage() {
         stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
       );
       const PREVIEW_SLIDE_MS = 720;
+      // Shorter than one magnetic step (550ms scroll + 150ms block), so a
+      // switch slide finishes before the next project can take over.
+      const PREVIEW_SWITCH_MS = 600;
       const PREVIEW_SLIDE_OVERLAP_PX = 2;
       const PREVIEW_CYCLE_MS = 3400;
       const PREVIEW_SLIDE_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
@@ -597,21 +600,31 @@ export default function ProjectsPage() {
         });
       }
 
+      // "slide" = next item inside a project; "switch" = first item of another
+      // project, sliding in from the side the user is scrolling towards.
       async function transitionPreview(
         item: PreviewItem,
-        mode: "cut" | "slide",
+        mode: "cut" | "slide" | "switch",
+        dir: 1 | -1 = 1,
       ): Promise<boolean> {
+        const ms = mode === "switch" ? PREVIEW_SWITCH_MS : PREVIEW_SLIDE_MS;
+        const waitMs = mode === "slide" ? 900 : 1500;
         if (previewLayers.length < 2) return false;
         const gen = ++previewGen;
+
+        // Never cut a running slide short: let it land, then continue. If
+        // newer transitions were requested meanwhile, only the latest runs.
+        const inFlight = previewLayers.flatMap((layer) => layer.getAnimations());
+        if (inFlight.length) {
+          await Promise.all(
+            inFlight.map((a) => a.finished.catch(() => undefined)),
+          );
+          if (gen !== previewGen) return false;
+        }
+
         const incoming = previewLayers[1 - previewFront];
         const outgoing = previewLayers[previewFront];
         if (!incoming) return false;
-
-        // A project switch can land mid-slide: settle that slide first so the
-        // back layer is free and no half-moved frame is left behind.
-        previewLayers.forEach((layer) =>
-          layer.getAnimations().forEach((a) => a.finish()),
-        );
 
         const instant =
           mode === "cut" || previewFirstPaint || reducePreviewMotion();
@@ -623,7 +636,7 @@ export default function ProjectsPage() {
 
         // The current frame stays on screen until the next one can paint,
         // so the frame never flashes empty.
-        await waitForPreviewMedia(incoming, item, mode === "cut" ? 1500 : 900);
+        await waitForPreviewMedia(incoming, item, waitMs);
         if (gen !== previewGen) return false;
 
         const hasOutgoing =
@@ -635,7 +648,7 @@ export default function ProjectsPage() {
           outgoing.style.zIndex = "1";
         }
 
-        if (instant) {
+        if (instant || !hasOutgoing) {
           showLayerOpen(incoming);
           if (outgoing && outgoing !== incoming) {
             hideLayer(outgoing);
@@ -648,7 +661,15 @@ export default function ProjectsPage() {
         // Both layers travel the same distance with a constant overlap, so
         // sub-pixel rounding can never open a seam between them.
         const SEAM = PREVIEW_SLIDE_OVERLAP_PX;
-        const inFrom = `translate3d(calc(100% - ${SEAM}px), 0, 0)`;
+        const ahead = `translate3d(calc(100% - ${SEAM}px), 0, 0)`;
+        const behind = `translate3d(calc(-100% + ${SEAM}px), 0, 0)`;
+        const inFrom = dir === 1 ? ahead : behind;
+        const outTo = dir === 1 ? behind : ahead;
+        const timing: KeyframeAnimationOptions = {
+          duration: ms,
+          easing: PREVIEW_SLIDE_EASE,
+          fill: "forwards",
+        };
         incoming.style.opacity = "1";
         incoming.style.transform = inFrom;
         await nextFrame();
@@ -656,25 +677,14 @@ export default function ProjectsPage() {
 
         const inAnim = incoming.animate(
           [{ transform: inFrom }, { transform: "translate3d(0, 0, 0)" }],
-          {
-            duration: PREVIEW_SLIDE_MS,
-            easing: PREVIEW_SLIDE_EASE,
-            fill: "forwards",
-          },
+          timing,
         );
 
         if (hasOutgoing && outgoing) {
           stopLayerAnims(outgoing);
           outgoing.animate(
-            [
-              { transform: "translate3d(0, 0, 0)" },
-              { transform: `translate3d(calc(-100% + ${SEAM}px), 0, 0)` },
-            ],
-            {
-              duration: PREVIEW_SLIDE_MS,
-              easing: PREVIEW_SLIDE_EASE,
-              fill: "forwards",
-            },
+            [{ transform: "translate3d(0, 0, 0)" }, { transform: outTo }],
+            timing,
           );
         }
 
@@ -683,18 +693,23 @@ export default function ProjectsPage() {
         try {
           await inAnim.finished;
         } catch {
-          /* superseded or cancelled */
+          return false;
         }
-        if (gen !== previewGen) return false;
+        // Settle the layers even if a newer transition is queued: it waits
+        // for this slide and relies on a clean front/back state.
         showLayerOpen(incoming);
         if (outgoing && outgoing !== incoming) {
           hideLayer(outgoing);
           pauseLayer(outgoing);
         }
-        return true;
+        return gen === previewGen;
       }
 
-      function startPreviewCycle(slug: string, fallback: string) {
+      function startPreviewCycle(
+        slug: string,
+        fallback: string,
+        enterDir: 0 | 1 | -1 = 0,
+      ) {
         if (previewCycleTimer !== null) window.clearInterval(previewCycleTimer);
         previewCycleTimer = null;
         const items = previewItems(slug, [fallback]);
@@ -714,7 +729,11 @@ export default function ProjectsPage() {
           if (next && back) fillPreviewLayer(back, next, false);
         };
 
-        void transitionPreview(items[0], "cut").then(prefillNext);
+        const entry =
+          enterDir === 0
+            ? transitionPreview(items[0], "cut")
+            : transitionPreview(items[0], "switch", enterDir);
+        void entry.then(prefillNext);
         if (items.length < 2) return;
         previewCycleTimer = window.setInterval(() => {
           previewCycleIdx = (previewCycleIdx + 1) % items.length;
@@ -736,10 +755,11 @@ export default function ProjectsPage() {
           }
         });
         if (best !== displayedImg) {
+          const dir = displayedImg < 0 ? 0 : best > displayedImg ? 1 : -1;
           displayedImg = best;
           const slug = rows[best]?.getAttribute("data-slug") ?? "";
           const bg = rows[best]?.getAttribute("data-img") ?? "";
-          startPreviewCycle(slug, bg);
+          startPreviewCycle(slug, bg, dir);
         }
       }
 
