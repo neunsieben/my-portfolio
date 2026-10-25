@@ -385,9 +385,19 @@ export default function ProjectsPage() {
         const lastRow = rows[rows.length - 1];
         const lr = lastRow.getBoundingClientRect();
         unlockY = lr.bottom + window.scrollY - window.innerHeight * 0.3;
-        if (wasLocked) {
+        if (wasLocked) pin(window.scrollY >= lockY - 1);
+      }
+
+      // While locked, the preview follows the page until it reaches the
+      // viewport centre (scrollY === lockY) and only then stays fixed, so it
+      // never covers the headline and the hand-off has no visual jump.
+      function pin(on: boolean) {
+        if (on) {
           panel.classList.add("locked");
           panel.style.top = window.innerHeight / 2 - imgH / 2 + "px";
+        } else {
+          panel.classList.remove("locked");
+          panel.style.top = "";
         }
       }
 
@@ -405,8 +415,7 @@ export default function ProjectsPage() {
       }
 
       function lock() {
-        panel.classList.add("locked");
-        panel.style.top = window.innerHeight / 2 - imgH / 2 + "px";
+        pin(window.scrollY >= lockY - 1);
         panel.style.display = "";
       }
 
@@ -692,7 +701,10 @@ export default function ProjectsPage() {
               window.scrollTo(0, Math.round(target(0)));
             });
           }
-          if (mode === "locked") swapImage();
+          if (mode === "locked") {
+            pin(sy >= lockY - 1);
+            swapImage();
+          }
           if (mode === "free-bottom" && sy <= unlockY && !animating) {
             mode = "locked";
             lock();
