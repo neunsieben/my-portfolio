@@ -1764,6 +1764,13 @@ nav.scrolled {
   display: block;
 }
 
+.pd-media-item video {
+  aspect-ratio: 4 / 3;
+  background: #0a0a0a;
+  object-fit: contain;
+  object-position: center;
+}
+
 .pd-media-item.pd-placeholder {
   aspect-ratio: 16 / 9;
 }

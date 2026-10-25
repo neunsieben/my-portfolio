@@ -26,7 +26,7 @@ export default function ProjectDetailPage() {
           if (e.isIntersecting) e.target.classList.add("visible");
         });
       },
-      { threshold: 0.05 },
+      { threshold: 0, rootMargin: "0px 0px 80px 0px" },
     );
     document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
 
@@ -243,7 +243,15 @@ export default function ProjectDetailPage() {
                 <img src={item.src} alt={item.alt ?? project.name} />
               )}
               {item.type === "video" && item.src && (
-                <video src={item.src} autoPlay muted loop playsInline />
+                <video
+                  src={item.src}
+                  poster={item.poster}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                />
               )}
             </div>
           ))}

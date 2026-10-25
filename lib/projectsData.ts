@@ -4,6 +4,8 @@ export type ProjectMedia = {
   type: "image" | "video";
   src?: string;
   alt?: string;
+  /** Still shown before the video can paint, and on phones that skip autoplay */
+  poster?: string;
   /** CSS background value shown as placeholder when no src is set */
   bg?: string;
 };
@@ -49,11 +51,13 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       {
         type: "video",
         src: "/images/projects/zalazium/zalazium_intro.mp4",
+        poster: "/images/projects/zalazium/zalazium_intro_poster.jpg",
         alt: "Zalazium — intro animation",
       },
       {
         type: "video",
         src: "/images/projects/zalazium/zalazium_sicherheit.mp4",
+        poster: "/images/projects/zalazium/zalazium_sicherheit_poster.jpg",
         alt: "Zalazium — security animation",
       },
     ],

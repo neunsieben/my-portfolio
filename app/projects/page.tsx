@@ -148,7 +148,7 @@ function bgSrc(bg: string) {
 
 type PreviewItem =
   | { kind: "image"; src: string }
-  | { kind: "video"; src: string }
+  | { kind: "video"; src: string; poster?: string }
   | { kind: "bg"; bg: string };
 
 const PREVIEW_DIR = "/images/previews/";
@@ -167,7 +167,8 @@ function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] 
     if (!m.src) continue;
     if (m.type === "image")
       fromMedia.push({ kind: "image", src: previewSrc(m.src) });
-    if (m.type === "video") fromMedia.push({ kind: "video", src: m.src });
+    if (m.type === "video")
+      fromMedia.push({ kind: "video", src: m.src, poster: m.poster });
   }
   if (fromMedia.length) return fromMedia;
   return fallback.map((bg) => {
@@ -487,6 +488,8 @@ export default function ProjectsPage() {
         } else if (item.kind === "video") {
           if (photo) photo.style.display = "none";
           if (vid) {
+            if (item.poster) vid.setAttribute("poster", item.poster);
+            else vid.removeAttribute("poster");
             if (vid.getAttribute("src") !== item.src) {
               vid.src = item.src;
               vid.load();
@@ -1299,10 +1302,12 @@ export default function ProjectsPage() {
                               key={i}
                               className="carousel-slide"
                               src={item.src}
+                              poster={item.poster}
                               autoPlay
                               muted
                               loop
                               playsInline
+                              preload="metadata"
                             />
                           );
                         }
