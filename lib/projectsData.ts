@@ -51,6 +51,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: "/images/projects/zalazium/zalazium_intro.mp4",
         alt: "Zalazium — intro animation",
       },
+      {
+        type: "video",
+        src: "/images/projects/zalazium/zalazium_sicherheit.mp4",
+        alt: "Zalazium — security animation",
+      },
     ],
   },
   {
@@ -110,14 +115,14 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     descriptionDe: LOREM_DE,
     media: [
       {
-        type: "image",
-        src: "/images/projects/studio_liebe/studio_liebe_thumbnail.jpg",
-        alt: "Studio Liebe",
-      },
-      {
         type: "video",
         src: "/images/projects/studio_liebe/studio_liebe_logo_animation.mp4",
         alt: "Studio Liebe — logo animation",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/studio_liebe_thumbnail.jpg",
+        alt: "Studio Liebe",
       },
       {
         type: "video",

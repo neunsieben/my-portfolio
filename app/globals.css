@@ -1060,6 +1060,12 @@ nav.scrolled {
     border-bottom: none;
   }
 
+  /* Magnetic snap measures row geometry; layout must not animate on resize */
+  .projects-page .project-row-entry.reveal,
+  .projects-page .projects-header .reveal {
+    transition-property: opacity, transform;
+  }
+
   .projects-page .project-row-name {
     margin-bottom: 20px;
   }

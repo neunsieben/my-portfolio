@@ -246,10 +246,14 @@ export default function ProjectsPage() {
   routerRef.current = router;
 
   useEffect(() => {
-    const prevScroll = document.documentElement.style.scrollBehavior;
-    document.documentElement.style.scrollBehavior = "auto";
+    const root = document.documentElement;
+    const prevScroll = root.style.scrollBehavior;
+    const prevAnchor = root.style.overflowAnchor;
+    root.style.scrollBehavior = "auto";
+    root.style.overflowAnchor = "none";
     return () => {
-      document.documentElement.style.scrollBehavior = prevScroll;
+      root.style.scrollBehavior = prevScroll;
+      root.style.overflowAnchor = prevAnchor;
     };
   }, []);
 
@@ -414,7 +418,20 @@ export default function ProjectsPage() {
       function target(idx: number) {
         const row = rows[idx];
         const r = row.getBoundingClientRect();
-        return r.top + r.height / 2 + window.scrollY - window.innerHeight / 2;
+        const centered =
+          r.top + r.height / 2 + window.scrollY - window.innerHeight / 2;
+        if (idx !== 0) return centered;
+        // The title itself is translated by its reveal animation, so measure
+        // its untransformed container instead.
+        const title = document.querySelector(
+          ".projects-page .projects-header-top",
+        );
+        const nav = document.querySelector("nav");
+        if (!title || !nav) return centered;
+        const titleAbsTop = title.getBoundingClientRect().top + window.scrollY;
+        const keepTitleBelow = nav.getBoundingClientRect().bottom + 20;
+        const maxScroll = titleAbsTop - keepTitleBelow;
+        return Math.min(centered, Math.max(0, maxScroll));
       }
 
       function fillPreviewLayer(layer: HTMLElement, item: PreviewItem) {
@@ -435,7 +452,7 @@ export default function ProjectsPage() {
           if (vid) {
             vid.src = item.src;
             vid.style.display = "block";
-            void vid.play();
+            vid.play().catch(() => {});
           }
         } else {
           if (photo) photo.style.display = "none";
@@ -734,8 +751,27 @@ export default function ProjectsPage() {
         history.scrollRestoration = "manual";
       }
       measure();
-      onResizeMeasure = measure;
-      window.addEventListener("resize", measure);
+      let realignTimer: number | null = null;
+      const realign = () => {
+        if (pageDisposed || !magneticEnabled || mode !== "locked") return;
+        if (animating) return;
+        window.scrollTo(0, Math.max(0, Math.round(target(snapIdx))));
+      };
+      onResizeMeasure = () => {
+        measure();
+        if (mode === "locked") lock();
+        if (realignTimer !== null) window.clearTimeout(realignTimer);
+        realignTimer = window.setTimeout(() => {
+          realignTimer = null;
+          measure();
+          realign();
+        }, 120);
+      };
+      window.addEventListener("resize", onResizeMeasure);
+      document.fonts?.ready.then(() => {
+        measure();
+        realign();
+      });
       enterFirstProject();
       requestAnimationFrame(() => {
         if (!pageDisposed && magneticEnabled) enterFirstProject();
@@ -947,7 +983,7 @@ export default function ProjectsPage() {
           video.muted = true;
           video.loop = true;
           video.playsInline = true;
-          void video.play();
+          video.play().catch(() => {});
         });
         const speed = 1.2 + (idx % 3) * 0.4;
         let pos = 0;
