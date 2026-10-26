@@ -60,6 +60,12 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         poster: "/images/projects/zalazium/zalazium_sicherheit_poster.jpg",
         alt: "Zalazium — security animation",
       },
+      {
+        type: "video",
+        src: "/images/projects/zalazium/zalazium_style_guide.mp4",
+        poster: "/images/projects/zalazium/zalazium_style_guide_poster.jpg",
+        alt: "Zalazium — style guide animation",
+      },
     ],
   },
   {
