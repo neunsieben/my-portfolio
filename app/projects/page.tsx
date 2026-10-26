@@ -88,7 +88,7 @@ const LIST_ROWS = [
     slug: "forbes-cpxart",
     dataImg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg)",
     num: "006",
-    name: "Forbes x CPxArt",
+    name: "CPxArt x Forbes",
     desc: "Hand-painted bomber jackets for CPxArt, featured in Forbes — wearable art merging painting and fashion.",
     slides: [
       "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg)",
@@ -226,7 +226,7 @@ const GRID_ITEMS = [
     bg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg)",
     cat: "Art · Fashion",
     num: "006",
-    name: "Forbes x CPxArt",
+    name: "CPxArt x Forbes",
   },
   {
     reveal: "reveal reveal-delay-6",

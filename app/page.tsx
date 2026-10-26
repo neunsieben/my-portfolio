@@ -744,55 +744,59 @@ void main(){
       <section className="projects-section">
         <div className="projects-editorial">
           <div className="project-row">
-            <a href="#" className="project-item project-left reveal hoverable">
-              <div
-                className="project-img"
-                style={{
-                  background:
-                    "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)",
-                }}
-              ></div>
+            <Link
+              href="/projects/zalazium-gmbh"
+              className="project-item project-left reveal hoverable"
+            >
+              <div className="project-img">
+                <img
+                  src="/images/previews/zalazium/zalazium_intro_poster.jpg"
+                  alt="Zalazium GmbH"
+                />
+              </div>
               <div className="project-meta">
                 <span className="project-name">
                   001&nbsp;&nbsp;&nbsp;&nbsp;Zalazium GmbH
                 </span>
                 <span className="project-cat">UX · Branding · Motion</span>
               </div>
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/projects/studio-liebe"
               className="project-item project-right reveal reveal-delay-2 hoverable"
             >
-              <div
-                className="project-img"
-                style={{
-                  background:
-                    "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)",
-                }}
-              ></div>
+              <div className="project-img">
+                <img
+                  src="/images/previews/studio_liebe/studio_liebe_thumbnail.jpg"
+                  alt="Studio Liebe"
+                />
+              </div>
               <div className="project-meta">
                 <span className="project-name">
-                  002&nbsp;&nbsp;&nbsp;&nbsp;Daily Grind Coffee
+                  004&nbsp;&nbsp;&nbsp;&nbsp;Studio Liebe
                 </span>
-                <span className="project-cat">Branding · Packaging</span>
+                <span className="project-cat">Branding · Web Design</span>
               </div>
-            </a>
+            </Link>
           </div>
           <div className="project-row project-row-offset">
-            <a href="#" className="project-item project-center reveal hoverable">
-              <div
-                className="project-img project-img-wide"
-                style={{
-                  background: "url(/images/projects/home/home-thumbnail.jpg) center/cover no-repeat",
-                }}
-              ></div>
+            <Link
+              href="/projects/carlitoz-way"
+              className="project-item project-center reveal hoverable"
+            >
+              <div className="project-img project-img-wide">
+                <img
+                  src="/images/previews/carlitoz_way/carlitoz_box_top.jpg"
+                  alt="Carlitoz Way"
+                />
+              </div>
               <div className="project-meta">
                 <span className="project-name">
-                  003&nbsp;&nbsp;&nbsp;&nbsp;Donata Jan Trio
+                  007&nbsp;&nbsp;&nbsp;&nbsp;Carlitoz Way
                 </span>
-                <span className="project-cat">Album Artwork</span>
+                <span className="project-cat">Packaging Design</span>
               </div>
-            </a>
+            </Link>
           </div>
         </div>
         <div className="projects-more reveal">

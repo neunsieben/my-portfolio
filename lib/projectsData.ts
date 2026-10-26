@@ -164,7 +164,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   {
     slug: "forbes-cpxart",
     num: "006",
-    name: "Forbes x CPxArt",
+    name: "CPxArt x Forbes",
     category: "Art · Fashion",
     year: "2017",
     client: "CPxArt",
@@ -180,32 +180,27 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       {
         type: "image",
         src: "/images/projects/cpxart/cpxart_1.jpg",
-        alt: "Forbes x CPxArt — hand-painted bomber jackets",
+        alt: "CPxArt x Forbes — hand-painted bomber jackets",
       },
       {
         type: "image",
         src: "/images/projects/cpxart/cpxart_yellow_jacket.jpg",
-        alt: "Forbes x CPxArt — studio shot, yellow jacket",
+        alt: "CPxArt x Forbes — studio shot, yellow jacket",
       },
       {
         type: "image",
         src: "/images/projects/cpxart/cpxart_red_jacket.jpg",
-        alt: "Forbes x CPxArt — studio shot, red jacket",
+        alt: "CPxArt x Forbes — studio shot, red jacket",
       },
       {
         type: "image",
         src: "/images/projects/cpxart/cpxart_2.jpg",
-        alt: "Forbes x CPxArt — hand-painted bomber jacket detail",
-      },
-      {
-        type: "image",
-        src: "/images/projects/cpxart/cpxart_3.jpg",
-        alt: "Forbes x CPxArt — hand-painted bomber jacket",
+        alt: "CPxArt x Forbes — hand-painted bomber jacket detail",
       },
       {
         type: "image",
         src: "/images/projects/cpxart/cpxart_forbes_screenshot.jpg",
-        alt: "Forbes x CPxArt — Forbes article screenshot",
+        alt: "CPxArt x Forbes — Forbes article screenshot",
       },
     ],
   },
