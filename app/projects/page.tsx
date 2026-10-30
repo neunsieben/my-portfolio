@@ -358,13 +358,22 @@ export default function ProjectsPage() {
       let previewFront = 0;
       let previewGen = 0;
       let previewFirstPaint = true;
+      let couplePreviewToAnim = false;
+      let switchDrive: {
+        incoming: HTMLElement;
+        outgoing: HTMLElement | null;
+        dir: 1 | -1;
+        gen: number;
+        travel: number;
+        resolve: (ok: boolean) => void;
+      } | null = null;
       const previewLayers = Array.from(
         stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
       );
+      const MAGNETIC_MS = 550;
       const PREVIEW_SLIDE_MS = 720;
-      // Shorter than one magnetic step (550ms scroll + 150ms block), so a
-      // switch slide finishes before the next project can take over.
-      const PREVIEW_SWITCH_MS = 600;
+      // Match the magnetic snap so the frame moves with the list.
+      const PREVIEW_SWITCH_MS = MAGNETIC_MS;
       const PREVIEW_SLIDE_OVERLAP_PX = 2;
       const PREVIEW_CYCLE_MS = 3400;
       const PREVIEW_SLIDE_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
@@ -384,6 +393,11 @@ export default function ProjectsPage() {
         if (previewCycleTimer !== null) window.clearInterval(previewCycleTimer);
         previewCycleTimer = null;
         previewGen += 1;
+        if (switchDrive) {
+          const pending = switchDrive;
+          switchDrive = null;
+          pending.resolve(false);
+        }
         previewLayers.forEach((layer) => {
           stopLayerAnims(layer);
           pauseLayer(layer);
@@ -603,6 +617,32 @@ export default function ProjectsPage() {
         });
       }
 
+      function applySwitchDrive(e: number) {
+        const drive = switchDrive;
+        if (!drive) return;
+        const xIn = (1 - e) * drive.dir * drive.travel;
+        const xOut = -e * drive.dir * drive.travel;
+        drive.incoming.style.transform = `translate3d(${xIn}px, 0, 0)`;
+        if (drive.outgoing) {
+          drive.outgoing.style.transform = `translate3d(${xOut}px, 0, 0)`;
+        }
+      }
+
+      function settleSwitchDrive(ok: boolean) {
+        const drive = switchDrive;
+        if (!drive) return;
+        switchDrive = null;
+        const current = drive.gen === previewGen;
+        if (current) {
+          showLayerOpen(drive.incoming);
+          if (drive.outgoing && drive.outgoing !== drive.incoming) {
+            hideLayer(drive.outgoing);
+            pauseLayer(drive.outgoing);
+          }
+        }
+        drive.resolve(ok && current);
+      }
+
       // "slide" = next item inside a project; "switch" = first item of another
       // project, sliding in from the side the user is scrolling towards.
       async function transitionPreview(
@@ -611,18 +651,21 @@ export default function ProjectsPage() {
         dir: 1 | -1 = 1,
       ): Promise<boolean> {
         const ms = mode === "switch" ? PREVIEW_SWITCH_MS : PREVIEW_SLIDE_MS;
-        const waitMs = mode === "slide" ? 900 : 1500;
+        const waitMs = mode === "slide" ? 900 : 80;
         if (previewLayers.length < 2) return false;
         const gen = ++previewGen;
 
-        // Never cut a running slide short: let it land, then continue. If
-        // newer transitions were requested meanwhile, only the latest runs.
         const inFlight = previewLayers.flatMap((layer) => layer.getAnimations());
         if (inFlight.length) {
-          await Promise.all(
-            inFlight.map((a) => a.finished.catch(() => undefined)),
-          );
-          if (gen !== previewGen) return false;
+          if (mode === "switch") {
+            // Start with the scroll, don't wait out a rest-cycle slide.
+            inFlight.forEach((a) => a.finish());
+          } else {
+            await Promise.all(
+              inFlight.map((a) => a.finished.catch(() => undefined)),
+            );
+            if (gen !== previewGen) return false;
+          }
         }
 
         const incoming = previewLayers[1 - previewFront];
@@ -637,10 +680,13 @@ export default function ProjectsPage() {
         incoming.style.zIndex = "2";
         fillPreviewLayer(incoming, item);
 
-        // The current frame stays on screen until the next one can paint,
-        // so the frame never flashes empty.
-        await waitForPreviewMedia(incoming, item, waitMs);
-        if (gen !== previewGen) return false;
+        // Magnetic project-switches share the snap's rAF clock, so they
+        // must not wait on decode. In-project slides still wait to paint.
+        const couple = mode === "switch" && couplePreviewToAnim && !instant;
+        if (!couple) {
+          await waitForPreviewMedia(incoming, item, waitMs);
+          if (gen !== previewGen) return false;
+        }
 
         const hasOutgoing =
           !!outgoing &&
@@ -668,6 +714,29 @@ export default function ProjectsPage() {
         const behind = `translate3d(calc(-100% + ${SEAM}px), 0, 0)`;
         const inFrom = dir === 1 ? ahead : behind;
         const outTo = dir === 1 ? behind : ahead;
+
+        if (couple) {
+          return new Promise<boolean>((resolve) => {
+            if (switchDrive) {
+              switchDrive.resolve(false);
+              switchDrive = null;
+            }
+            const w = stickyEl.getBoundingClientRect().width || 1;
+            incoming.style.opacity = "1";
+            if (outgoing) stopLayerAnims(outgoing);
+            previewFront = 1 - previewFront;
+            switchDrive = {
+              incoming,
+              outgoing,
+              dir,
+              gen,
+              travel: Math.max(1, w - SEAM),
+              resolve,
+            };
+            applySwitchDrive(0);
+          });
+        }
+
         const timing: KeyframeAnimationOptions = {
           duration: ms,
           easing: PREVIEW_SLIDE_EASE,
@@ -698,14 +767,13 @@ export default function ProjectsPage() {
         } catch {
           return false;
         }
-        // Settle the layers even if a newer transition is queued: it waits
-        // for this slide and relies on a clean front/back state.
+        if (gen !== previewGen) return false;
         showLayerOpen(incoming);
         if (outgoing && outgoing !== incoming) {
           hideLayer(outgoing);
           pauseLayer(outgoing);
         }
-        return gen === previewGen;
+        return true;
       }
 
       function startPreviewCycle(
@@ -772,6 +840,8 @@ export default function ProjectsPage() {
         const from = window.scrollY;
         const diff = to - from;
         if (Math.abs(diff) < 1) {
+          applySwitchDrive(1);
+          settleSwitchDrive(true);
           animating = false;
           blocked = false;
           if (cb) cb();
@@ -780,18 +850,22 @@ export default function ProjectsPage() {
         const t0 = performance.now();
         function step(now: number) {
           if (pageDisposed) {
+            settleSwitchDrive(false);
             animating = false;
             blocked = false;
             return;
           }
-          const t = Math.min((now - t0) / 550, 1);
+          const t = Math.min((now - t0) / MAGNETIC_MS, 1);
           const e =
             t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
           window.scrollTo(0, from + diff * e);
+          applySwitchDrive(e);
           if (t < 1) {
             requestAnimationFrame(step);
           } else {
             window.scrollTo(0, Math.round(to));
+            applySwitchDrive(1);
+            settleSwitchDrive(true);
             animating = false;
             setTimeout(() => {
               blocked = false;
@@ -817,7 +891,7 @@ export default function ProjectsPage() {
           }
           if (mode === "locked") {
             pin(sy >= lockY - 1);
-            swapImage();
+            if (!animating && !blocked) swapImage();
           }
           if (mode === "free-bottom" && sy <= unlockY && !animating) {
             mode = "locked";
@@ -844,6 +918,12 @@ export default function ProjectsPage() {
           return;
         }
         snapIdx = next;
+        displayedImg = next;
+        const slug = rows[next]?.getAttribute("data-slug") ?? "";
+        const bg = rows[next]?.getAttribute("data-img") ?? "";
+        couplePreviewToAnim = true;
+        startPreviewCycle(slug, bg, dir > 0 ? 1 : -1);
+        couplePreviewToAnim = false;
         anim(target(snapIdx));
       }
 
