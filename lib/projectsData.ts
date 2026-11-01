@@ -66,6 +66,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         poster: "/images/projects/zalazium/zalazium_style_guide_poster.jpg",
         alt: "Zalazium — style guide animation",
       },
+      {
+        type: "image",
+        src: "/images/projects/zalazium/zalazium_logo_construction.jpg",
+        alt: "Zalazium — logo construction",
+      },
     ],
   },
   {
