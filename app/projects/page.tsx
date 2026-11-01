@@ -139,6 +139,20 @@ const LIST_ROWS = [
       "linear-gradient(160deg,#1a1a2e,#0a0a12,#0d0d1a)",
     ],
   },
+  {
+    reveal: "reveal reveal-delay-9",
+    slug: "henning-media",
+    dataImg: "linear-gradient(135deg,#161412,#22201c,#0e0d0b)",
+    num: "010",
+    name: "Henning Media",
+    desc: "Logo for photographer and videographer Niklas Henning, now working as Henning Media.",
+    slides: [
+      "linear-gradient(135deg,#161412,#22201c,#0e0d0b)",
+      "linear-gradient(160deg,#0e0d0b,#1a1815,#22201c)",
+      "linear-gradient(135deg,#161412,#22201c,#0e0d0b)",
+      "linear-gradient(160deg,#0e0d0b,#1a1815,#22201c)",
+    ],
+  },
 ] as const;
 
 function bgSrc(bg: string) {
@@ -251,6 +265,14 @@ const GRID_ITEMS = [
     cat: "Album Artwork · Tour Design",
     num: "009",
     name: "Kölsch / IPSO",
+  },
+  {
+    reveal: "reveal reveal-delay-9",
+    slug: "henning-media",
+    bg: "linear-gradient(135deg,#161412,#22201c,#0e0d0b)",
+    cat: "Logo Design",
+    num: "010",
+    name: "Henning Media",
   },
 ] as const;
 

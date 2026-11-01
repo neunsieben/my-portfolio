@@ -302,6 +302,23 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       },
     ],
   },
+  {
+    slug: "henning-media",
+    num: "010",
+    name: "Henning Media",
+    category: "Logo Design",
+    year: "2026",
+    client: "Niklas Henning / Henning Media",
+    role: "Logo Design",
+    description:
+      "Logo for photographer and videographer Niklas Henning, now working as Henning Media.\n\nIn 2026 I designed the mark and its construction — from first sketches through the finished identity.",
+    descriptionDe:
+      "Logo für den Fotografen und Videografen Niklas Henning, der heute als Henning Media arbeitet.\n\n2026 habe ich die Bildmarke und ihre Konstruktion gestaltet — von den ersten Skizzen bis zur fertigen Identität.",
+    media: [
+      { type: "image", bg: "linear-gradient(135deg,#161412,#22201c,#0e0d0b)" },
+      { type: "image", bg: "linear-gradient(160deg,#0e0d0b,#1a1815,#22201c)" },
+    ],
+  },
 ];
 
 /** Quick lookup: project number → slug */
@@ -315,4 +332,5 @@ export const NUM_TO_SLUG: Record<string, string> = {
   "007": "carlitoz-way",
   "008": "magic-mansion",
   "009": "kolsch-ipso",
+  "010": "henning-media",
 };

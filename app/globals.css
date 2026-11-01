@@ -1303,6 +1303,10 @@ nav.scrolled {
   transition-delay: 0.8s;
 }
 
+.reveal-delay-9 {
+  transition-delay: 0.9s;
+}
+
 @media (max-width: 768px) {
   .projects-page .get-in-touch-links {
     gap: 24px;
