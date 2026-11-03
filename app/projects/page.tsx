@@ -8,7 +8,7 @@ import { PROJECT_DETAILS } from "@/lib/projectsData";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const LIST_ROWS = [
@@ -182,7 +182,11 @@ function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] 
     if (m.type === "image")
       fromMedia.push({ kind: "image", src: previewSrc(m.src) });
     if (m.type === "video")
-      fromMedia.push({ kind: "video", src: m.src, poster: m.poster });
+      fromMedia.push({
+        kind: "video",
+        src: m.src,
+        poster: m.poster ? previewSrc(m.poster) : undefined,
+      });
   }
   if (fromMedia.length) return fromMedia;
   return fallback.map((bg) => {
@@ -193,88 +197,92 @@ function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] 
   });
 }
 
-const GRID_ITEMS = [
-  {
-    reveal: "reveal",
-    slug: "zalazium-gmbh",
-    bg: "url(/images/projects/zalazium/zalazium_intro_poster.jpg)",
-    cat: "UX · Branding · Motion",
-    num: "001",
-    name: "Zalazium GmbH",
-  },
-  {
-    reveal: "reveal reveal-delay-1",
-    slug: "daily-grind-coffee",
-    bg: "url(/images/projects/daily_grind/daily_grind_cup_text_poster.jpg)",
-    cat: "Branding · Packaging",
-    num: "002",
-    name: "Daily Grind Coffee",
-  },
-  {
-    reveal: "reveal reveal-delay-2",
-    slug: "donata-jan-trio",
-    bg: "url(/images/projects/donata_jan_trio/donata_cover_mockup.jpg)",
-    cat: "Album Artwork",
-    num: "003",
-    name: "Donata Jan Trio",
-  },
-  {
-    reveal: "reveal reveal-delay-3",
-    slug: "studio-liebe",
-    bg: "url(/images/projects/studio_liebe/studio_liebe_thumbnail.jpg)",
-    cat: "Branding · Web Design",
-    num: "004",
-    name: "Studio Liebe",
-  },
-  {
-    reveal: "reveal reveal-delay-4",
-    slug: "resort-13",
-    bg: "url(/images/projects/resort13/resort13_thumbnail_new.jpg)",
-    cat: "Branding · Social Media",
-    num: "005",
-    name: "Resort 13 x PALLAS",
-  },
-  {
-    reveal: "reveal reveal-delay-5",
-    slug: "forbes-cpxart",
-    bg: "url(/images/projects/cpxart/cpxart_yellow_jacket.jpg)",
-    cat: "Art · Fashion",
-    num: "006",
-    name: "CPxArt x Forbes",
-  },
-  {
-    reveal: "reveal reveal-delay-6",
-    slug: "carlitoz-way",
-    bg: "url(/images/projects/carlitoz_way/carlitoz_box_top.jpg)",
-    cat: "Packaging Design",
-    num: "007",
-    name: "Carlitoz Way",
-  },
-  {
-    reveal: "reveal reveal-delay-7",
-    slug: "magic-mansion",
-    bg: "linear-gradient(135deg,#1a0a2e,#2d1054,#3d1a6e)",
-    cat: "Branding",
-    num: "008",
-    name: "Magic Mansion",
-  },
-  {
-    reveal: "reveal reveal-delay-8",
-    slug: "kolsch-ipso",
-    bg: "url(/images/projects/koelsch/koelsch_kinema_spotify.jpg)",
-    cat: "Album Artwork · Tour Design",
-    num: "009",
-    name: "Kölsch / IPSO",
-  },
-  {
-    reveal: "reveal reveal-delay-9",
-    slug: "henning-media",
-    bg: "linear-gradient(135deg,#161412,#22201c,#0e0d0b)",
-    cat: "Logo Design",
-    num: "010",
-    name: "Henning Media",
-  },
-] as const;
+const PREVIEW_CYCLE_MS = 3400;
+
+function PreviewThumb({
+  item,
+  className,
+  alt,
+}: {
+  item: PreviewItem | undefined;
+  className: string;
+  alt: string;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        if (entry.isIntersecting) vid.play().catch(() => {});
+        else vid.pause();
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(vid);
+    return () => io.disconnect();
+  }, [item]);
+
+  if (!item) return <div className={className} />;
+  if (item.kind === "image") {
+    return <img className={className} src={item.src} alt={alt} />;
+  }
+  if (item.kind === "video") {
+    return (
+      <video
+        ref={videoRef}
+        className={className}
+        src={item.src}
+        poster={item.poster}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      />
+    );
+  }
+  return <div className={className} style={{ backgroundImage: item.bg }} />;
+}
+
+function CyclingThumb({
+  slug,
+  fallback,
+  className,
+  alt,
+}: {
+  slug: string;
+  fallback: readonly string[];
+  className: string;
+  alt: string;
+}) {
+  const items = previewItems(slug, fallback);
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    setIdx(0);
+    if (items.length < 2) return;
+    const id = window.setInterval(() => {
+      setIdx((i) => (i + 1) % items.length);
+    }, PREVIEW_CYCLE_MS);
+    return () => window.clearInterval(id);
+  }, [slug, items.length]);
+
+  const item = items[idx] ?? items[0];
+  const itemKey =
+    !item ? "empty" : item.kind === "bg" ? item.bg : item.src;
+
+  return (
+    <PreviewThumb
+      key={itemKey}
+      item={item}
+      className={className}
+      alt={alt}
+    />
+  );
+}
 
 export default function ProjectsPage() {
   const router = useRouter();
@@ -397,7 +405,6 @@ export default function ProjectsPage() {
       // Match the magnetic snap so the frame moves with the list.
       const PREVIEW_SWITCH_MS = MAGNETIC_MS;
       const PREVIEW_SLIDE_OVERLAP_PX = 2;
-      const PREVIEW_CYCLE_MS = 3400;
       const PREVIEW_SLIDE_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
       const reducePreviewMotion = () =>
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -523,6 +530,9 @@ export default function ProjectsPage() {
           }
         } else if (item.kind === "video") {
           if (photo) photo.style.display = "none";
+          layer.style.backgroundImage = item.poster
+            ? `url("${item.poster}")`
+            : "";
           if (vid) {
             if (item.poster) vid.setAttribute("poster", item.poster);
             else vid.removeAttribute("poster");
@@ -1430,34 +1440,33 @@ export default function ProjectsPage() {
         </div>
 
         <div className="projects-grid view-hidden" id="gridView">
-          {GRID_ITEMS.map((g) => (
-            <div
-              key={g.name}
-              className={`project-grid-item ${g.reveal} hoverable`}
-              data-slug={g.slug}
-            >
-              <div className="project-grid-img-wrap">
-                {bgSrc(g.bg) ? (
-                  <img
+          {LIST_ROWS.map((row) => {
+            const detail = PROJECT_DETAILS.find((p) => p.slug === row.slug);
+            return (
+              <div
+                key={row.num}
+                className={`project-grid-item ${row.reveal} hoverable`}
+                data-slug={row.slug}
+              >
+                <div className="project-grid-img-wrap">
+                  <CyclingThumb
+                    slug={row.slug}
+                    fallback={row.slides}
                     className="project-grid-img"
-                    src={bgSrc(g.bg) ?? ""}
-                    alt={g.name}
+                    alt={row.name}
                   />
-                ) : (
-                  <div
-                    className="project-grid-img"
-                    style={{ backgroundImage: g.bg }}
-                  />
-                )}
+                </div>
+                <div className="project-grid-meta">
+                  <span className="project-grid-name">
+                    {row.num}&nbsp;&nbsp;&nbsp;&nbsp;{row.name}
+                  </span>
+                  <span className="project-grid-cat">
+                    {detail?.category ?? ""}
+                  </span>
+                </div>
               </div>
-              <div className="project-grid-meta">
-                <span className="project-grid-name">
-                  {g.num}&nbsp;&nbsp;&nbsp;&nbsp;{g.name}
-                </span>
-                <span className="project-grid-cat">{g.cat}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

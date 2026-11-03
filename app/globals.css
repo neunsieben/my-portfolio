@@ -1124,6 +1124,10 @@ nav.scrolled {
     transition: transform 0.6s ease;
   }
 
+  .projects-page video.project-grid-img {
+    background: #0a0a0a;
+  }
+
   .projects-page .project-grid-item:hover .project-grid-img {
     transform: scale(1.03);
   }
