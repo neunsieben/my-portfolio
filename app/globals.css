@@ -1005,7 +1005,8 @@ nav.scrolled {
     left: 48px;
   }
 
-  .projects-page .projects-list-img {
+  .projects-page .projects-list-img,
+  .projects-page .project-grid-preview {
     position: relative;
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -1013,6 +1014,10 @@ nav.scrolled {
     isolation: isolate;
     background-color: var(--bg);
     transform-origin: center center;
+  }
+
+  .projects-page .projects-list-img,
+  .projects-page .project-grid-preview {
     transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -1072,7 +1077,8 @@ nav.scrolled {
 
   /* Magnetic snap measures row geometry; layout must not animate on resize */
   .projects-page .project-row-entry.reveal,
-  .projects-page .projects-header .reveal {
+  .projects-page .projects-header .reveal,
+  .projects-page .project-grid-item.reveal {
     transition-property: opacity, transform;
   }
 
@@ -1104,32 +1110,27 @@ nav.scrolled {
   .projects-page .project-grid-item {
     text-decoration: none;
     color: var(--text);
+    min-width: 0;
+    align-self: start;
   }
 
   .projects-page .project-grid-img-wrap {
-    overflow: hidden;
     margin-bottom: 16px;
+    overflow: hidden;
   }
 
-  .projects-page .project-grid-img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    object-position: center;
-    background-color: var(--bg);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: block;
-    transition: transform 0.6s ease;
-  }
-
-  .projects-page video.project-grid-img {
-    background: #0a0a0a;
-  }
-
-  .projects-page .project-grid-item:hover .project-grid-img {
+  .projects-page .project-grid-item:hover .project-grid-preview {
     transform: scale(1.03);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .projects-page .project-grid-preview {
+      transition: none;
+    }
+
+    .projects-page .project-grid-item:hover .project-grid-preview {
+      transform: none;
+    }
   }
 
   .projects-page .project-grid-meta {

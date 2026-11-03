@@ -6,9 +6,24 @@ import { SiteNav } from "@/components/SiteNav";
 import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
 import { PROJECT_DETAILS } from "@/lib/projectsData";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
+import {
+  createSlidingPreview,
+  fillPreviewLayer,
+  hideLayer,
+  nextFrame,
+  pauseLayer,
+  PREVIEW_CYCLE_MS,
+  PREVIEW_SLIDE_MS,
+  PREVIEW_SLIDE_OVERLAP_PX,
+  previewSlideTransforms,
+  showLayerOpen,
+  stopLayerAnims,
+  waitForPreviewMedia,
+  type PreviewItem,
+} from "@/lib/slidingPreview";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 const LIST_ROWS = [
@@ -160,11 +175,6 @@ function bgSrc(bg: string) {
   return m?.[1] ?? null;
 }
 
-type PreviewItem =
-  | { kind: "image"; src: string }
-  | { kind: "video"; src: string; poster?: string }
-  | { kind: "bg"; bg: string };
-
 const PREVIEW_DIR = "/images/previews/";
 const ORIGINAL_DIR = "/images/projects/";
 
@@ -197,90 +207,42 @@ function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] 
   });
 }
 
-const PREVIEW_CYCLE_MS = 3400;
-
-function PreviewThumb({
-  item,
-  className,
-  alt,
-}: {
-  item: PreviewItem | undefined;
-  className: string;
-  alt: string;
-}) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry) return;
-        if (entry.isIntersecting) vid.play().catch(() => {});
-        else vid.pause();
-      },
-      { threshold: 0.35 },
-    );
-    io.observe(vid);
-    return () => io.disconnect();
-  }, [item]);
-
-  if (!item) return <div className={className} />;
-  if (item.kind === "image") {
-    return <img className={className} src={item.src} alt={alt} />;
-  }
-  if (item.kind === "video") {
-    return (
-      <video
-        ref={videoRef}
-        className={className}
-        src={item.src}
-        poster={item.poster}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-      />
-    );
-  }
-  return <div className={className} style={{ backgroundImage: item.bg }} />;
-}
-
-function CyclingThumb({
+function SlidingPreviewFrame({
   slug,
   fallback,
-  className,
-  alt,
 }: {
   slug: string;
   fallback: readonly string[];
-  className: string;
-  alt: string;
 }) {
-  const items = previewItems(slug, fallback);
-  const [idx, setIdx] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setIdx(0);
-    if (items.length < 2) return;
-    const id = window.setInterval(() => {
-      setIdx((i) => (i + 1) % items.length);
-    }, PREVIEW_CYCLE_MS);
-    return () => window.clearInterval(id);
-  }, [slug, items.length]);
-
-  const item = items[idx] ?? items[0];
-  const itemKey =
-    !item ? "empty" : item.kind === "bg" ? item.bg : item.src;
+    const root = rootRef.current;
+    if (!root) return;
+    const preview = createSlidingPreview(root);
+    preview.startCycle(previewItems(slug, fallback));
+    const io = new IntersectionObserver(
+      ([entry]) => preview.setInView(!!entry?.isIntersecting),
+      { threshold: 0.01 },
+    );
+    io.observe(root);
+    return () => {
+      io.disconnect();
+      preview.stop();
+    };
+  }, [slug, fallback]);
 
   return (
-    <PreviewThumb
-      key={itemKey}
-      item={item}
-      className={className}
-      alt={alt}
-    />
+    <div ref={rootRef} className="project-grid-preview">
+      <div className="preview-layer" data-preview-layer="0">
+        <img alt="" />
+        <video muted loop playsInline preload="auto" />
+      </div>
+      <div className="preview-layer" data-preview-layer="1">
+        <img alt="" />
+        <video muted loop playsInline preload="auto" />
+      </div>
+    </div>
   );
 }
 
@@ -401,22 +363,10 @@ export default function ProjectsPage() {
         stickyEl.querySelectorAll<HTMLElement>("[data-preview-layer]"),
       );
       const MAGNETIC_MS = 550;
-      const PREVIEW_SLIDE_MS = 720;
       // Match the magnetic snap so the frame moves with the list.
       const PREVIEW_SWITCH_MS = MAGNETIC_MS;
-      const PREVIEW_SLIDE_OVERLAP_PX = 2;
-      const PREVIEW_SLIDE_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
       const reducePreviewMotion = () =>
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      function pauseLayer(layer: HTMLElement | undefined) {
-        const vid = layer?.querySelector("video");
-        vid?.pause();
-      }
-
-      function stopLayerAnims(layer: HTMLElement) {
-        layer.getAnimations().forEach((anim) => anim.cancel());
-      }
 
       stopPreviewCycle = () => {
         if (previewCycleTimer !== null) window.clearInterval(previewCycleTimer);
@@ -509,95 +459,6 @@ export default function ProjectsPage() {
         return Math.min(centered, Math.max(0, maxScroll));
       }
 
-      // Setting the same src again would restart the download, so only
-      // assign when the layer holds something else.
-      function fillPreviewLayer(
-        layer: HTMLElement,
-        item: PreviewItem,
-        play = true,
-      ) {
-        const photo = layer.querySelector("img");
-        const vid = layer.querySelector("video");
-        layer.style.backgroundImage = "";
-        if (item.kind === "image") {
-          if (vid) {
-            vid.pause();
-            vid.style.display = "none";
-          }
-          if (photo) {
-            if (photo.getAttribute("src") !== item.src) photo.src = item.src;
-            photo.style.display = "block";
-          }
-        } else if (item.kind === "video") {
-          if (photo) photo.style.display = "none";
-          layer.style.backgroundImage = item.poster
-            ? `url("${item.poster}")`
-            : "";
-          if (vid) {
-            if (item.poster) vid.setAttribute("poster", item.poster);
-            else vid.removeAttribute("poster");
-            if (vid.getAttribute("src") !== item.src) {
-              vid.src = item.src;
-              vid.load();
-            }
-            vid.style.display = "block";
-            if (play) vid.play().catch(() => {});
-            else vid.pause();
-          }
-        } else {
-          if (photo) photo.style.display = "none";
-          if (vid) {
-            vid.pause();
-            vid.style.display = "none";
-          }
-          layer.style.backgroundImage = item.bg;
-        }
-      }
-
-      // Resolves once the layer can paint a real frame (decoded image or
-      // first video frame), or after timeoutMs as a last resort.
-      function waitForPreviewMedia(
-        layer: HTMLElement,
-        item: PreviewItem,
-        timeoutMs: number,
-      ) {
-        const timeout = new Promise<void>((resolve) =>
-          window.setTimeout(resolve, timeoutMs),
-        );
-        if (item.kind === "image") {
-          const photo = layer.querySelector("img");
-          if (!photo) return Promise.resolve();
-          const loaded =
-            photo.complete && photo.naturalWidth > 0
-              ? Promise.resolve()
-              : new Promise<void>((resolve) => {
-                  photo.addEventListener("load", () => resolve(), {
-                    once: true,
-                  });
-                  photo.addEventListener("error", () => resolve(), {
-                    once: true,
-                  });
-                });
-          const ready = loaded
-            .then(() => photo.decode?.())
-            .catch(() => undefined);
-          return Promise.race([ready, timeout]);
-        }
-        if (item.kind === "video") {
-          const vid = layer.querySelector("video");
-          if (!vid || vid.readyState >= 2) return Promise.resolve();
-          return Promise.race([
-            new Promise<void>((resolve) => {
-              const done = () => resolve();
-              vid.addEventListener("loadeddata", done, { once: true });
-              vid.addEventListener("error", done, { once: true });
-            }),
-            timeout,
-          ]);
-        }
-        return Promise.resolve();
-      }
-
       const warmed = new Set<string>();
       const warmVideos: HTMLVideoElement[] = [];
       function warm(item: PreviewItem | undefined) {
@@ -629,24 +490,6 @@ export default function ProjectsPage() {
       function warmAround(idx: number) {
         rowItems(idx).forEach(warm);
         [idx + 1, idx - 1, idx + 2].forEach((i) => warm(rowItems(i)[0]));
-      }
-
-      function hideLayer(layer: HTMLElement) {
-        stopLayerAnims(layer);
-        layer.style.opacity = "0";
-        layer.style.transform = "scale(1.1)";
-      }
-
-      function showLayerOpen(layer: HTMLElement) {
-        stopLayerAnims(layer);
-        layer.style.opacity = "1";
-        layer.style.transform = "scale(1)";
-      }
-
-      function nextFrame() {
-        return new Promise<void>((resolve) => {
-          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-        });
       }
 
       function applySwitchDrive(e: number) {
@@ -739,14 +582,6 @@ export default function ProjectsPage() {
           return true;
         }
 
-        // Both layers travel the same distance with a constant overlap, so
-        // sub-pixel rounding can never open a seam between them.
-        const SEAM = PREVIEW_SLIDE_OVERLAP_PX;
-        const ahead = `translate3d(calc(100% - ${SEAM}px), 0, 0)`;
-        const behind = `translate3d(calc(-100% + ${SEAM}px), 0, 0)`;
-        const inFrom = dir === 1 ? ahead : behind;
-        const outTo = dir === 1 ? behind : ahead;
-
         if (couple) {
           return new Promise<boolean>((resolve) => {
             if (switchDrive) {
@@ -762,17 +597,20 @@ export default function ProjectsPage() {
               outgoing,
               dir,
               gen,
-              travel: Math.max(1, w - SEAM),
+              travel: Math.max(1, w - PREVIEW_SLIDE_OVERLAP_PX),
               resolve,
             };
             applySwitchDrive(0);
           });
         }
 
-        const timing: KeyframeAnimationOptions = {
+        const { inFrom, outTo, timing } = previewSlideTransforms(
+          dir,
+          stickyEl.getBoundingClientRect().width || 1,
+        );
+        const slideTiming: KeyframeAnimationOptions = {
+          ...timing,
           duration: ms,
-          easing: PREVIEW_SLIDE_EASE,
-          fill: "forwards",
         };
         incoming.style.opacity = "1";
         incoming.style.transform = inFrom;
@@ -781,14 +619,14 @@ export default function ProjectsPage() {
 
         const inAnim = incoming.animate(
           [{ transform: inFrom }, { transform: "translate3d(0, 0, 0)" }],
-          timing,
+          slideTiming,
         );
 
         if (hasOutgoing && outgoing) {
           stopLayerAnims(outgoing);
           outgoing.animate(
             [{ transform: "translate3d(0, 0, 0)" }, { transform: outTo }],
-            timing,
+            slideTiming,
           );
         }
 
@@ -1449,11 +1287,9 @@ export default function ProjectsPage() {
                 data-slug={row.slug}
               >
                 <div className="project-grid-img-wrap">
-                  <CyclingThumb
+                  <SlidingPreviewFrame
                     slug={row.slug}
                     fallback={row.slides}
-                    className="project-grid-img"
-                    alt={row.name}
                   />
                 </div>
                 <div className="project-grid-meta">
