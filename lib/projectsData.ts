@@ -84,10 +84,18 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     description: LOREM,
     descriptionDe: LOREM_DE,
     media: [
-      { type: "image", bg: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)" },
-      { type: "image", bg: "linear-gradient(160deg,#0f3460,#1a1a2e,#16213e)" },
-      { type: "image", bg: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)" },
-      { type: "image", bg: "linear-gradient(160deg,#0f3460,#1a1a2e,#16213e)" },
+      {
+        type: "video",
+        src: "/images/projects/daily_grind/daily_grind_beans_trailer.mp4",
+        poster: "/images/projects/daily_grind/daily_grind_beans_trailer_poster.jpg",
+        alt: "Daily Grind Coffee — animated logo trailer",
+      },
+      {
+        type: "video",
+        src: "/images/projects/daily_grind/daily_grind_cup_text.mp4",
+        poster: "/images/projects/daily_grind/daily_grind_cup_text_poster.jpg",
+        alt: "Daily Grind Coffee — cup text animation",
+      },
     ],
   },
   {

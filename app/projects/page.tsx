@@ -30,15 +30,15 @@ const LIST_ROWS = [
   {
     reveal: "reveal reveal-delay-1",
     slug: "daily-grind-coffee",
-    dataImg: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)",
+    dataImg: "url(/images/projects/daily_grind/daily_grind_cup_text_poster.jpg)",
     num: "002",
     name: "Daily Grind Coffee",
     desc: "Complete brand identity and packaging design for a specialty coffee roastery based in Hamburg.",
     slides: [
-      "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)",
-      "linear-gradient(160deg,#0f3460,#1a1a2e,#16213e)",
-      "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)",
-      "linear-gradient(160deg,#0f3460,#1a1a2e,#16213e)",
+      "url(/images/projects/daily_grind/daily_grind_cup_text_poster.jpg)",
+      "url(/images/projects/daily_grind/daily_grind_beans_trailer_poster.jpg)",
+      "url(/images/projects/daily_grind/daily_grind_cup_text_poster.jpg)",
+      "url(/images/projects/daily_grind/daily_grind_beans_trailer_poster.jpg)",
     ],
   },
   {
@@ -197,7 +197,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal",
     slug: "zalazium-gmbh",
-    bg: "linear-gradient(135deg,#c8c6c2,#d8d6d2,#bab8b4)",
+    bg: "url(/images/projects/zalazium/zalazium_intro_poster.jpg)",
     cat: "UX · Branding · Motion",
     num: "001",
     name: "Zalazium GmbH",
@@ -205,7 +205,7 @@ const GRID_ITEMS = [
   {
     reveal: "reveal reveal-delay-1",
     slug: "daily-grind-coffee",
-    bg: "linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)",
+    bg: "url(/images/projects/daily_grind/daily_grind_cup_text_poster.jpg)",
     cat: "Branding · Packaging",
     num: "002",
     name: "Daily Grind Coffee",
