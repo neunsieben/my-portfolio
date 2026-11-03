@@ -8,9 +8,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const project = PROJECT_DETAILS.find((p) => p.slug === slug);
-  if (!project) return { title: "Leonard Semmler — Projects" };
+  if (!project) return { title: "Leonard Baack — Projects" };
   return {
-    title: `${project.name} — Leonard Semmler`,
+    title: `${project.name} — Leonard Baack`,
     description: project.description.slice(0, 160),
   };
 }

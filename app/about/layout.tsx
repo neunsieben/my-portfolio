@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Leonard Semmler — About",
-  description: "About Leonard Semmler",
+  title: "Leonard Baack — About",
+  description: "About Leonard Baack",
 };
 
 export default function AboutLayout({

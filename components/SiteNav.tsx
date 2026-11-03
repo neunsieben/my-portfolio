@@ -37,7 +37,7 @@ export function SiteNav({
     const logoEl = document.getElementById("navLogo");
     if (logoEl) {
       const n = new Date();
-      logoEl.textContent = `LEONARDSEMMLER/PORTFOLIO/${n.getFullYear()}/${MONTHS[n.getMonth()]}`;
+      logoEl.textContent = `LEONARDBAACK/PORTFOLIO/${n.getFullYear()}/${MONTHS[n.getMonth()]}`;
     }
 
     // Typewriter animation scoped to the nav — works on every page
@@ -62,7 +62,7 @@ export function SiteNav({
         href={logoHref}
         className="nav-logo terminal-link hoverable"
         id="navLogo"
-        aria-label="Leonard Semmler portfolio home"
+        aria-label="Leonard Baack portfolio home"
       />
       <ul className="nav-links">{children}</ul>
     </nav>

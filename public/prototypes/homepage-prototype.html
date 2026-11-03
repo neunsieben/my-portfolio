@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
-<title>Leonard Semmler — Portfolio</title>
+<title>Leonard Baack — Portfolio</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
   @font-face{font-family:'Montreal';src:url('montreal.woff2') format('woff2');font-weight:700;font-display:swap;}
@@ -49,7 +49,7 @@
   .hero-inner{text-align:left;}
   .hero-canvas-wrap{display:block;line-height:0;margin-top:-4vw;}
   .hero-canvas-wrap:first-child{margin-top:0;}
-  #leonardCanvas,#semmlerCanvas{display:block;}
+  #leonardCanvas,#baackCanvas{display:block;}
   .hero-name{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--grey-mid);text-align:left;line-height:1.6;margin:16px 0 0;padding-left:calc(min(90vw, 1100px) * 0.03);opacity:0;animation:fadeUp 1s ease 2.4s forwards;}
   .hero-name .typewriter-cursor{display:inline-block;width:10px;height:1.1em;background:var(--grey-mid);vertical-align:text-bottom;margin-left:2px;animation:blink 0.8s step-end infinite;}
   @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
@@ -154,7 +154,7 @@
   <div class="hero-liquid-container">
     <div class="hero-inner">
       <div class="hero-canvas-wrap"><canvas id="leonardCanvas"></canvas></div>
-      <div class="hero-canvas-wrap"><canvas id="semmlerCanvas"></canvas></div>
+      <div class="hero-canvas-wrap"><canvas id="baackCanvas"></canvas></div>
       <div class="hero-name"><span id="typewriterText"></span><span class="typewriter-cursor"></span></div>
     </div>
   </div>
@@ -214,7 +214,7 @@
 </section>
 
 <footer class="footer">
-  <div class="footer-bottom">© 2026 Leonard Semmler. All Rights Reserved.</div>
+  <div class="footer-bottom">© 2026 Leonard Baack. All Rights Reserved.</div>
 </footer>
 
 <script>
@@ -513,10 +513,10 @@ const leonardInstance = createGlassEffect(
 );
 
 // ========================================================
-// HERO — "Semmler" canvas (independent effect)
+// HERO — "Baack" canvas (independent effect)
 // ========================================================
-const semmlerInstance = createGlassEffect(
-  document.getElementById('semmlerCanvas'),
+const baackInstance = createGlassEffect(
+  document.getElementById('baackCanvas'),
   (tx, tc, dpr) => {
     const vw = window.innerWidth;
     const fs = Math.floor(Math.min(220, Math.max(56, vw * 0.14)) * dpr);
@@ -524,7 +524,7 @@ const semmlerInstance = createGlassEffect(
     tx.font = `700 ${fs}px 'Montreal','Plus Jakarta Sans',-apple-system,Helvetica Neue,sans-serif`;
     tx.textAlign = 'left'; tx.textBaseline = 'middle';
     tx.fillStyle = '#0a0a0a';
-    tx.fillText('Semmler', padding, tc.height * 0.55);
+    tx.fillText('Baack', padding, tc.height * 0.55);
   },
   260, 75
 );
@@ -554,8 +554,8 @@ const getInTouchInstance = createVerticalGlassEffect(
 document.fonts.ready.then(() => {
   leonardInstance.resize();
   leonardInstance.render();
-  semmlerInstance.resize();
-  semmlerInstance.render();
+  baackInstance.resize();
+  baackInstance.render();
   getInTouchInstance.resize();
   getInTouchInstance.render();
 });
@@ -615,12 +615,12 @@ document.fonts.ready.then(() => {
   sweepObs.observe(canvas);
 })();
 
-// NAV LOGO — LEONARDSEMMLER/PORTFOLIO/YEAR/MONTH
+// NAV LOGO — LEONARDBAACK/PORTFOLIO/YEAR/MONTH
 (function(){
   const el = document.getElementById('navLogo');
   const months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
   const now = new Date();
-  el.textContent = `LEONARDSEMMLER/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
+  el.textContent = `LEONARDBAACK/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
 })();
 (function(){
   const text = 'Visual Storytelling';
@@ -664,7 +664,7 @@ document.fonts.ready.then(() => {
 function simulateGlassSweep() {
   const canvases = [
     document.getElementById('leonardCanvas'),
-    document.getElementById('semmlerCanvas')
+    document.getElementById('baackCanvas')
   ];
   const duration = 350;
   const steps = 25;
@@ -741,7 +741,7 @@ function simulateGlassSweep() {
   // Typewriter synced to total duration
   const months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
   const now = new Date();
-  const loaderText = `LEONARDSEMMLER/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
+  const loaderText = `LEONARDBAACK/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
   const typeEl = document.getElementById('loaderTypeText');
   const charDelay = (totalDuration - 400) / loaderText.length;
   let ti = 0;

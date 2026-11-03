@@ -35,8 +35,8 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Leonard Semmler — Portfolio",
-  description: "Portfolio of Leonard Semmler",
+  title: "Leonard Baack — Portfolio",
+  description: "Portfolio of Leonard Baack",
 };
 
 export default function RootLayout({

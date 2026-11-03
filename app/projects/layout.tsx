@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Leonard Semmler — Projects",
-  description: "Selected projects by Leonard Semmler",
+  title: "Leonard Baack — Projects",
+  description: "Selected projects by Leonard Baack",
 };
 
 export default function ProjectsLayout({

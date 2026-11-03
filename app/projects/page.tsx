@@ -1310,7 +1310,7 @@ export default function ProjectsPage() {
         <a
           href={CONTACT_MAILTO}
           className="get-in-touch-headline-link reveal"
-          aria-label="Send email to Leonard Semmler"
+          aria-label="Send email to Leonard Baack"
         >
           <canvas id="getInTouchCanvas" />
         </a>
@@ -1335,7 +1335,7 @@ export default function ProjectsPage() {
 
       <footer className="footer">
         <div className="footer-bottom">
-          © 2026 Leonard Semmler. All Rights Reserved.
+          © 2026 Leonard Baack. All Rights Reserved.
         </div>
       </footer>
     </div>

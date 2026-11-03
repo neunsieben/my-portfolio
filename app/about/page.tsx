@@ -307,7 +307,7 @@ export default function AboutPage() {
         <div className="about-photo reveal">
           <img
             src="/images/about/leo_press_portfolio.jpg"
-            alt="Leonard Semmler"
+            alt="Leonard Baack"
             className="about-photo-img"
           />
         </div>
@@ -341,7 +341,7 @@ export default function AboutPage() {
         <div className="about-bio-col reveal">
           <div className="about-bio-label">Background</div>
           <p className="about-bio-text">
-            I&apos;m <strong>Leonard Semmler</strong>, a designer based in{" "}
+            I&apos;m <strong>Leonard Baack</strong>, a designer based in{" "}
             <strong>Hamburg, Germany</strong> with a B.Sc. in{" "}
             <strong>Human-Computer Interaction</strong>. My work lives at the
             intersection of strategy and aesthetics — I believe the best design
@@ -395,7 +395,7 @@ export default function AboutPage() {
         <a
           href={CONTACT_MAILTO}
           className="get-in-touch-headline-link reveal"
-          aria-label="Send email to Leonard Semmler"
+          aria-label="Send email to Leonard Baack"
         >
           <canvas id="getInTouchCanvas" />
         </a>
@@ -420,7 +420,7 @@ export default function AboutPage() {
 
       <footer className="footer">
         <div className="footer-bottom">
-          © 2026 Leonard Semmler. All Rights Reserved.
+          © 2026 Leonard Baack. All Rights Reserved.
         </div>
       </footer>
     </div>

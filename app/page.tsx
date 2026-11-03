@@ -219,9 +219,9 @@ void main(){
     }
 
     const leonardEl = document.getElementById("leonardCanvas");
-    const semmlerEl = document.getElementById("semmlerCanvas");
+    const baackEl = document.getElementById("baackCanvas");
     const getInTouchEl = document.getElementById("getInTouchCanvas");
-    if (!leonardEl || !semmlerEl || !getInTouchEl) {
+    if (!leonardEl || !baackEl || !getInTouchEl) {
       return () => {};
     }
 
@@ -246,10 +246,10 @@ void main(){
     );
 
     // ========================================================
-    // HERO — "Semmler" canvas (independent effect)
+    // HERO — "Baack" canvas (independent effect)
     // ========================================================
-    const semmlerInstance = createGlassEffect(
-      semmlerEl as HTMLCanvasElement,
+    const baackInstance = createGlassEffect(
+      baackEl as HTMLCanvasElement,
       (tx, tc, dpr) => {
         const vw = window.innerWidth;
         const fs = Math.floor(Math.min(220, Math.max(56, vw * 0.14)) * dpr);
@@ -259,7 +259,7 @@ void main(){
         tx.textAlign = "left";
         tx.textBaseline = "middle";
         tx.fillStyle = "#0a0a0a";
-        tx.fillText("Semmler", padding, tc.height * 0.55);
+        tx.fillText("Baack", padding, tc.height * 0.55);
       },
       260,
       75,
@@ -295,8 +295,8 @@ void main(){
       if (pageDisposed) return;
       leonardInstance.resize();
       leonardInstance.render();
-      semmlerInstance.resize();
-      semmlerInstance.render();
+      baackInstance.resize();
+      baackInstance.render();
       getInTouchInstance.resize();
       getInTouchInstance.render();
     });
@@ -412,7 +412,7 @@ void main(){
     function simulateGlassSweep() {
       const canvases = [
         document.getElementById("leonardCanvas"),
-        document.getElementById("semmlerCanvas"),
+        document.getElementById("baackCanvas"),
       ].filter(Boolean) as HTMLCanvasElement[];
       const duration = 350;
       const steps = 25;
@@ -509,7 +509,7 @@ void main(){
         "DECEMBER",
       ];
       const now = new Date();
-      const loaderText = `LEONARDSEMMLER/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
+      const loaderText = `LEONARDBAACK/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
       const typeEl = document.getElementById("loaderTypeText");
       const charDelay = (totalDuration - 400) / loaderText.length;
       let ti = 0;
@@ -663,7 +663,7 @@ void main(){
     return () => {
       pageDisposed = true;
       window.removeEventListener("resize", leonardInstance.resize);
-      window.removeEventListener("resize", semmlerInstance.resize);
+      window.removeEventListener("resize", baackInstance.resize);
       window.removeEventListener("resize", getInTouchInstance.resize);
       sweepObs?.disconnect();
       obs.disconnect();
@@ -714,7 +714,7 @@ void main(){
               <canvas id="leonardCanvas"></canvas>
             </div>
             <div className="hero-canvas-wrap">
-              <canvas id="semmlerCanvas"></canvas>
+              <canvas id="baackCanvas"></canvas>
             </div>
             <div className="hero-name">
               <span id="typewriterText"></span>
@@ -830,7 +830,7 @@ void main(){
         <a
           href={CONTACT_MAILTO}
           className="get-in-touch-headline-link reveal"
-          aria-label="Send email to Leonard Semmler"
+          aria-label="Send email to Leonard Baack"
         >
           <canvas id="getInTouchCanvas"></canvas>
         </a>
@@ -855,7 +855,7 @@ void main(){
 
       <footer className="footer">
         <div className="footer-bottom">
-          © 2026 Leonard Semmler. All Rights Reserved.
+          © 2026 Leonard Baack. All Rights Reserved.
         </div>
       </footer>
     </>
