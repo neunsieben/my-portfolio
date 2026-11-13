@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 const MAX_TILT = 16;
 
-/** Black 4:3 frame with a square cover. The frame tilts toward the cursor. */
+/** Black 4:3 window. Only the square cover inside it tilts. */
 export function TiltCover({
   src,
   alt,
@@ -93,9 +93,8 @@ export function TiltCover({
 
   return (
     <div ref={frameRef} className={className ? `tilt-cover ${className}` : "tilt-cover"}>
-      <div ref={planeRef} className="tilt-cover-plane">
+      <div ref={planeRef} className="tilt-cover-art">
         <img
-          className="tilt-cover-art"
           src={src}
           alt={alt}
           draggable={false}

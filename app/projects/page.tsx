@@ -1252,12 +1252,8 @@ export default function ProjectsPage() {
                     <div className="carousel-track-inner">
                       {row.slug === "hungry4" ? (
                         <div className="carousel-slide tilt-cover">
-                          <div className="tilt-cover-plane">
-                            <img
-                              className="tilt-cover-art"
-                              src={HUNGRY4_COVER}
-                              alt=""
-                            />
+                          <div className="tilt-cover-art">
+                            <img src={HUNGRY4_COVER} alt="" />
                           </div>
                         </div>
                       ) : (
