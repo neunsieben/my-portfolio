@@ -5,14 +5,78 @@ import { SiteCursor } from "@/components/SiteCursor";
 import { SiteNav } from "@/components/SiteNav";
 import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
-import { PROJECT_DETAILS } from "@/lib/projectsData";
+import { PROJECT_DETAILS, type ProjectMedia } from "@/lib/projectsData";
 import { initTerminalLinks } from "@/lib/terminalAnimation";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import { TiltCover } from "@/components/TiltCover";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
+function DetailMedia({
+  item,
+  eager,
+  name,
+}: {
+  item: ProjectMedia;
+  eager: boolean;
+  name: string;
+}) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const wrap = wrapRef.current;
+    if (!video || !wrap) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          video.preload = "auto";
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { rootMargin: "240px 0px" },
+    );
+    io.observe(wrap);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className={`pd-media-item reveal${!item.src ? " pd-placeholder" : ""}`}
+      style={!item.src && item.bg ? { background: item.bg } : {}}
+    >
+      {item.presentation === "tilt-cover" && item.src ? (
+        <TiltCover src={item.src} alt={item.alt ?? name} />
+      ) : null}
+      {item.presentation !== "tilt-cover" && item.type === "image" && item.src ? (
+        <img
+          src={item.src}
+          alt={item.alt ?? name}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={eager ? "high" : "low"}
+        />
+      ) : null}
+      {item.type === "video" && item.src ? (
+        <video
+          ref={videoRef}
+          src={item.src}
+          poster={item.poster}
+          muted
+          loop
+          playsInline
+          preload={eager ? "auto" : "none"}
+        />
+      ) : null}
+    </div>
+  );
+}
 
 export default function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -235,29 +299,12 @@ export default function ProjectDetailPage() {
         <div className="pd-left pd-media-left-col" aria-hidden="true" />
         <div className="pd-media-right">
           {project.media.map((item, i) => (
-            <div
+            <DetailMedia
               key={i}
-              className={`pd-media-item reveal${!item.src ? " pd-placeholder" : ""}`}
-              style={!item.src && item.bg ? { background: item.bg } : {}}
-            >
-              {item.presentation === "tilt-cover" && item.src ? (
-                <TiltCover src={item.src} alt={item.alt ?? project.name} />
-              ) : null}
-              {item.presentation !== "tilt-cover" && item.type === "image" && item.src && (
-                <img src={item.src} alt={item.alt ?? project.name} />
-              )}
-              {item.type === "video" && item.src && (
-                <video
-                  src={item.src}
-                  poster={item.poster}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                />
-              )}
-            </div>
+              item={item}
+              eager={i === 0}
+              name={project.name}
+            />
           ))}
         </div>
       </section>

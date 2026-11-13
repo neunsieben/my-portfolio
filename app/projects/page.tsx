@@ -1053,12 +1053,41 @@ export default function ProjectsPage() {
 
     // MOBILE CONTINUOUS SLIDESHOW (prototype: clone + RAF; run on mobile load & when resizing into mobile)
     const carouselInited = new WeakSet<HTMLElement>();
+    const rowPlaybackBound = new WeakSet<HTMLElement>();
+    const rowPlaybackObservers: IntersectionObserver[] = [];
     const carouselRafByIdx: number[] = [];
     let carouselTimeout: number | null = null;
     let resizeCarouselTimer: number | null = null;
 
+    function bindCarouselPlayback(row: HTMLElement) {
+      if (rowPlaybackBound.has(row)) return;
+      rowPlaybackBound.add(row);
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          row.querySelectorAll("video").forEach((node) => {
+            const video = node as HTMLVideoElement;
+            if (entry?.isIntersecting) {
+              video.preload = "auto";
+              video.play().catch(() => {});
+            } else {
+              video.pause();
+            }
+          });
+        },
+        { threshold: 0.45 },
+      );
+      io.observe(row);
+      rowPlaybackObservers.push(io);
+    }
+
     function startMobileCarousels() {
-      if (pageDisposed || window.innerWidth > 768) return;
+      if (pageDisposed) return;
+      if (window.innerWidth > 768) {
+        document.querySelectorAll(".project-row-carousel video").forEach((node) => {
+          (node as HTMLVideoElement).pause();
+        });
+        return;
+      }
       document.querySelectorAll(".carousel-track-inner").forEach((track, idx) => {
         const el = track as HTMLElement;
         if (carouselInited.has(el)) return;
@@ -1072,7 +1101,7 @@ export default function ProjectsPage() {
           video.muted = true;
           video.loop = true;
           video.playsInline = true;
-          video.play().catch(() => {});
+          video.preload = "none";
         });
         const speed = 1.2 + (idx % 3) * 0.4;
         let pos = 0;
@@ -1086,6 +1115,9 @@ export default function ProjectsPage() {
           carouselRafByIdx[idx] = requestAnimationFrame(animate);
         }
         carouselRafByIdx[idx] = requestAnimationFrame(animate);
+      });
+      document.querySelectorAll(".project-row-entry").forEach((row) => {
+        bindCarouselPlayback(row as HTMLElement);
       });
     }
 
@@ -1115,17 +1147,28 @@ export default function ProjectsPage() {
     const slugEls = Array.from(
       document.querySelectorAll<HTMLElement>("[data-slug]"),
     );
-    const slugClickHandlers: Array<{ el: HTMLElement; fn: EventListener }> = [];
+    const slugClickHandlers: Array<{
+      el: HTMLElement;
+      fn: EventListener;
+      arm: EventListener;
+    }> = [];
     slugEls.forEach((el) => {
       const slug = el.getAttribute("data-slug");
       if (!slug) return;
       el.style.cursor = "pointer";
+      const arm: EventListener = () => {
+        routerRef.current.prefetch(`/projects/${slug}`);
+      };
       const fn: EventListener = () => {
         if (window.getSelection()?.toString()) return;
+        document.querySelectorAll("video").forEach((node) => {
+          (node as HTMLVideoElement).pause();
+        });
         routerRef.current.push(`/projects/${slug}`);
       };
+      el.addEventListener("pointerdown", arm);
       el.addEventListener("click", fn);
-      slugClickHandlers.push({ el, fn });
+      slugClickHandlers.push({ el, fn, arm });
     });
 
     const onPreviewImgError = (e: Event) => {
@@ -1145,6 +1188,7 @@ export default function ProjectsPage() {
       carouselRafByIdx.forEach((id) => {
         if (id) cancelAnimationFrame(id);
       });
+      rowPlaybackObservers.forEach((io) => io.disconnect());
       if (carouselTimeout !== null) window.clearTimeout(carouselTimeout);
       if (resizeCarouselTimer !== null) window.clearTimeout(resizeCarouselTimer);
       window.removeEventListener("resize", syncViewForMobile);
@@ -1166,9 +1210,10 @@ export default function ProjectsPage() {
       sweepObs?.disconnect();
       obs.disconnect();
       terminalCleanups.forEach((fn) => fn());
-      slugClickHandlers.forEach(({ el, fn }) =>
-        el.removeEventListener("click", fn),
-      );
+      slugClickHandlers.forEach(({ el, fn, arm }) => {
+        el.removeEventListener("pointerdown", arm);
+        el.removeEventListener("click", fn);
+      });
     };
   }, []);
 
@@ -1266,11 +1311,10 @@ export default function ProjectsPage() {
                               className="carousel-slide"
                               src={item.src}
                               poster={item.poster}
-                              autoPlay
                               muted
                               loop
                               playsInline
-                              preload="metadata"
+                              preload="none"
                             />
                           );
                         }
