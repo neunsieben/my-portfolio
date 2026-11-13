@@ -457,13 +457,14 @@ void main(){
     // ========================================================
     const loader = document.getElementById("loader");
     const counter = document.getElementById("loaderCounter");
+    const blockScroll = (event: TouchEvent) => event.preventDefault();
     if (loader && counter) {
       const loaderEl = loader;
       const counterEl = counter;
       let current = 0;
       let target = 0;
 
-      document.documentElement.classList.add("is-loading");
+      loaderEl.addEventListener("touchmove", blockScroll, { passive: false });
 
       const totalDuration = 1500;
 
@@ -486,7 +487,7 @@ void main(){
             loaderEl.classList.add("phase2");
             setTimeout(() => {
               loaderEl.classList.add("done");
-              document.documentElement.classList.remove("is-loading");
+              loaderEl.removeEventListener("touchmove", blockScroll);
               simulateGlassSweep();
             }, 800);
           }, 400);
@@ -667,7 +668,7 @@ void main(){
       window.removeEventListener("resize", getInTouchInstance.resize);
       sweepObs?.disconnect();
       obs.disconnect();
-      document.documentElement.classList.remove("is-loading");
+      loader?.removeEventListener("touchmove", blockScroll);
     };
   }, []);
 

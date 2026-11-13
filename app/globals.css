@@ -47,14 +47,10 @@
 
 html {
   scroll-behavior: smooth;
-  /* clip, not hidden: hidden stops iOS from painting the page color under the bottom toolbar */
-  overflow-x: clip;
-  color-scheme: only light;
   background-color: #f5f4f0;
-}
-
-html.is-loading {
-  overflow: clip;
+  color-scheme: only light;
+  min-height: 100%;
+  min-height: -webkit-fill-available;
 }
 
 body {
@@ -63,6 +59,8 @@ body {
   font-family: var(--font-body);
   font-weight: 400;
   overflow-x: clip;
+  min-height: 100%;
+  min-height: -webkit-fill-available;
   -webkit-font-smoothing: antialiased;
   color-scheme: only light;
 }
@@ -84,6 +82,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
 }
 
 .loader-content {
@@ -738,14 +737,7 @@ nav.scrolled {
     font-size: 20px;
   }
 
-  .hero {
-    /* lvh reaches behind the phone address bar; svh stops short and Safari paints that gap black */
-    height: 100lvh;
-    background: var(--bg);
-  }
-
   .scroll-explore {
-    bottom: calc(100lvh - 100svh);
     padding: 20px 24px;
     justify-content: flex-start;
   }
