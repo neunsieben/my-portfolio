@@ -739,11 +739,13 @@ nav.scrolled {
   }
 
   .hero {
-    height: 100svh;
+    /* lvh reaches behind the phone address bar; svh stops short and Safari paints that gap black */
+    height: 100lvh;
     background: var(--bg);
   }
 
   .scroll-explore {
+    bottom: calc(100lvh - 100svh);
     padding: 20px 24px;
     justify-content: flex-start;
   }
