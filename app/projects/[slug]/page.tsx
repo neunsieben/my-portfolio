@@ -8,7 +8,6 @@ import { CONTACT_MAILTO } from "@/lib/siteContact";
 import { PROJECT_DETAILS, type ProjectMedia } from "@/lib/projectsData";
 import { initTerminalLinks } from "@/lib/terminalAnimation";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
-import { DepthPhoto } from "@/components/DepthPhoto";
 import { TiltCover } from "@/components/TiltCover";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -55,10 +54,7 @@ function DetailMedia({
       {item.presentation === "tilt-cover" && item.src ? (
         <TiltCover src={item.src} alt={item.alt ?? name} />
       ) : null}
-      {item.depth && item.src ? (
-        <DepthPhoto src={item.src} depth={item.depth} alt={item.alt ?? name} />
-      ) : null}
-      {!item.depth && item.presentation !== "tilt-cover" && item.type === "image" && item.src ? (
+      {item.presentation !== "tilt-cover" && item.type === "image" && item.src ? (
         <img
           src={item.src}
           alt={item.alt ?? name}

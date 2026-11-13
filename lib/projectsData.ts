@@ -12,8 +12,6 @@ export type ProjectMedia = {
   presentation?: "tilt-cover";
   /** Still 4:3 stand-in for list and grid when presentation is tilt-cover. */
   frame?: string;
-  /** Grayscale depth for a small cursor parallax. Near is white. */
-  depth?: string;
 };
 
 export type ProjectDetail = {
@@ -217,13 +215,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       {
         type: "image",
         src: "/images/projects/cpxart/cpxart_yellow_jacket.jpg",
-        depth: "/images/projects/cpxart/cpxart_yellow_jacket_depth.jpg",
         alt: "CPxArt x Forbes — studio shot, yellow jacket",
       },
       {
         type: "image",
         src: "/images/projects/cpxart/cpxart_red_jacket.jpg",
-        depth: "/images/projects/cpxart/cpxart_red_jacket_depth.jpg",
         alt: "CPxArt x Forbes — studio shot, red jacket",
       },
       {
