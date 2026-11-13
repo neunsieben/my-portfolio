@@ -1865,6 +1865,19 @@ nav.scrolled {
   overflow: hidden;
 }
 
+.depth-photo {
+  width: 100%;
+  display: block;
+  touch-action: pan-y;
+}
+
+.depth-photo canvas,
+.depth-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .pd-media-item img,
 .pd-media-item video {
   width: 100%;
