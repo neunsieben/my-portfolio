@@ -1231,6 +1231,7 @@ export default function ProjectsPage() {
               <TiltCover
                 src={HUNGRY4_COVER}
                 alt="Hungry4 cover"
+                static
               />
             </div>
           </div>
@@ -1254,6 +1255,7 @@ export default function ProjectsPage() {
                         <div className="carousel-slide tilt-cover">
                           <div className="tilt-cover-art">
                             <img src={HUNGRY4_COVER} alt="" />
+                            <div className="tilt-cover-glare" />
                           </div>
                         </div>
                       ) : (
@@ -1311,7 +1313,7 @@ export default function ProjectsPage() {
               >
                 <div className="project-grid-img-wrap">
                   {row.slug === "hungry4" ? (
-                    <TiltCover src={HUNGRY4_COVER} alt="Hungry4 cover" />
+                    <TiltCover src={HUNGRY4_COVER} alt="Hungry4 cover" static />
                   ) : (
                     <SlidingPreviewFrame
                       slug={row.slug}

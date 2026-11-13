@@ -9,10 +9,13 @@ export function TiltCover({
   src,
   alt,
   className,
+  static: isStatic = false,
 }: {
   src: string;
   alt: string;
   className?: string;
+  /** Flat preview. Same size and placement, no cursor tilt. */
+  static?: boolean;
 }) {
   const frameRef = useRef<HTMLDivElement>(null);
   const planeRef = useRef<HTMLDivElement>(null);
@@ -22,7 +25,7 @@ export function TiltCover({
     const frame = frameRef.current;
     const plane = planeRef.current;
     const glare = glareRef.current;
-    if (!frame || !plane || !glare) return;
+    if (!frame || !plane || !glare || isStatic) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf = 0;
@@ -37,12 +40,12 @@ export function TiltCover({
       currentY += (targetY - currentY) * 0.16;
       const rx = currentY * -MAX_TILT;
       const ry = currentX * MAX_TILT;
-      const scale = active ? 1.03 : 1;
-      plane.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`;
-      const gx = (currentX + 0.5) * 100;
-      const gy = (currentY + 0.5) * 100;
-      glare.style.opacity = active ? "1" : "0";
-      glare.style.background = `radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.55), rgba(255,255,255,0.08) 28%, transparent 58%)`;
+      plane.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      // Light stays above and in front of the frame. The sheen slides
+      // across the cover only because the cover's angle changes.
+      const hx = Math.min(88, Math.max(12, 50 + (ry / MAX_TILT) * 38));
+      const hy = Math.min(88, Math.max(12, 30 + (-rx / MAX_TILT) * 38));
+      glare.style.background = `radial-gradient(circle at ${hx}% ${hy}%, rgba(255,255,255,0.5), rgba(255,255,255,0.08) 26%, transparent 56%)`;
       const stillMoving =
         Math.abs(targetX - currentX) > 0.001 ||
         Math.abs(targetY - currentY) > 0.001;
@@ -50,7 +53,7 @@ export function TiltCover({
         raf = requestAnimationFrame(paint);
       } else {
         raf = 0;
-        plane.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+        plane.style.transform = "rotateX(0deg) rotateY(0deg)";
       }
     };
 
@@ -70,7 +73,6 @@ export function TiltCover({
         Math.min(0.5, (event.clientY - rect.top) / rect.height - 0.5),
       );
       active = true;
-      frame.classList.add("is-active");
       kick();
     };
 
@@ -78,7 +80,6 @@ export function TiltCover({
       targetX = 0;
       targetY = 0;
       active = false;
-      frame.classList.remove("is-active");
       kick();
     };
 
@@ -89,7 +90,7 @@ export function TiltCover({
       frame.removeEventListener("pointermove", onMove);
       frame.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [isStatic]);
 
   return (
     <div ref={frameRef} className={className ? `tilt-cover ${className}` : "tilt-cover"}>
