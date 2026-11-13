@@ -490,7 +490,8 @@ void main(){
               loaderEl.classList.add("done");
               loaderEl.removeEventListener("touchmove", blockScroll);
               simulateGlassSweep();
-            }, 800);
+              syncEdgeColor();
+            }, 1100);
           }, 400);
         }, delay + 50);
       }
@@ -672,9 +673,37 @@ void main(){
       setTimeout(loopScrollSweep, 5000);
     }
 
+    // The strip behind the phone address bar uses the root background.
+    // Match it to whatever section is actually at the bottom of the screen.
+    const syncEdgeColor = () => {
+      const root = document.documentElement;
+      if (document.querySelector(".loader:not(.done)")) {
+        root.style.removeProperty("background-color");
+        return;
+      }
+      const hit = document.elementFromPoint(
+        window.innerWidth / 2,
+        Math.max(0, window.innerHeight - 2),
+      );
+      const onBlack = Boolean(
+        hit?.closest(".home-footer, #contact, .about-teaser"),
+      );
+      const atEnd =
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 8;
+      if (onBlack || atEnd) root.style.setProperty("background-color", "#0a0a0a", "important");
+      else root.style.removeProperty("background-color");
+    };
+    syncEdgeColor();
+    window.addEventListener("scroll", syncEdgeColor, { passive: true });
+    window.addEventListener("resize", syncEdgeColor);
+
     return () => {
       pageDisposed = true;
       document.documentElement.classList.remove("is-home");
+      document.documentElement.style.removeProperty("background-color");
+      window.removeEventListener("scroll", syncEdgeColor);
+      window.removeEventListener("resize", syncEdgeColor);
       window.removeEventListener("resize", leonardInstance.resize);
       window.removeEventListener("resize", baackInstance.resize);
       window.removeEventListener("resize", getInTouchInstance.resize);

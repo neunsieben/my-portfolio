@@ -74,12 +74,11 @@ body {
   }
 }
 
-/* The strip behind the phone address bar only shows the root background.
-   Keep it black only while the intro still covers the screen. The moment the
-   sheet starts rising, the page underneath must already be the cream homepage. */
-html:has(.loader:not(.phase2)),
-html:has(.loader:not(.phase2)) body {
-  background: #0a0a0a !important;
+/* The strip behind the phone address bar shows the root background.
+   Keep that strip black until the intro sheet has left, without painting the
+   page underneath black. */
+html:has(.loader:not(.done)) {
+  background-color: #0a0a0a !important;
 }
 
 /* Loading screen. Tall enough to start behind the phone address bar, not above it. */
@@ -857,7 +856,7 @@ nav.scrolled {
 
   .home-footer {
     background: var(--text);
-    padding-bottom: calc(48px + 140px);
+    padding: 32px 24px 28px;
   }
 
   .home-footer .footer-bottom {
@@ -1286,7 +1285,7 @@ nav.scrolled {
 }
 
 .projects-page .get-in-touch {
-  background: var(--bg);
+  background: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1311,7 +1310,7 @@ nav.scrolled {
 }
 
 .pd-page .get-in-touch {
-  background: var(--bg);
+  background: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
