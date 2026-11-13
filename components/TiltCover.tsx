@@ -46,10 +46,10 @@ function paperLight(rx: number, ry: number, strong: boolean) {
   const minB = Math.min(...samples);
   const lit = Math.min(1, Math.max(0, (maxB - 0.15) / 0.7));
   const shd = Math.min(1, Math.max(0, (minB - 0.15) / 0.7));
-  const lightA = (strong ? 0.044 + lit * 0.013 : 0.16 + lit * 0.18).toFixed(3);
+  const lightA = (strong ? 0.048 + lit * 0.014 : 0.16 + lit * 0.18).toFixed(3);
   const shadowA = (0.28 + (1 - shd) * 0.22).toFixed(3);
   if (strong) {
-    return `linear-gradient(${angle.toFixed(2)}deg, rgba(255, 246, 232, 0) 0%, rgba(255, 246, 232, 0) 38%, rgba(255, 228, 196, 0.017) 70%, rgba(255, 248, 236, ${lightA}) 100%)`;
+    return `linear-gradient(${angle.toFixed(2)}deg, rgba(255, 246, 232, 0) 0%, rgba(255, 246, 232, 0) 38%, rgba(255, 228, 196, 0.019) 70%, rgba(255, 248, 236, ${lightA}) 100%)`;
   }
   return `linear-gradient(${angle.toFixed(2)}deg, rgba(36, 26, 20, ${shadowA}) 0%, rgba(150, 136, 120, 0.06) 48%, rgba(255, 246, 232, ${lightA}) 100%)`;
 }
