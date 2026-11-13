@@ -30,8 +30,9 @@ export function DotGrid({ dotColor = "rgba(255,255,255,0.12)" }: { dotColor?: st
 
     function resize() {
       currentDpr = window.devicePixelRatio || 1;
+      const fullScreen = window.matchMedia("(max-width: 768px)").matches;
       dotCanvas.style.width = "100vw";
-      dotCanvas.style.height = "100lvh";
+      dotCanvas.style.height = fullScreen ? "calc(100lvh + 200px)" : "100lvh";
       const width = dotCanvas.clientWidth || window.innerWidth;
       const height = Math.max(dotCanvas.clientHeight, window.innerHeight);
       viewWidth = width;

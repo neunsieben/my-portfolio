@@ -754,8 +754,23 @@ nav.scrolled {
     justify-content: flex-start;
   }
 
+  .loader {
+    bottom: -200px;
+    height: auto;
+    align-items: flex-start;
+  }
+
+  .loader-content {
+    height: calc(100% - 200px);
+    flex: none;
+  }
+
   .loader-type {
-    bottom: calc(28px + 100lvh - 100svh);
+    bottom: calc(200px + 48px);
+  }
+
+  #dotGrid {
+    height: calc(100lvh + 200px);
   }
 
   .hero-social {
