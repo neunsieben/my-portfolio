@@ -76,7 +76,7 @@ export default function AboutPage() {
       },
       320,
       110,
-      { shouldStop: () => pageDisposed },
+      { shouldStop: () => pageDisposed, hugText: true },
     );
 
     let heroAnimTimer: number | null = null;

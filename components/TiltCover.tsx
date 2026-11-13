@@ -79,9 +79,11 @@ export function TiltCover({
     let currentY = 0;
     let active = false;
 
+    let follow = 0.16;
+
     const paint = () => {
-      currentX += (targetX - currentX) * 0.16;
-      currentY += (targetY - currentY) * 0.16;
+      currentX += (targetX - currentX) * follow;
+      currentY += (targetY - currentY) * follow;
       const rx = currentY * -MAX_TILT;
       const ry = currentX * MAX_TILT;
       plane.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
@@ -104,13 +106,17 @@ export function TiltCover({
 
     const onMove = (event: PointerEvent) => {
       const rect = frame.getBoundingClientRect();
+      const touch = event.pointerType === "touch";
+      // A finger stays nearer the middle than a mouse, so reach full tilt sooner.
+      const gain = touch ? 1.7 : 1;
+      follow = touch ? 0.34 : 0.16;
       targetX = Math.max(
         -0.5,
-        Math.min(0.5, (event.clientX - rect.left) / rect.width - 0.5),
+        Math.min(0.5, ((event.clientX - rect.left) / rect.width - 0.5) * gain),
       );
       targetY = Math.max(
         -0.5,
-        Math.min(0.5, (event.clientY - rect.top) / rect.height - 0.5),
+        Math.min(0.5, ((event.clientY - rect.top) / rect.height - 0.5) * gain),
       );
       active = true;
       kick();

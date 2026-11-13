@@ -1,5 +1,7 @@
 /** About page vertical glass: hero + get-in-touch (u_reveal + force). */
 
+import { fittedHeadlineHeight } from "./canvasHeadFontStack";
+
 export const ABOUT_GLASS_VERTEX = `attribute vec2 a_pos;varying vec2 v_uv;void main(){v_uv=a_pos*0.5+0.5;v_uv.y=1.0-v_uv.y;gl_Position=vec4(a_pos,0.0,1.0);}`;
 
 export const ABOUT_GLASS_FRAGMENT = `
@@ -61,7 +63,7 @@ export function createAboutVerticalGlassEffect(
   textRenderer: AboutGlassTextRenderer,
   heightDesktop: number,
   heightMobile: number,
-  options?: { shouldStop?: () => boolean },
+  options?: { shouldStop?: () => boolean; hugText?: boolean },
 ) {
   const gl = canvasEl.getContext("webgl", {
     alpha: true,
@@ -91,7 +93,10 @@ export function createAboutVerticalGlassEffect(
     const pad = window.innerWidth > 768 ? 96 : 48;
     const W = window.innerWidth - pad;
     const t = Math.min(1, Math.max(0, (window.innerWidth - 480) / (1200 - 480)));
-    const H = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
+    const legacy = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
+    const H = options?.hugText
+      ? Math.min(legacy, fittedHeadlineHeight(W, dpr))
+      : legacy;
     canvasEl.width = W * dpr;
     canvasEl.height = H * dpr;
     canvasEl.style.width = "100%";

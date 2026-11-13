@@ -1,5 +1,7 @@
 /** Shared WebGL vertical fluted glass (Get in touch). */
 
+import { fittedHeadlineHeight } from "./canvasHeadFontStack";
+
 export const GLASS_VERTEX_SHADER = `
 attribute vec2 a_pos;
 varying vec2 v_uv;
@@ -81,7 +83,8 @@ export function createVerticalGlassEffect(
     const pad = window.innerWidth > 768 ? 96 : 48;
     const W = window.innerWidth - pad;
     const t = Math.min(1, Math.max(0, (window.innerWidth - 480) / (1200 - 480)));
-    const H = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
+    const legacy = Math.round(heightMobile + (heightDesktop - heightMobile) * t);
+    const H = Math.min(legacy, fittedHeadlineHeight(W, dpr));
     canvasEl.width = W * dpr;
     canvasEl.height = H * dpr;
     canvasEl.style.width = "100%";

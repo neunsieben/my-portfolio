@@ -645,7 +645,7 @@ nav.scrolled {
   display: flex;
   justify-content: center;
   gap: 36px;
-  margin-top: 20px;
+  margin-top: 8px;
   list-style: none;
 }
 
@@ -1550,7 +1550,7 @@ nav.scrolled {
   display: flex;
   justify-content: center;
   gap: 36px;
-  margin-top: 20px;
+  margin-top: 8px;
   list-style: none;
 }
 
