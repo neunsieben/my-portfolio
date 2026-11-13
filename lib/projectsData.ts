@@ -8,6 +8,8 @@ export type ProjectMedia = {
   poster?: string;
   /** CSS background value shown as placeholder when no src is set */
   bg?: string;
+  /** Square cover, centered in a black 4:3 frame that tilts with the cursor */
+  presentation?: "tilt-cover";
 };
 
 export type ProjectDetail = {
@@ -25,6 +27,8 @@ export type ProjectDetail = {
   visitLabel?: string;
   media: ProjectMedia[];
 };
+
+export const HUNGRY4_COVER = "/images/projects/hungry4/hungry4_cover.jpg";
 
 const LOREM =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -327,6 +331,25 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       { type: "image", bg: "linear-gradient(160deg,#0e0d0b,#1a1815,#22201c)" },
     ],
   },
+  {
+    slug: "hungry4",
+    num: "011",
+    name: "Hungry4",
+    category: "Album Artwork",
+    year: "2026",
+    client: "Hungry4",
+    role: "Cover Artwork",
+    description: "Cover artwork for Hungry4.",
+    descriptionDe: "Cover-Artwork für Hungry4.",
+    media: [
+      {
+        type: "image",
+        src: HUNGRY4_COVER,
+        alt: "Hungry4 — cover",
+        presentation: "tilt-cover",
+      },
+    ],
+  },
 ];
 
 /** Quick lookup: project number → slug */
@@ -341,4 +364,5 @@ export const NUM_TO_SLUG: Record<string, string> = {
   "008": "magic-mansion",
   "009": "kolsch-ipso",
   "010": "henning-media",
+  "011": "hungry4",
 };

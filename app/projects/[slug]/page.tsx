@@ -8,6 +8,7 @@ import { CONTACT_MAILTO } from "@/lib/siteContact";
 import { PROJECT_DETAILS } from "@/lib/projectsData";
 import { initTerminalLinks } from "@/lib/terminalAnimation";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
+import { TiltCover } from "@/components/TiltCover";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
@@ -239,7 +240,10 @@ export default function ProjectDetailPage() {
               className={`pd-media-item reveal${!item.src ? " pd-placeholder" : ""}`}
               style={!item.src && item.bg ? { background: item.bg } : {}}
             >
-              {item.type === "image" && item.src && (
+              {item.presentation === "tilt-cover" && item.src ? (
+                <TiltCover src={item.src} alt={item.alt ?? project.name} />
+              ) : null}
+              {item.presentation !== "tilt-cover" && item.type === "image" && item.src && (
                 <img src={item.src} alt={item.alt ?? project.name} />
               )}
               {item.type === "video" && item.src && (
