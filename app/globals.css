@@ -621,14 +621,19 @@ nav.scrolled {
 /* Get in touch section */
 .get-in-touch {
   background: var(--text);
-  padding: 40px 48px 120px;
+  padding: 72px 48px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
-  min-height: 60vh;
   z-index: 1;
+}
+
+/* Always visible. The reveal fade was leaving this block invisible on project pages. */
+.get-in-touch .reveal {
+  opacity: 1;
+  transform: none;
 }
 
 #getInTouchCanvas {
@@ -667,7 +672,7 @@ nav.scrolled {
 }
 
 .footer {
-  padding: 40px 48px;
+  padding: 8px 48px 48px;
   background: var(--text);
   position: relative;
   z-index: 1;
@@ -836,7 +841,7 @@ nav.scrolled {
   }
 
   .get-in-touch {
-    padding: 40px 24px 80px;
+    padding: 48px 24px 8px;
   }
 
   .get-in-touch-links {
@@ -846,7 +851,7 @@ nav.scrolled {
   }
 
   .footer {
-    padding: 40px 24px 30px;
+    padding: 8px 24px 32px;
     background: transparent;
   }
 
@@ -856,7 +861,6 @@ nav.scrolled {
 
   .home-footer {
     background: var(--text);
-    padding: 32px 24px 28px;
   }
 
   .home-footer .footer-bottom {
@@ -933,11 +937,7 @@ nav.scrolled {
   }
 
   .projects-page .footer {
-    padding: 30px 24px;
-  }
-
-  .projects-page .get-in-touch {
-    padding: 60px 24px 80px;
+    background: transparent;
   }
 
   /* After grid mode on desktop, list can stay .view-hidden — always show list on mobile */
@@ -1218,14 +1218,6 @@ nav.scrolled {
     text-transform: uppercase;
     color: var(--text);
   }
-
-  .projects-page .get-in-touch {
-    padding: 120px 48px 120px;
-  }
-
-  .projects-page .footer {
-    padding: 40px 48px;
-  }
 }
 
 .projects-page .project-row-num {
@@ -1289,9 +1281,8 @@ nav.scrolled {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
-  min-height: 40vh;
   /* Above .projects-container (z-index: 3) so fixed list image does not cover footer / get-in-touch */
   z-index: 5;
 }
@@ -1314,9 +1305,8 @@ nav.scrolled {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
-  min-height: 40vh;
   z-index: 5;
 }
 
@@ -1543,13 +1533,11 @@ nav.scrolled {
 
 .about-page .get-in-touch {
   background: transparent;
-  padding: 120px 48px 120px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
-  min-height: 40vh;
   z-index: 1;
 }
 
@@ -1589,7 +1577,6 @@ nav.scrolled {
 }
 
 .about-page .footer {
-  padding: 40px 48px;
   background: transparent;
 }
 
@@ -1639,18 +1626,10 @@ nav.scrolled {
     gap: 40px;
   }
 
-  .about-page .get-in-touch {
-    padding: 60px 24px 80px;
-  }
-
   .about-page .get-in-touch-links {
     gap: 24px;
     flex-wrap: wrap;
     justify-content: center;
-  }
-
-  .about-page .footer {
-    padding: 30px 24px;
   }
 }
 

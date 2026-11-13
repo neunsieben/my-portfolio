@@ -136,7 +136,7 @@ export default function ProjectDetailPage() {
         window.removeEventListener("resize", gitInstance.resize);
       }
     };
-  }, []);
+  }, [slug]);
 
   if (!project) return notFound();
 
