@@ -685,7 +685,7 @@ void main(){
           </div>
         </div>
       </div>
-      <DotGrid coverScreen />
+      <DotGrid />
       <SiteCursor variant="home" />
       <SiteNav scrolledThreshold={50}>
         <li>
@@ -737,6 +737,8 @@ void main(){
           </div>
         </div>
       </section>
+
+      <div className="home-edge" aria-hidden="true" />
 
       <section className="featured-works" id="selected-work">
         <h2 className="section-title reveal">Selected work</h2>
