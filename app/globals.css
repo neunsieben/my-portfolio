@@ -73,10 +73,14 @@ body {
   }
 }
 
-/* Loading screen */
+/* Loading screen. Tall enough to start behind the phone address bar, not above it. */
 .loader {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  height: 100lvh;
   z-index: 99999;
   background: var(--text);
   display: flex;
@@ -144,7 +148,10 @@ body {
 /* Dot grid pattern */
 #dotGrid {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100lvh;
   pointer-events: none;
   z-index: 2;
   mix-blend-mode: difference;
@@ -208,7 +215,7 @@ nav {
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 28px 48px;
+  padding: calc(28px + env(safe-area-inset-top, 0px)) 48px 28px;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -220,7 +227,7 @@ nav {
 }
 
 nav.scrolled {
-  padding: 16px 48px;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 48px 16px;
   background: rgba(245, 244, 240, 0.4);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
@@ -701,12 +708,12 @@ nav.scrolled {
 
 @media (max-width: 768px) {
   nav {
-    padding: 20px 24px;
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 24px 20px;
     align-items: baseline;
   }
 
   nav.scrolled {
-    padding: 14px 24px;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) 24px 14px;
   }
 
   .nav-logo {
@@ -737,9 +744,18 @@ nav.scrolled {
     font-size: 20px;
   }
 
+  .hero {
+    height: 100lvh;
+  }
+
   .scroll-explore {
+    bottom: calc(100lvh - 100svh);
     padding: 20px 24px;
     justify-content: flex-start;
+  }
+
+  .loader-type {
+    bottom: calc(28px + 100lvh - 100svh);
   }
 
   .hero-social {

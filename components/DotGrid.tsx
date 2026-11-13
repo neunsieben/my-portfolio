@@ -17,6 +17,8 @@ export function DotGrid({ dotColor = "rgba(255,255,255,0.12)" }: { dotColor?: st
     const baseSize = 1.5;
     let cols: number,
       rows: number,
+      viewWidth = 0,
+      viewHeight = 0,
       pulses: {
         col: number;
         row: number;
@@ -28,12 +30,16 @@ export function DotGrid({ dotColor = "rgba(255,255,255,0.12)" }: { dotColor?: st
 
     function resize() {
       currentDpr = window.devicePixelRatio || 1;
-      dotCanvas.width = window.innerWidth * currentDpr;
-      dotCanvas.height = window.innerHeight * currentDpr;
-      dotCanvas.style.width = window.innerWidth + "px";
-      dotCanvas.style.height = window.innerHeight + "px";
-      cols = Math.ceil(window.innerWidth / spacing) + 1;
-      rows = Math.ceil(window.innerHeight / spacing) + 1;
+      dotCanvas.style.width = "100vw";
+      dotCanvas.style.height = "100lvh";
+      const width = dotCanvas.clientWidth || window.innerWidth;
+      const height = Math.max(dotCanvas.clientHeight, window.innerHeight);
+      viewWidth = width;
+      viewHeight = height;
+      dotCanvas.width = width * currentDpr;
+      dotCanvas.height = height * currentDpr;
+      cols = Math.ceil(width / spacing) + 1;
+      rows = Math.ceil(height / spacing) + 1;
       pulses = [];
       const totalDots = cols * rows;
       const pulseCount = Math.floor(totalDots * 0.02);
@@ -74,7 +80,7 @@ export function DotGrid({ dotColor = "rgba(255,255,255,0.12)" }: { dotColor?: st
     function render(time: number) {
       if (pageDisposed) return;
       dotCtx.setTransform(currentDpr, 0, 0, currentDpr, 0, 0);
-      dotCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      dotCtx.clearRect(0, 0, viewWidth, viewHeight);
       const t = time * 0.001;
       shufflePulses(time);
 
