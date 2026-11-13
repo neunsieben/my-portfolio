@@ -456,10 +456,9 @@ void main(){
     // LOADING SCREEN
     // ========================================================
     const loader = document.getElementById("loader");
-    const counter = document.getElementById("loaderCounter");
-    if (loader && counter) {
+    const counters = loader?.querySelectorAll(".loader-counter") ?? [];
+    if (loader && counters.length) {
       const loaderEl = loader;
-      const counterEl = counter;
       let current = 0;
       let target = 0;
 
@@ -481,14 +480,14 @@ void main(){
           delay += phase.duration;
         });
         setTimeout(() => {
-          // Brief hold showing 100, then curtain slides up
+          // Hold on 100, then the top half leaves upward and the bottom half leaves downward.
           setTimeout(() => {
             loaderEl.classList.add("phase2");
             setTimeout(() => {
               loaderEl.classList.add("done");
               document.documentElement.classList.remove("is-loading");
               simulateGlassSweep();
-            }, 800);
+            }, 1100);
           }, 400);
         }, delay + 50);
       }
@@ -510,13 +509,15 @@ void main(){
       ];
       const now = new Date();
       const loaderText = `LEONARDBAACK/PORTFOLIO/${now.getFullYear()}/${months[now.getMonth()]}`;
-      const typeEl = document.getElementById("loaderTypeText");
+      const typeEls = loader.querySelectorAll(".loader-type-text");
       const charDelay = (totalDuration - 400) / loaderText.length;
       let ti = 0;
       function typeLoader() {
         if (pageDisposed) return;
-        if (ti <= loaderText.length && typeEl) {
-          typeEl.textContent = loaderText.slice(0, ti);
+        if (ti <= loaderText.length) {
+          typeEls.forEach((el) => {
+            el.textContent = loaderText.slice(0, ti);
+          });
           ti++;
           setTimeout(typeLoader, charDelay);
         }
@@ -527,7 +528,9 @@ void main(){
         if (pageDisposed) return;
         current += (target - current) * 0.08;
         const rounded = Math.round(current);
-        counterEl.textContent = String(rounded);
+        counters.forEach((el) => {
+          el.textContent = String(rounded);
+        });
         if (rounded < 100 || !loaderEl.classList.contains("done")) {
           requestAnimationFrame(animate);
         }
@@ -674,13 +677,22 @@ void main(){
   return (
     <>
       <div className="loader" id="loader">
-        <div className="loader-content">
-          <div className="loader-counter" id="loaderCounter">
-            0
+        <div className="loader-half loader-half-top">
+          <div className="loader-content">
+            <div className="loader-counter">0</div>
+            <div className="loader-type">
+              <span className="loader-type-text"></span>
+              <span className="typewriter-cursor"></span>
+            </div>
           </div>
-          <div className="loader-type">
-            <span id="loaderTypeText"></span>
-            <span className="typewriter-cursor"></span>
+        </div>
+        <div className="loader-half loader-half-bottom">
+          <div className="loader-content">
+            <div className="loader-counter">0</div>
+            <div className="loader-type">
+              <span className="loader-type-text"></span>
+              <span className="typewriter-cursor"></span>
+            </div>
           </div>
         </div>
       </div>
