@@ -685,7 +685,7 @@ void main(){
           </div>
         </div>
       </div>
-      <DotGrid />
+      <DotGrid coverScreen />
       <SiteCursor variant="home" />
       <SiteNav scrolledThreshold={50}>
         <li>

@@ -3,7 +3,13 @@
 import { useEffect } from "react";
 
 /** Figma-style dot grid with subtle random pulse (same logic as homepage). */
-export function DotGrid({ dotColor = "rgba(255,255,255,0.12)" }: { dotColor?: string } = {}) {
+export function DotGrid({
+  dotColor = "rgba(255,255,255,0.12)",
+  coverScreen = false,
+}: {
+  dotColor?: string;
+  coverScreen?: boolean;
+} = {}) {
   useEffect(() => {
     let pageDisposed = false;
 
@@ -30,9 +36,22 @@ export function DotGrid({ dotColor = "rgba(255,255,255,0.12)" }: { dotColor?: st
 
     function resize() {
       currentDpr = window.devicePixelRatio || 1;
-      const fullScreen = window.matchMedia("(max-width: 768px)").matches;
+      const fullScreen =
+        coverScreen && window.matchMedia("(max-width: 768px)").matches;
       dotCanvas.style.width = "100vw";
-      dotCanvas.style.height = fullScreen ? "calc(100lvh + 200px)" : "100lvh";
+      if (fullScreen) {
+        dotCanvas.style.position = "absolute";
+        dotCanvas.style.top = "0";
+        const pageHeight = Math.max(
+          document.documentElement.scrollHeight,
+          document.body.scrollHeight,
+          window.innerHeight + 220,
+        );
+        dotCanvas.style.height = `${pageHeight}px`;
+      } else {
+        dotCanvas.style.position = "fixed";
+        dotCanvas.style.height = "100lvh";
+      }
       const width = dotCanvas.clientWidth || window.innerWidth;
       const height = Math.max(dotCanvas.clientHeight, window.innerHeight);
       viewWidth = width;
@@ -122,7 +141,7 @@ export function DotGrid({ dotColor = "rgba(255,255,255,0.12)" }: { dotColor?: st
       pageDisposed = true;
       window.removeEventListener("resize", onResize);
     };
-  }, [dotColor]);
+  }, [dotColor, coverScreen]);
 
-  return <canvas id="dotGrid" />;
+  return <canvas id="dotGrid" className={coverScreen ? "dot-grid-cover" : undefined} />;
 }

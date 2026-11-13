@@ -59,6 +59,7 @@ body {
   font-family: var(--font-body);
   font-weight: 400;
   overflow-x: clip;
+  position: relative;
   min-height: 100%;
   min-height: -webkit-fill-available;
   -webkit-font-smoothing: antialiased;
@@ -71,6 +72,14 @@ body {
     background: #f5f4f0 !important;
     color: #0a0a0a !important;
   }
+}
+
+/* The strip behind the phone address bar only shows the root background.
+   Fixed layers are clipped above it, so the page itself has to be black there
+   for as long as the intro is on screen. */
+html:has(.loader:not(.done)),
+html:has(.loader:not(.done)) body {
+  background: #0a0a0a !important;
 }
 
 /* Loading screen. Tall enough to start behind the phone address bar, not above it. */
@@ -754,23 +763,28 @@ nav.scrolled {
     justify-content: flex-start;
   }
 
+  /* Fixed layers stop above the address bar. These sit in the page, so the
+     extra height is actually painted behind the bar. */
   .loader {
-    bottom: -200px;
-    height: auto;
-    align-items: flex-start;
-  }
-
-  .loader-content {
-    height: calc(100% - 200px);
-    flex: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100lvh + 220px);
+    bottom: auto;
+    align-items: stretch;
+    padding-bottom: 220px;
   }
 
   .loader-type {
-    bottom: calc(200px + 48px);
+    bottom: 48px;
   }
 
-  #dotGrid {
-    height: calc(100lvh + 200px);
+  #dotGrid.dot-grid-cover {
+    position: absolute;
+    top: 0;
+    height: calc(100lvh + 220px);
   }
 
   .hero-social {
