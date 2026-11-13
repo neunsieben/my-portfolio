@@ -33,7 +33,7 @@ function shadePoint(u: number, v: number, rx: number, ry: number) {
 }
 
 /** Broad paper falloff from the fixed lamp. No specular hotspot. */
-function paperLight(rx: number, ry: number) {
+function paperLight(rx: number, ry: number, strong: boolean) {
   const samples = [-0.5, 0, 0.5].flatMap((v) =>
     [-0.5, 0, 0.5].map((u) => shadePoint(u, v, rx, ry)),
   );
@@ -46,8 +46,11 @@ function paperLight(rx: number, ry: number) {
   const minB = Math.min(...samples);
   const lit = Math.min(1, Math.max(0, (maxB - 0.15) / 0.7));
   const shd = Math.min(1, Math.max(0, (minB - 0.15) / 0.7));
-  const lightA = (0.16 + lit * 0.18).toFixed(3);
+  const lightA = (strong ? 0.72 + lit * 0.22 : 0.16 + lit * 0.18).toFixed(3);
   const shadowA = (0.28 + (1 - shd) * 0.22).toFixed(3);
+  if (strong) {
+    return `linear-gradient(${angle.toFixed(2)}deg, rgba(255, 246, 232, 0) 0%, rgba(255, 246, 232, 0) 38%, rgba(255, 228, 196, 0.28) 70%, rgba(255, 248, 236, ${lightA}) 100%)`;
+  }
   return `linear-gradient(${angle.toFixed(2)}deg, rgba(36, 26, 20, ${shadowA}) 0%, rgba(150, 136, 120, 0.06) 48%, rgba(255, 246, 232, ${lightA}) 100%)`;
 }
 
@@ -56,10 +59,12 @@ export function TiltCover({
   src,
   alt,
   className,
+  lamp,
 }: {
   src: string;
   alt: string;
   className?: string;
+  lamp?: "strong";
 }) {
   const frameRef = useRef<HTMLDivElement>(null);
   const planeRef = useRef<HTMLDivElement>(null);
@@ -87,7 +92,9 @@ export function TiltCover({
       const rx = currentY * -MAX_TILT;
       const ry = currentX * MAX_TILT;
       plane.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-      light.style.backgroundImage = `${paperLight(rx, ry)}, var(--paper-grain)`;
+      const shine = paperLight(rx, ry, lamp === "strong");
+      light.style.backgroundImage =
+        lamp === "strong" ? shine : `${shine}, var(--paper-grain)`;
       const stillMoving =
         Math.abs(targetX - currentX) > 0.001 ||
         Math.abs(targetY - currentY) > 0.001;
@@ -156,10 +163,13 @@ export function TiltCover({
       frame.removeEventListener("pointercancel", onUp);
       frame.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [lamp]);
 
   return (
-    <div ref={frameRef} className={className ? `tilt-cover ${className}` : "tilt-cover"}>
+    <div
+      ref={frameRef}
+      className={`tilt-cover${lamp === "strong" ? " tilt-cover-strong" : ""}${className ? ` ${className}` : ""}`}
+    >
       <div ref={planeRef} className="tilt-cover-art">
         <img
           src={src}

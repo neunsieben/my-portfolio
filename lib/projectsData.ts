@@ -12,6 +12,8 @@ export type ProjectMedia = {
   presentation?: "tilt-cover";
   /** Still 4:3 stand-in for list and grid when presentation is tilt-cover. */
   frame?: string;
+  /** Stronger lamp so the highlight reads on a black cover. */
+  lamp?: "strong";
 };
 
 export type ProjectDetail = {
@@ -367,6 +369,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: HUNGRY4_COVER,
         alt: "Hungry4 — cover",
         presentation: "tilt-cover",
+        lamp: "strong",
         frame: HUNGRY4_FRAME,
       },
     ],

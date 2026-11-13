@@ -52,7 +52,7 @@ function DetailMedia({
       style={!item.src && item.bg ? { background: item.bg } : {}}
     >
       {item.presentation === "tilt-cover" && item.src ? (
-        <TiltCover src={item.src} alt={item.alt ?? name} />
+        <TiltCover src={item.src} alt={item.alt ?? name} lamp={item.lamp} />
       ) : null}
       {item.presentation !== "tilt-cover" && item.type === "image" && item.src ? (
         <img
