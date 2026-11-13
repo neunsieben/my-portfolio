@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Plus_Jakarta_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
@@ -37,6 +37,13 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Leonard Baack — Portfolio",
   description: "Portfolio of Leonard Baack",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#f5f4f0",
+  colorScheme: "only light",
 };
 
 export default function RootLayout({

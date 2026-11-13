@@ -47,8 +47,9 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
-  color-scheme: light;
+  /* clip, not hidden: hidden stops iOS from painting the page color under the bottom toolbar */
+  overflow-x: clip;
+  color-scheme: only light;
   background-color: #f5f4f0;
 }
 
@@ -57,9 +58,9 @@ body {
   color: #0a0a0a;
   font-family: var(--font-body);
   font-weight: 400;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
-  color-scheme: light;
+  color-scheme: only light;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -921,7 +922,7 @@ nav.scrolled {
 
 /* --- Projects listing page --- */
 .projects-page {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .projects-page .projects-header {
@@ -1322,7 +1323,7 @@ nav.scrolled {
 
 /* --- About page (matches public/prototypes/about.html) --- */
 .about-page {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .about-page .about-hero {
@@ -1598,7 +1599,7 @@ nav.scrolled {
 .pd-page {
   background: var(--bg);
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Shared two-column grid wrapper */
@@ -1862,7 +1863,7 @@ nav.scrolled {
   .pd-right {
     padding: 48px 24px 64px;
     justify-content: flex-start;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .pd-title {
