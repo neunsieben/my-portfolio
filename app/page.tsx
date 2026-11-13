@@ -12,6 +12,7 @@ import { useEffect } from "react";
 export default function Home() {
   useEffect(() => {
     let pageDisposed = false;
+    document.documentElement.classList.add("is-home");
 
     // ========================================================
     // SHARED FLUTED GLASS SHADER — used for both canvases
@@ -663,6 +664,7 @@ void main(){
 
     return () => {
       pageDisposed = true;
+      document.documentElement.classList.remove("is-home");
       window.removeEventListener("resize", leonardInstance.resize);
       window.removeEventListener("resize", baackInstance.resize);
       window.removeEventListener("resize", getInTouchInstance.resize);

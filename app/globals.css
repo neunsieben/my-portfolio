@@ -567,8 +567,8 @@ nav.scrolled {
   content: "";
   position: absolute;
   top: clamp(-600px, -60vh, -400px);
-  left: -50%;
-  right: -50%;
+  left: 0;
+  right: 0;
   height: clamp(500px, 65vh, 700px);
   background: radial-gradient(
     ellipse 120% 40% at 50% 100%,
@@ -581,7 +581,7 @@ nav.scrolled {
     transparent 90%
   );
   pointer-events: none;
-  transform: scaleY(var(--curve-scale, 1));
+  transform: scaleX(2) scaleY(var(--curve-scale, 1));
   transform-origin: bottom center;
   z-index: 0;
 }
@@ -720,10 +720,18 @@ nav.scrolled {
 }
 
 @media (max-width: 768px) {
-  html,
-  body {
+  html.is-home {
     max-width: 100%;
     overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  html.is-home body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
   }
 
   nav {
@@ -761,6 +769,15 @@ nav.scrolled {
 
   .hero-name {
     font-size: 20px;
+  }
+
+  .hero,
+  .hero-liquid-container,
+  .hero-inner,
+  .hero-canvas-wrap,
+  #leonardCanvas,
+  #baackCanvas {
+    max-width: 100%;
   }
 
   .hero {
