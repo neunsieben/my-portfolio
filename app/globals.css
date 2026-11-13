@@ -53,6 +53,10 @@ html {
   background-color: #f5f4f0;
 }
 
+html.is-loading {
+  overflow: clip;
+}
+
 body {
   background: #f5f4f0;
   color: #0a0a0a;
@@ -135,8 +139,7 @@ body {
 }
 
 .loader.done {
-  visibility: hidden;
-  pointer-events: none;
+  display: none;
 }
 
 /* Dot grid pattern */
@@ -735,6 +738,11 @@ nav.scrolled {
     font-size: 20px;
   }
 
+  .hero {
+    height: 100svh;
+    background: var(--bg);
+  }
+
   .scroll-explore {
     padding: 20px 24px;
     justify-content: flex-start;
@@ -799,6 +807,11 @@ nav.scrolled {
 
   .footer {
     padding: 40px 24px 30px;
+    background: transparent;
+  }
+
+  .footer-bottom {
+    color: var(--grey-mid);
   }
 
   .cursor,

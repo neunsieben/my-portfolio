@@ -463,7 +463,7 @@ void main(){
       let current = 0;
       let target = 0;
 
-      document.body.style.overflow = "hidden";
+      document.documentElement.classList.add("is-loading");
 
       const totalDuration = 1500;
 
@@ -486,7 +486,7 @@ void main(){
             loaderEl.classList.add("phase2");
             setTimeout(() => {
               loaderEl.classList.add("done");
-              document.body.style.overflow = "";
+              document.documentElement.classList.remove("is-loading");
               simulateGlassSweep();
             }, 800);
           }, 400);
@@ -667,7 +667,7 @@ void main(){
       window.removeEventListener("resize", getInTouchInstance.resize);
       sweepObs?.disconnect();
       obs.disconnect();
-      document.body.style.overflow = "";
+      document.documentElement.classList.remove("is-loading");
     };
   }, []);
 
