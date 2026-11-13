@@ -3,6 +3,53 @@
 import { useEffect, useRef } from "react";
 
 const MAX_TILT = 16;
+/** Fixed lamp: left of the frame, above it, and in front. It never follows the pointer. */
+const LAMP = [-0.9, -0.78, 1.15] as const;
+/** The cover only tips a few degrees. Shade a little more so the paper still reads. */
+const SHADE_GAIN = 2.2;
+
+function shadePoint(u: number, v: number, rx: number, ry: number) {
+  rx *= SHADE_GAIN;
+  ry *= SHADE_GAIN;
+  const ryR = (ry * Math.PI) / 180;
+  const rxR = (rx * Math.PI) / 180;
+  const cy = Math.cos(ryR);
+  const sy = Math.sin(ryR);
+  const x1 = u * cy;
+  const z1 = -u * sy;
+  const cx = Math.cos(rxR);
+  const sx = Math.sin(rxR);
+  const y2 = v * cx - z1 * sx;
+  const z2 = v * sx + z1 * cx;
+  const lx = LAMP[0] - x1;
+  const ly = LAMP[1] - y2;
+  const lz = LAMP[2] - z2;
+  const dist = Math.hypot(lx, ly, lz) || 1;
+  const ndotl = Math.max(
+    0,
+    (sy * lx + -sx * cy * ly + cx * cy * lz) / dist,
+  );
+  return ndotl / (1 + dist * dist * 0.11);
+}
+
+/** Broad paper falloff from the fixed lamp. No specular hotspot. */
+function paperLight(rx: number, ry: number) {
+  const samples = [-0.5, 0, 0.5].flatMap((v) =>
+    [-0.5, 0, 0.5].map((u) => shadePoint(u, v, rx, ry)),
+  );
+  const left = shadePoint(-0.5, 0, rx, ry);
+  const right = shadePoint(0.5, 0, rx, ry);
+  const top = shadePoint(0, -0.5, rx, ry);
+  const bottom = shadePoint(0, 0.5, rx, ry);
+  const angle = (Math.atan2(right - left, -(bottom - top)) * 180) / Math.PI;
+  const maxB = Math.max(...samples);
+  const minB = Math.min(...samples);
+  const lit = Math.min(1, Math.max(0, (maxB - 0.15) / 0.7));
+  const shd = Math.min(1, Math.max(0, (minB - 0.15) / 0.7));
+  const lightA = (0.16 + lit * 0.18).toFixed(3);
+  const shadowA = (0.28 + (1 - shd) * 0.22).toFixed(3);
+  return `linear-gradient(${angle.toFixed(2)}deg, rgba(36, 26, 20, ${shadowA}) 0%, rgba(150, 136, 120, 0.06) 48%, rgba(255, 246, 232, ${lightA}) 100%)`;
+}
 
 /** Black 4:3 window. Only the square cover inside it tilts. */
 export function TiltCover({
@@ -16,13 +63,13 @@ export function TiltCover({
 }) {
   const frameRef = useRef<HTMLDivElement>(null);
   const planeRef = useRef<HTMLDivElement>(null);
-  const glareRef = useRef<HTMLDivElement>(null);
+  const lightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const frame = frameRef.current;
     const plane = planeRef.current;
-    const glare = glareRef.current;
-    if (!frame || !plane || !glare) return;
+    const light = lightRef.current;
+    if (!frame || !plane || !light) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf = 0;
@@ -38,10 +85,7 @@ export function TiltCover({
       const rx = currentY * -MAX_TILT;
       const ry = currentX * MAX_TILT;
       plane.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-      // Light stays in the top-left. The sheen slides because the cover turns.
-      const hx = Math.min(62, Math.max(0, currentX * 104));
-      const hy = Math.min(62, Math.max(0, currentY * 104));
-      glare.style.background = `radial-gradient(circle at ${hx}% ${hy}%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.34) 22%, rgba(255,255,255,0.1) 46%, transparent 64%)`;
+      light.style.backgroundImage = `${paperLight(rx, ry)}, var(--paper-grain)`;
       const stillMoving =
         Math.abs(targetX - currentX) > 0.001 ||
         Math.abs(targetY - currentY) > 0.001;
@@ -50,7 +94,7 @@ export function TiltCover({
       } else {
         raf = 0;
         plane.style.transform = "rotateX(0deg) rotateY(0deg)";
-        glare.style.background = "";
+        light.style.backgroundImage = "";
       }
     };
 
@@ -100,7 +144,7 @@ export function TiltCover({
             event.currentTarget.style.visibility = "hidden";
           }}
         />
-        <div ref={glareRef} className="tilt-cover-glare" />
+        <div ref={lightRef} className="tilt-cover-light" />
       </div>
     </div>
   );
