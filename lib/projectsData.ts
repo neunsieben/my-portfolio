@@ -31,6 +31,10 @@ export type ProjectDetail = {
 export const HUNGRY4_COVER =
   "/images/projects/hungry4/hungry4_cover_alec_dienaar_if_you_can.jpg";
 
+/** Still 4:3 thumbnail: black frame, cover centered. Used by list and grid. */
+export const HUNGRY4_FRAME =
+  "/images/projects/hungry4/hungry4_cover_frame.jpg";
+
 const LOREM =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 

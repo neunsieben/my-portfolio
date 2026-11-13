@@ -1804,36 +1804,14 @@ nav.scrolled {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 1;
-  mix-blend-mode: soft-light;
+  mix-blend-mode: screen;
   background: radial-gradient(
-    circle at 50% 30%,
-    rgba(255, 255, 255, 0.5),
-    rgba(255, 255, 255, 0.08) 26%,
-    transparent 56%
+    circle at 0% 0%,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.34) 22%,
+    rgba(255, 255, 255, 0.1) 46%,
+    transparent 64%
   );
-}
-
-.projects-page .projects-list-img .tilt-cover {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  display: none;
-}
-
-.projects-page .projects-list-img.is-hungry4 .tilt-cover {
-  display: block;
-}
-
-.projects-page .projects-list-img.is-hungry4 .preview-layer {
-  visibility: hidden;
-}
-
-@media (max-width: 768px) {
-  .carousel-slide.tilt-cover {
-    width: 78vw;
-    flex-shrink: 0;
-  }
 }
 
 .pd-media-item {

@@ -4,7 +4,7 @@ import { DotGrid } from "@/components/DotGrid";
 import { SiteCursor } from "@/components/SiteCursor";
 import { SiteNav } from "@/components/SiteNav";
 import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
-import { PROJECT_DETAILS, HUNGRY4_COVER } from "@/lib/projectsData";
+import { PROJECT_DETAILS, HUNGRY4_FRAME } from "@/lib/projectsData";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
 import {
   createSlidingPreview,
@@ -22,7 +22,6 @@ import {
   type PreviewItem,
 } from "@/lib/slidingPreview";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
-import { TiltCover } from "@/components/TiltCover";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -172,11 +171,11 @@ const LIST_ROWS = [
   {
     reveal: "reveal",
     slug: "hungry4",
-    dataImg: "#000000",
+    dataImg: `url(${HUNGRY4_FRAME})`,
     num: "011",
     name: "Hungry4",
     desc: "Cover artwork for Hungry4.",
-    slides: ["#000000", "#000000", "#000000", "#000000"],
+    slides: [`url(${HUNGRY4_FRAME})`],
   },
 ] as const;
 
@@ -198,6 +197,10 @@ function previewSrc(src: string) {
 function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] {
   const fromMedia: PreviewItem[] = [];
   for (const m of PROJECT_DETAILS.find((p) => p.slug === slug)?.media ?? []) {
+    if (m.presentation === "tilt-cover") {
+      fromMedia.push({ kind: "image", src: previewSrc(HUNGRY4_FRAME) });
+      continue;
+    }
     if (!m.src) continue;
     if (m.type === "image")
       fromMedia.push({ kind: "image", src: previewSrc(m.src) });
@@ -661,7 +664,6 @@ export default function ProjectsPage() {
         fallback: string,
         enterDir: 0 | 1 | -1 = 0,
       ) {
-        stickyEl.classList.toggle("is-hungry4", slug === "hungry4");
         if (previewCycleTimer !== null) window.clearInterval(previewCycleTimer);
         previewCycleTimer = null;
         const items = previewItems(slug, [fallback]);
@@ -1228,11 +1230,6 @@ export default function ProjectsPage() {
                 <img alt="" />
                 <video muted loop playsInline preload="auto" />
               </div>
-              <TiltCover
-                src={HUNGRY4_COVER}
-                alt="Hungry4 cover"
-                static
-              />
             </div>
           </div>
           <div className="projects-list-rows" id="listRows">
@@ -1251,15 +1248,7 @@ export default function ProjectsPage() {
                 <div className="project-row-carousel">
                   <div className="carousel-track">
                     <div className="carousel-track-inner">
-                      {row.slug === "hungry4" ? (
-                        <div className="carousel-slide tilt-cover">
-                          <div className="tilt-cover-art">
-                            <img src={HUNGRY4_COVER} alt="" />
-                            <div className="tilt-cover-glare" />
-                          </div>
-                        </div>
-                      ) : (
-                        previewItems(row.slug, row.slides).map((item, i) => {
+                      {previewItems(row.slug, row.slides).map((item, i) => {
                         if (item.kind === "image") {
                           return (
                             <img
@@ -1292,8 +1281,7 @@ export default function ProjectsPage() {
                             style={{ backgroundImage: item.bg }}
                           />
                         );
-                      })
-                      )}
+                      })}
                     </div>
                   </div>
                 </div>
@@ -1308,18 +1296,14 @@ export default function ProjectsPage() {
             return (
               <div
                 key={row.num}
-                className={`project-grid-item ${row.reveal} hoverable${row.slug === "hungry4" ? " is-tilt" : ""}`}
+                className={`project-grid-item ${row.reveal} hoverable`}
                 data-slug={row.slug}
               >
                 <div className="project-grid-img-wrap">
-                  {row.slug === "hungry4" ? (
-                    <TiltCover src={HUNGRY4_COVER} alt="Hungry4 cover" static />
-                  ) : (
-                    <SlidingPreviewFrame
-                      slug={row.slug}
-                      fallback={row.slides}
-                    />
-                  )}
+                  <SlidingPreviewFrame
+                    slug={row.slug}
+                    fallback={row.slides}
+                  />
                 </div>
                 <div className="project-grid-meta">
                   <span className="project-grid-name">
