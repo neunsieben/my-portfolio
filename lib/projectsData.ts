@@ -8,8 +8,10 @@ export type ProjectMedia = {
   poster?: string;
   /** CSS background value shown as placeholder when no src is set */
   bg?: string;
-  /** Square cover, centered in a black 4:3 frame that tilts with the cursor */
+  /** Square cover, centered in a black 4:3 frame. Only the cover tilts. */
   presentation?: "tilt-cover";
+  /** Still 4:3 stand-in for list and grid when presentation is tilt-cover. */
+  frame?: string;
 };
 
 export type ProjectDetail = {
@@ -34,6 +36,12 @@ export const HUNGRY4_COVER =
 /** Still 4:3 thumbnail: black frame, cover centered. Used by list and grid. */
 export const HUNGRY4_FRAME =
   "/images/projects/hungry4/hungry4_cover_frame.jpg";
+
+export const KOLSCH_COVER =
+  "/images/projects/koelsch/kolsch_kinema_album_cover.jpg";
+
+export const KOLSCH_FRAME =
+  "/images/projects/koelsch/kolsch_kinema_album_cover_frame.jpg";
 
 const LOREM =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -314,6 +322,13 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     media: [
       {
         type: "image",
+        src: KOLSCH_COVER,
+        alt: "Kölsch — Kinema cover",
+        presentation: "tilt-cover",
+        frame: KOLSCH_FRAME,
+      },
+      {
+        type: "image",
         src: "/images/projects/koelsch/koelsch_kinema_spotify.jpg",
         alt: "Kölsch — KINEMEA album on Spotify",
       },
@@ -352,6 +367,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         src: HUNGRY4_COVER,
         alt: "Hungry4 — cover",
         presentation: "tilt-cover",
+        frame: HUNGRY4_FRAME,
       },
     ],
   },

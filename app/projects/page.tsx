@@ -4,7 +4,7 @@ import { DotGrid } from "@/components/DotGrid";
 import { SiteCursor } from "@/components/SiteCursor";
 import { SiteNav } from "@/components/SiteNav";
 import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
-import { PROJECT_DETAILS, HUNGRY4_FRAME } from "@/lib/projectsData";
+import { PROJECT_DETAILS, HUNGRY4_FRAME, KOLSCH_FRAME } from "@/lib/projectsData";
 import { CONTACT_MAILTO } from "@/lib/siteContact";
 import {
   createSlidingPreview,
@@ -143,7 +143,7 @@ const LIST_ROWS = [
   {
     reveal: "reveal reveal-delay-8",
     slug: "kolsch-ipso",
-    dataImg: "url(/images/projects/koelsch/koelsch_kinema_spotify.jpg)",
+    dataImg: `url(${KOLSCH_FRAME})`,
     num: "009",
     name: "Kölsch / IPSO",
     desc: "Album cover artwork for the album \"Kinema\" and Europe Tour design for \"Kölsch and the Machine\".",
@@ -197,8 +197,8 @@ function previewSrc(src: string) {
 function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] {
   const fromMedia: PreviewItem[] = [];
   for (const m of PROJECT_DETAILS.find((p) => p.slug === slug)?.media ?? []) {
-    if (m.presentation === "tilt-cover") {
-      fromMedia.push({ kind: "image", src: previewSrc(HUNGRY4_FRAME) });
+    if (m.presentation === "tilt-cover" && m.frame) {
+      fromMedia.push({ kind: "image", src: previewSrc(m.frame) });
       continue;
     }
     if (!m.src) continue;
