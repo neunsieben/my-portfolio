@@ -530,6 +530,16 @@ void main(){
         current += (target - current) * 0.08;
         const rounded = Math.round(current);
         counterEl.textContent = String(rounded);
+        const maxWidth = window.innerWidth * 0.9;
+        const maxHeight = window.innerHeight * 0.62;
+        counterEl.style.fontSize = "";
+        const fitted = parseFloat(getComputedStyle(counterEl).fontSize);
+        const scale = Math.min(
+          1,
+          maxWidth / Math.max(counterEl.scrollWidth, 1),
+          maxHeight / Math.max(counterEl.offsetHeight, 1),
+        );
+        if (scale < 0.995) counterEl.style.fontSize = `${fitted * scale}px`;
         if (rounded < 100 || !loaderEl.classList.contains("done")) {
           requestAnimationFrame(animate);
         }
@@ -740,8 +750,6 @@ void main(){
         </div>
       </section>
 
-      <div className="home-edge" aria-hidden="true" />
-
       <section className="featured-works" id="selected-work">
         <h2 className="section-title reveal">Selected work</h2>
       </section>
@@ -858,7 +866,7 @@ void main(){
         </ul>
       </section>
 
-      <footer className="footer">
+      <footer className="footer home-footer">
         <div className="footer-bottom">
           © 2026 Leonard Baack. All Rights Reserved.
         </div>

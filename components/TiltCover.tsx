@@ -103,7 +103,6 @@ export function TiltCover({
     };
 
     const onMove = (event: PointerEvent) => {
-      if (event.pointerType === "touch") return;
       const rect = frame.getBoundingClientRect();
       targetX = Math.max(
         -0.5,
@@ -117,7 +116,21 @@ export function TiltCover({
       kick();
     };
 
-    const onLeave = () => {
+    const onLeave = (event?: PointerEvent) => {
+      if (event?.pointerType === "touch") return;
+      targetX = 0;
+      targetY = 0;
+      active = false;
+      kick();
+    };
+
+    const onDown = (event: PointerEvent) => {
+      if (event.pointerType === "touch") frame.setPointerCapture(event.pointerId);
+      onMove(event);
+    };
+
+    const onUp = (event: PointerEvent) => {
+      if (event.pointerType !== "touch") return;
       targetX = 0;
       targetY = 0;
       active = false;
@@ -125,10 +138,16 @@ export function TiltCover({
     };
 
     frame.addEventListener("pointermove", onMove);
+    frame.addEventListener("pointerdown", onDown);
+    frame.addEventListener("pointerup", onUp);
+    frame.addEventListener("pointercancel", onUp);
     frame.addEventListener("pointerleave", onLeave);
     return () => {
       cancelAnimationFrame(raf);
       frame.removeEventListener("pointermove", onMove);
+      frame.removeEventListener("pointerdown", onDown);
+      frame.removeEventListener("pointerup", onUp);
+      frame.removeEventListener("pointercancel", onUp);
       frame.removeEventListener("pointerleave", onLeave);
     };
   }, []);
