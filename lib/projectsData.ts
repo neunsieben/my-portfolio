@@ -54,7 +54,7 @@ const LOREM_DE =
 export const PROJECT_DETAILS: ProjectDetail[] = [
   {
     slug: "zalazium-gmbh",
-    num: "001",
+    num: "008",
     name: "Zalazium GmbH",
     category: "UX · Branding · Motion",
     year: "2025",
@@ -94,7 +94,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "daily-grind-coffee",
-    num: "002",
+    num: "006",
     name: "Daily Grind Coffee",
     category: "Branding · Packaging",
     year: "2024",
@@ -119,7 +119,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "donata-jan-trio",
-    num: "003",
+    num: "002",
     name: "Donata Jan Trio",
     category: "Album Artwork",
     year: "2024",
@@ -175,7 +175,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "resort-13",
-    num: "005",
+    num: "009",
     name: "Resort 13 x PALLAS",
     category: "Branding · Social Media",
     year: "2025",
@@ -195,7 +195,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "forbes-cpxart",
-    num: "006",
+    num: "001",
     name: "CPxArt x Forbes",
     category: "Art · Fashion",
     year: "2017",
@@ -238,7 +238,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "carlitoz-way",
-    num: "007",
+    num: "010",
     name: "Carlitoz Way",
     category: "Packaging Design",
     year: "2026",
@@ -296,7 +296,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "magic-mansion",
-    num: "008",
+    num: "005",
     name: "Magic Mansion",
     category: "Branding",
     year: "2025",
@@ -311,7 +311,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "kolsch-ipso",
-    num: "009",
+    num: "007",
     name: "Kölsch / IPSO",
     category: "Album Artwork · Tour Design",
     year: "2025",
@@ -338,7 +338,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "henning-media",
-    num: "010",
+    num: "011",
     name: "Henning Media",
     category: "Logo Design",
     year: "2026",
@@ -355,7 +355,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
   },
   {
     slug: "hungry4",
-    num: "011",
+    num: "012",
     name: "Hungry4",
     category: "Album Artwork",
     year: "2026",
@@ -374,19 +374,34 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       },
     ],
   },
+  {
+    slug: "hifi-klubben",
+    num: "003",
+    name: "HiFi Klubben",
+    category: "Branding",
+    year: "—",
+    client: "HiFi Klubben",
+    description: LOREM,
+    descriptionDe: LOREM_DE,
+    media: [
+      { type: "image", bg: "linear-gradient(135deg,#1c1a17,#2a2622,#12110f)" },
+      { type: "image", bg: "linear-gradient(160deg,#12110f,#1c1a17,#2a2622)" },
+    ],
+  },
 ];
 
-/** Quick lookup: project number → slug */
+/** Quick lookup: project number → slug. 001 is the oldest, 012 the newest. */
 export const NUM_TO_SLUG: Record<string, string> = {
-  "001": "zalazium-gmbh",
-  "002": "daily-grind-coffee",
-  "003": "donata-jan-trio",
+  "001": "forbes-cpxart",
+  "002": "donata-jan-trio",
+  "003": "hifi-klubben",
   "004": "studio-liebe",
-  "005": "resort-13",
-  "006": "forbes-cpxart",
-  "007": "carlitoz-way",
-  "008": "magic-mansion",
-  "009": "kolsch-ipso",
-  "010": "henning-media",
-  "011": "hungry4",
+  "005": "magic-mansion",
+  "006": "daily-grind-coffee",
+  "007": "kolsch-ipso",
+  "008": "zalazium-gmbh",
+  "009": "resort-13",
+  "010": "carlitoz-way",
+  "011": "henning-media",
+  "012": "hungry4",
 };

@@ -794,7 +794,7 @@ void main(){
               <ProjectSlide slug="zalazium-gmbh" />
               <div className="project-meta">
                 <span className="project-name">
-                  001&nbsp;&nbsp;&nbsp;&nbsp;Zalazium GmbH
+                  008&nbsp;&nbsp;&nbsp;&nbsp;Zalazium GmbH
                 </span>
                 <span className="project-cat">UX · Branding · Motion</span>
               </div>
@@ -820,7 +820,7 @@ void main(){
               <ProjectSlide slug="carlitoz-way" />
               <div className="project-meta">
                 <span className="project-name">
-                  007&nbsp;&nbsp;&nbsp;&nbsp;Carlitoz Way
+                  010&nbsp;&nbsp;&nbsp;&nbsp;Carlitoz Way
                 </span>
                 <span className="project-cat">Packaging Design</span>
               </div>
