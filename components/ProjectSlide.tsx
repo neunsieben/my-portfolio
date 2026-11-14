@@ -24,6 +24,10 @@ function itemsFor(slug: string): PreviewItem[] {
       items.push({ kind: "image", src: previewSrc(item.frame) });
       continue;
     }
+    if (item.presentation === "hm-construction" && item.hm) {
+      items.push({ kind: "hm", variant: item.hm });
+      continue;
+    }
     if (!item.src) continue;
     if (item.type === "image") {
       items.push({ kind: "image", src: previewSrc(item.src) });

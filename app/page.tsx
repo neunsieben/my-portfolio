@@ -800,15 +800,15 @@ void main(){
               </div>
             </Link>
             <Link
-              href="/projects/studio-liebe"
+              href="/projects/henning-media"
               className="project-item project-right reveal reveal-delay-2 hoverable"
             >
-              <ProjectSlide slug="studio-liebe" />
+              <ProjectSlide slug="henning-media" />
               <div className="project-meta">
                 <span className="project-name">
-                  004&nbsp;&nbsp;&nbsp;&nbsp;Studio Liebe
+                  011&nbsp;&nbsp;&nbsp;&nbsp;Henning Media
                 </span>
-                <span className="project-cat">Branding · Web Design</span>
+                <span className="project-cat">Logo Design</span>
               </div>
             </Link>
           </div>
