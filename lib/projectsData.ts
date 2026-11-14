@@ -9,7 +9,9 @@ export type ProjectMedia = {
   /** CSS background value shown as placeholder when no src is set */
   bg?: string;
   /** Square cover, centered in a black 4:3 frame. Only the cover tilts. */
-  presentation?: "tilt-cover";
+  presentation?: "tilt-cover" | "hm-construction";
+  /** Which Henning Media construction sequence to play. */
+  hm?: "mark" | "horizontal" | "stacked";
   /** Still 4:3 stand-in for list and grid when presentation is tilt-cover. */
   frame?: string;
   /** Stronger lamp so the highlight reads on a black cover. */
@@ -349,8 +351,24 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     descriptionDe:
       "Logo für den Fotografen und Videografen Niklas Henning, der heute als Henning Media arbeitet.\n\n2026 habe ich die Bildmarke und ihre Konstruktion gestaltet — von den ersten Skizzen bis zur fertigen Identität.",
     media: [
-      { type: "image", bg: "linear-gradient(135deg,#161412,#22201c,#0e0d0b)" },
-      { type: "image", bg: "linear-gradient(160deg,#0e0d0b,#1a1815,#22201c)" },
+      {
+        type: "image",
+        presentation: "hm-construction",
+        hm: "mark",
+        alt: "Construction of the Henning Media monogram",
+      },
+      {
+        type: "image",
+        presentation: "hm-construction",
+        hm: "horizontal",
+        alt: "Construction of the Henning Media horizontal lockup",
+      },
+      {
+        type: "image",
+        presentation: "hm-construction",
+        hm: "stacked",
+        alt: "Construction of the Henning Media stacked lockup",
+      },
     ],
   },
   {

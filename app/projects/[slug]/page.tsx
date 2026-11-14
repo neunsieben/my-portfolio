@@ -8,6 +8,7 @@ import { CONTACT_MAILTO } from "@/lib/siteContact";
 import { PROJECT_DETAILS, type ProjectMedia } from "@/lib/projectsData";
 import { initTerminalLinks } from "@/lib/terminalAnimation";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
+import { HmConstruction } from "@/components/HmConstruction";
 import { TiltCover } from "@/components/TiltCover";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -48,11 +49,16 @@ function DetailMedia({
   return (
     <div
       ref={wrapRef}
-      className={`pd-media-item reveal${!item.src ? " pd-placeholder" : ""}`}
+      className={`pd-media-item reveal${
+        !item.src && item.presentation !== "hm-construction" ? " pd-placeholder" : ""
+      }`}
       style={!item.src && item.bg ? { background: item.bg } : {}}
     >
       {item.presentation === "tilt-cover" && item.src ? (
         <TiltCover src={item.src} alt={item.alt ?? name} lamp={item.lamp} />
+      ) : null}
+      {item.presentation === "hm-construction" ? (
+        <HmConstruction variant={item.hm ?? "mark"} />
       ) : null}
       {item.presentation !== "tilt-cover" && item.type === "image" && item.src ? (
         <img
