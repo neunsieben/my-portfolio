@@ -56,7 +56,7 @@
     'font-family:var(--hm-font,ui-monospace,"SF Mono",Menlo,Consolas,monospace);font-size:var(--hm-caption-size,11px);font-weight:400;line-height:var(--hm-caption-leading,1.9);',
     'letter-spacing:var(--hm-caption-tracking,0.8px);text-transform:uppercase;color:var(--hm-measure,#6B7075);pointer-events:none;transition:opacity .35s ease}',
     '.cap.out{opacity:0}',
-    '.cap .n{color:var(--hm-guide,#E8452C)}',
+    '.cap .n{color:var(--hm-ink,currentColor)}',
     '.cap .t{text-transform:uppercase;color:var(--hm-ink,currentColor)}',
     ':host([captions="off"]) .cap{display:none}',
     '@media (prefers-reduced-motion:reduce){.draw,.fade,.cam,.guides,.cap{transition:none!important}}'

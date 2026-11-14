@@ -693,7 +693,7 @@ nav.scrolled {
 }
 
 .footer {
-  padding: 8px 48px 48px;
+  padding: 56px 48px 48px;
   background: var(--text);
   position: relative;
   z-index: 1;
@@ -841,6 +841,15 @@ nav.scrolled {
 
   .project-row {
     gap: 40px;
+    margin-bottom: 40px;
+  }
+
+  .project-row-offset {
+    margin-bottom: 0;
+  }
+
+  .projects-more {
+    margin-top: 60px;
   }
 
   .projects-editorial .project-item,
@@ -871,7 +880,7 @@ nav.scrolled {
   }
 
   .footer {
-    padding: 8px 24px 32px;
+    padding: 48px 24px 32px;
     background: transparent;
   }
 
