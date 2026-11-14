@@ -1898,6 +1898,12 @@ nav.scrolled {
   overflow: hidden;
 }
 
+@media (max-width: 768px) {
+  hm-construction {
+    --hm-caption-tracking: 0.4px;
+  }
+}
+
 .pd-media-item img,
 .pd-media-item video {
   width: 100%;

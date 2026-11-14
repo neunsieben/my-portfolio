@@ -20,9 +20,15 @@ export function HmConstruction({ variant = "mark" }: { variant?: Variant }) {
       display: "block",
       width: "100%",
       aspectRatio: "4 / 3",
-      color: "#0a0a0a",
-      ["--hm-bg" as string]: "#f5f4f0",
-      ["--hm-ink" as string]: "#0a0a0a",
+      background: "#0a0a0a",
+      color: "#f5f4f0",
+      ["--hm-bg" as string]: "#0a0a0a",
+      ["--hm-ink" as string]: "#f5f4f0",
+      ["--hm-guide" as string]: "#ff5b40",
+      ["--hm-measure" as string]: "#b5b2ac",
+      ["--hm-font" as string]: "var(--font-mono)",
+      ["--hm-caption-size" as string]: "11px",
+      ["--hm-caption-leading" as string]: "1.9",
     },
   });
 }
