@@ -1,17 +1,35 @@
 /** Dual-layer horizontal slide used by the projects list bulls-eye and Grid View. */
 
+import "../components/hm-construction.js";
+
+export type HmVariant = "mark" | "horizontal" | "stacked";
+
 export type PreviewItem =
   | { kind: "image"; src: string }
   | { kind: "video"; src: string; poster?: string }
-  | { kind: "bg"; bg: string };
+  | { kind: "bg"; bg: string }
+  | { kind: "hm"; variant: HmVariant };
+
+type HmEl = HTMLElement & {
+  play?: () => void;
+  quiet?: (fade?: boolean) => void;
+};
 
 export const PREVIEW_CYCLE_MS = 3400;
+
+export function previewCycleMs(items: PreviewItem[]) {
+  return items.length > 0 && items.every((item) => item.kind === "hm")
+    ? 8400
+    : PREVIEW_CYCLE_MS;
+}
 export const PREVIEW_SLIDE_MS = 720;
 export const PREVIEW_SLIDE_OVERLAP_PX = 2;
 export const PREVIEW_SLIDE_EASE = "cubic-bezier(0.65, 0, 0.35, 1)";
 
 export function pauseLayer(layer: HTMLElement | undefined) {
   layer?.querySelector("video")?.pause();
+  const hm = layer?.querySelector("hm-construction") as HmEl | null;
+  if (hm && hm.style.display !== "none") hm.quiet?.(false);
 }
 
 export function stopLayerAnims(layer: HTMLElement) {
@@ -30,6 +48,44 @@ export function showLayerOpen(layer: HTMLElement) {
   layer.style.transform = "scale(1)";
 }
 
+function concealHm(layer: HTMLElement) {
+  const hm = layer.querySelector("hm-construction") as HmEl | null;
+  if (!hm) return;
+  hm.quiet?.(false);
+  hm.style.display = "none";
+}
+
+function showHm(layer: HTMLElement, variant: HmVariant, play: boolean) {
+  let hm = layer.querySelector("hm-construction") as HmEl | null;
+  if (hm && hm.getAttribute("variant") !== variant) {
+    hm.quiet?.(false);
+    hm.remove();
+    hm = null;
+  }
+  if (!hm) {
+    hm = document.createElement("hm-construction") as HmEl;
+    hm.setAttribute("variant", variant);
+    hm.setAttribute("loop", "");
+    hm.setAttribute("autoplay", "off");
+    hm.style.display = "block";
+    hm.style.width = "100%";
+    hm.style.height = "100%";
+    hm.style.background = "#0a0a0a";
+    hm.style.color = "#f5f4f0";
+    hm.style.setProperty("--hm-bg", "#0a0a0a");
+    hm.style.setProperty("--hm-ink", "#f5f4f0");
+    hm.style.setProperty("--hm-guide", "#ff5b40");
+    hm.style.setProperty("--hm-measure", "#b5b2ac");
+    hm.style.setProperty("--hm-font", "var(--font-mono)");
+    hm.style.setProperty("--hm-caption-size", "clamp(7px, 2cqw, 10px)");
+    hm.style.setProperty("--hm-caption-leading", "1.5");
+    layer.appendChild(hm);
+  }
+  hm.style.display = "block";
+  if (play) hm.play?.();
+  else hm.quiet?.(false);
+}
+
 export function fillPreviewLayer(
   layer: HTMLElement,
   item: PreviewItem,
@@ -38,7 +94,9 @@ export function fillPreviewLayer(
   const photo = layer.querySelector("img");
   const vid = layer.querySelector("video");
   layer.style.backgroundImage = "";
+  layer.style.backgroundColor = "";
   if (item.kind === "image") {
+    concealHm(layer);
     if (vid) {
       vid.pause();
       vid.style.display = "none";
@@ -48,6 +106,7 @@ export function fillPreviewLayer(
       photo.style.display = "block";
     }
   } else if (item.kind === "video") {
+    concealHm(layer);
     if (photo) photo.style.display = "none";
     layer.style.backgroundImage = item.poster ? `url("${item.poster}")` : "";
     if (vid) {
@@ -61,7 +120,16 @@ export function fillPreviewLayer(
       if (play) vid.play().catch(() => {});
       else vid.pause();
     }
+  } else if (item.kind === "hm") {
+    if (photo) photo.style.display = "none";
+    if (vid) {
+      vid.pause();
+      vid.style.display = "none";
+    }
+    layer.style.backgroundColor = "#0a0a0a";
+    showHm(layer, item.variant, play);
   } else {
+    concealHm(layer);
     if (photo) photo.style.display = "none";
     if (vid) {
       vid.pause();
@@ -104,6 +172,7 @@ export function waitForPreviewMedia(
       timeout,
     ]);
   }
+  if (item.kind === "hm") return Promise.resolve();
   return Promise.resolve();
 }
 
@@ -151,6 +220,8 @@ export function createSlidingPreview(root: HTMLElement) {
     if (vid && getComputedStyle(vid).display !== "none") {
       vid.play().catch(() => {});
     }
+    const hm = layer?.querySelector("hm-construction") as HmEl | null;
+    if (hm && hm.style.display !== "none") hm.play?.();
   }
 
   async function transition(
@@ -273,7 +344,7 @@ export function createSlidingPreview(root: HTMLElement) {
       if (next) void transition(next, "slide").then((ok) => {
         if (ok) prefillNext();
       });
-    }, PREVIEW_CYCLE_MS);
+    }, previewCycleMs(items));
   }
 
   function startCycle(nextItems: PreviewItem[]) {

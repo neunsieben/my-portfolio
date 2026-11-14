@@ -35,6 +35,9 @@
     ':host{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;cursor:pointer;container-type:inline-size;',
     'background:var(--hm-bg,transparent);color:var(--hm-ink,currentColor);-webkit-tap-highlight-color:transparent}',
     ':host(:focus-visible){outline:2px solid var(--hm-guide,#E8452C);outline-offset:3px}',
+    '.stage{position:absolute;inset:0;opacity:0;transition:opacity 1.2s cubic-bezier(.16,1,.3,1)}',
+    ':host(.in) .stage{opacity:1}',
+    ':host(.reset) .stage{transition:none!important}',
     'svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden;transform:scale(.78);transform-origin:center}',
     '.ink{fill:var(--hm-ink,currentColor)}',
     '.red{stroke:var(--hm-guide,#E8452C);fill:none}',
@@ -59,7 +62,7 @@
     '.cap .n{color:var(--hm-ink,currentColor)}',
     '.cap .t{text-transform:uppercase;color:var(--hm-ink,currentColor)}',
     ':host([captions="off"]) .cap{display:none}',
-    '@media (prefers-reduced-motion:reduce){.draw,.fade,.cam,.guides,.cap{transition:none!important}}'
+    '@media (prefers-reduced-motion:reduce){.draw,.fade,.cam,.guides,.cap,.stage{transition:none!important}}'
   ].join('');
 
   var VARIANTS = {
@@ -213,9 +216,9 @@
       this._total = v.steps.length;
       var root = this.attachShadow({ mode: 'open' });
       root.innerHTML = '<style>' + CSS + '</style>' +
-        '<svg class="' + v.cls + '" viewBox="' + v.viewBox + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="' + v.label + '">' +
+        '<div class="stage"><svg class="' + v.cls + '" viewBox="' + v.viewBox + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="' + v.label + '">' +
         '<g class="cam">' + v.body.split('%MARK%').join(MARK).split('%WORD%').join(WORD) + '</g></svg>' +
-        '<div class="cap" aria-hidden="true"><span class="n"></span><span class="t"></span><span class="c"></span></div>';
+        '<div class="cap" aria-hidden="true"><span class="n"></span><span class="t"></span><span class="c"></span></div></div>';
       this._svg = root.querySelector('svg');
       this._cam = root.querySelector('.cam');
       this._groups = root.querySelectorAll('[data-s]');
@@ -225,14 +228,16 @@
       this.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); self.play(); }
       });
-      this._instant(v.rest);
+      var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (still) { this._instant(v.rest); this.classList.add('in'); }
+      else this._instant(0);
     }
-    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!still && this.getAttribute('autoplay') !== 'off' && 'IntersectionObserver' in window) {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce && this.getAttribute('autoplay') !== 'off' && 'IntersectionObserver' in window) {
       this._io = new IntersectionObserver(function (es) {
         es.forEach(function (e) {
-          if (e.isIntersecting) { if (!self._played) { self._played = true; self.play(); } }
-          else if (self.hasAttribute('loop')) { self.stop(); self._played = false; self._instant(self._v.rest); }
+          if (e.isIntersecting) { if (!self._played) self.play(); }
+          else if (self.hasAttribute('loop')) self.quiet(true);
         });
       }, { threshold: 0.5 });
       this._io.observe(this);
@@ -241,6 +246,7 @@
 
   HM.prototype.disconnectedCallback = function () {
     this.stop();
+    clearTimeout(this._hideTimer);
     if (this._io) { this._io.disconnect(); this._io = null; }
   };
 
@@ -279,8 +285,30 @@
 
   HM.prototype.stop = function () { clearTimeout(this._timer); this._timer = null; };
 
+  HM.prototype.quiet = function (fade) {
+    var self = this;
+    clearTimeout(this._hideTimer);
+    this.stop();
+    this._played = false;
+    if (!this._svg) return;
+    if (fade) {
+      this.classList.remove('in');
+      this._hideTimer = setTimeout(function () {
+        if (!self._played) self._instant(0);
+      }, 1200);
+      return;
+    }
+    this.classList.add('reset');
+    this.classList.remove('in');
+    this._instant(0);
+    this.classList.remove('reset');
+  };
+
   HM.prototype.play = function () {
     var self = this, v = this._v, n = 0;
+    clearTimeout(this._hideTimer);
+    this._played = true;
+    this.classList.add('in');
     this.stop();
     this._instant(0);
     (function next() {

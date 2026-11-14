@@ -1,6 +1,7 @@
 "use client";
 
 import { DotGrid } from "@/components/DotGrid";
+import { HmConstruction } from "@/components/HmConstruction";
 import { SiteCursor } from "@/components/SiteCursor";
 import { SiteNav } from "@/components/SiteNav";
 import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
@@ -12,7 +13,7 @@ import {
   hideLayer,
   nextFrame,
   pauseLayer,
-  PREVIEW_CYCLE_MS,
+  previewCycleMs,
   PREVIEW_SLIDE_MS,
   PREVIEW_SLIDE_OVERLAP_PX,
   previewSlideTransforms,
@@ -211,6 +212,10 @@ function previewSrc(src: string) {
 function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] {
   const fromMedia: PreviewItem[] = [];
   for (const m of PROJECT_DETAILS.find((p) => p.slug === slug)?.media ?? []) {
+    if (m.presentation === "hm-construction" && m.hm) {
+      fromMedia.push({ kind: "hm", variant: m.hm });
+      continue;
+    }
     if (m.presentation === "tilt-cover" && m.frame) {
       fromMedia.push({ kind: "image", src: previewSrc(m.frame) });
       continue;
@@ -489,7 +494,7 @@ export default function ProjectsPage() {
       const warmed = new Set<string>();
       const warmVideos: HTMLVideoElement[] = [];
       function warm(item: PreviewItem | undefined) {
-        if (!item || item.kind === "bg" || warmed.has(item.src)) return;
+        if (!item || item.kind === "bg" || item.kind === "hm" || warmed.has(item.src)) return;
         warmed.add(item.src);
         if (item.kind === "image") {
           const im = new Image();
@@ -707,7 +712,7 @@ export default function ProjectsPage() {
           previewCycleIdx = (previewCycleIdx + 1) % items.length;
           const next = items[previewCycleIdx];
           if (next) void transitionPreview(next, "slide").then(prefillNext);
-        }, PREVIEW_CYCLE_MS);
+        }, previewCycleMs(items));
       }
 
       function swapImage() {
@@ -1308,6 +1313,13 @@ export default function ProjectsPage() {
                   <div className="carousel-track">
                     <div className="carousel-track-inner">
                       {previewItems(row.slug, row.slides).map((item, i) => {
+                        if (item.kind === "hm") {
+                          return (
+                            <div key={i} className="carousel-slide hm-slide">
+                              <HmConstruction variant={item.variant} />
+                            </div>
+                          );
+                        }
                         if (item.kind === "image") {
                           return (
                             <img
