@@ -455,16 +455,25 @@ nav.scrolled {
 }
 
 .project-row {
-  display: grid;
-  grid-template-columns: 55% 40%;
-  gap: 5%;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
   margin-bottom: 80px;
 }
 
 .project-row-offset {
-  grid-template-columns: 1fr;
-  max-width: 55%;
+  margin-bottom: 0;
+}
+
+.projects-editorial .project-item {
+  width: 55%;
+}
+
+.project-left {
+  margin-right: auto;
+}
+
+.project-center {
   margin-left: auto;
   margin-right: 18%;
 }
@@ -517,7 +526,7 @@ nav.scrolled {
 }
 
 .project-right {
-  margin-top: 120px;
+  margin-left: auto;
 }
 
 .project-item:hover .project-img {
@@ -831,16 +840,15 @@ nav.scrolled {
   }
 
   .project-row {
-    grid-template-columns: 1fr;
     gap: 40px;
   }
 
-  .project-right {
-    margin-top: 0;
-  }
-
-  .project-row-offset {
-    max-width: 100%;
+  .projects-editorial .project-item,
+  .project-left,
+  .project-right,
+  .project-center {
+    width: 100%;
+    margin-left: 0;
     margin-right: 0;
   }
 
