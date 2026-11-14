@@ -89,7 +89,9 @@
           '</g>' +
           '<g data-s="2">' +
             '<line class="red draw" pathLength="1" stroke-width="1.2" x1="348" y1="-8" x2="96" y2="1180"/>' +
+            '<line class="red draw" pathLength="1" stroke-width="1.2" style="--d:.12s" x1="571.1" y1="135.6" x2="378.3" y2="1043.3"/>' +
             '<line class="red draw" pathLength="1" stroke-width="1.2" style="--d:.25s" x1="732.4" y1="106" x2="508.9" y2="1160"/>' +
+            '<line class="red draw" pathLength="1" stroke-width="1.2" style="--d:.37s" x1="862.6" y1="222.4" x2="691.5" y2="1027.4"/>' +
             '<line class="red draw" pathLength="1" stroke-width="1.2" style="--d:.5s" x1="1123" y1="177" x2="947.5" y2="1003"/>' +
             '<line class="red draw" pathLength="1" stroke-width="5" style="--d:.3s" x1="339" y1="48.1" x2="105.2" y2="1148.3"/>' +
             '<line class="red draw" pathLength="1" stroke-width="5" style="--d:.55s" x1="700" y1="258.5" x2="555.4" y2="938.5"/>' +
