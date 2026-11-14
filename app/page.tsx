@@ -1,6 +1,7 @@
 "use client";
 
 import { DotGrid } from "@/components/DotGrid";
+import { ProjectSlide } from "@/components/ProjectSlide";
 import { SiteCursor } from "@/components/SiteCursor";
 import { SiteNav } from "@/components/SiteNav";
 import { getCanvasHeadFontStack } from "@/lib/canvasHeadFontStack";
@@ -790,12 +791,7 @@ void main(){
               href="/projects/zalazium-gmbh"
               className="project-item project-left reveal hoverable"
             >
-              <div className="project-img">
-                <img
-                  src="/images/previews/zalazium/zalazium_intro_poster.jpg"
-                  alt="Zalazium GmbH"
-                />
-              </div>
+              <ProjectSlide slug="zalazium-gmbh" />
               <div className="project-meta">
                 <span className="project-name">
                   001&nbsp;&nbsp;&nbsp;&nbsp;Zalazium GmbH
@@ -807,12 +803,7 @@ void main(){
               href="/projects/studio-liebe"
               className="project-item project-right reveal reveal-delay-2 hoverable"
             >
-              <div className="project-img">
-                <img
-                  src="/images/previews/studio_liebe/studio_liebe_thumbnail.jpg"
-                  alt="Studio Liebe"
-                />
-              </div>
+              <ProjectSlide slug="studio-liebe" />
               <div className="project-meta">
                 <span className="project-name">
                   004&nbsp;&nbsp;&nbsp;&nbsp;Studio Liebe
@@ -826,12 +817,7 @@ void main(){
               href="/projects/carlitoz-way"
               className="project-item project-center reveal hoverable"
             >
-              <div className="project-img project-img-wide">
-                <img
-                  src="/images/previews/carlitoz_way/carlitoz_box_top.jpg"
-                  alt="Carlitoz Way"
-                />
-              </div>
+              <ProjectSlide slug="carlitoz-way" />
               <div className="project-meta">
                 <span className="project-name">
                   007&nbsp;&nbsp;&nbsp;&nbsp;Carlitoz Way

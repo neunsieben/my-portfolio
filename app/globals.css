@@ -466,7 +466,7 @@ nav.scrolled {
   grid-template-columns: 1fr;
   max-width: 55%;
   margin-left: auto;
-  margin-right: 10%;
+  margin-right: 18%;
 }
 
 .project-item {
@@ -486,7 +486,8 @@ nav.scrolled {
   position: relative;
 }
 
-.project-item .project-img img {
+.project-item .project-img img,
+.project-item .project-img video {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -496,16 +497,27 @@ nav.scrolled {
   display: block;
 }
 
-.project-right .project-img {
-  aspect-ratio: 3 / 4;
+.project-img .preview-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.1);
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+
+.project-img .preview-layer img,
+.project-img .preview-layer video {
+  display: none;
 }
 
 .project-right {
   margin-top: 120px;
-}
-
-.project-img-wide {
-  aspect-ratio: 16 / 9 !important;
 }
 
 .project-item:hover .project-img {
