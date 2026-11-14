@@ -49,7 +49,7 @@
     '.on .fade{opacity:1}',
     '.cam{transition:transform 1.9s cubic-bezier(.65,0,.2,1)}',
     '.guides{transition:opacity .9s ease .4s}',
-    'svg.v-mark[data-last] .guides{opacity:.4}',
+    'svg.v-mark[data-last] .guides{opacity:0;transition:opacity .6s ease 1.4s}',
     'svg.v-lock[data-last] .guides{opacity:0}',
     '.reset,.reset *{transition:none!important}',
     '.cap{position:absolute;left:4.5%;right:4.5%;bottom:4.5%;display:flex;flex-wrap:wrap;gap:.2em .9em;align-items:baseline;',
