@@ -35,7 +35,7 @@
     ':host{display:block;position:relative;aspect-ratio:4/3;overflow:hidden;cursor:pointer;container-type:inline-size;',
     'background:var(--hm-bg,transparent);color:var(--hm-ink,currentColor);-webkit-tap-highlight-color:transparent}',
     ':host(:focus-visible){outline:2px solid var(--hm-guide,#E8452C);outline-offset:3px}',
-    'svg{position:absolute;inset:0;width:100%;height:100%;display:block}',
+    'svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden;transform:scale(.78);transform-origin:center}',
     '.ink{fill:var(--hm-ink,currentColor)}',
     '.red{stroke:var(--hm-guide,#E8452C);fill:none}',
     '.grey{stroke:var(--hm-measure,#6B7075);fill:none}',
@@ -84,7 +84,7 @@
           '<g data-s="1">' +
             '<circle class="fade" cx="1284" cy="599" r="11" fill="var(--hm-guide,#E8452C)"/>' +
             '<line class="red draw" pathLength="1" stroke-width="1.5" style="--d:.3s" x1="1400" y1="599" x2="-140" y2="599"/>' +
-            '<line class="red draw" pathLength="1" stroke-width="2.5" style="--d:.5s" x1="1284" y1="599" x2="20" y2="-137.9"/>' +
+            '<line class="red draw" pathLength="1" stroke-width="2.5" style="--d:.5s" x1="1284" y1="599" x2="169" y2="-51"/>' +
             '<line class="red draw" pathLength="1" stroke-width="2.5" style="--d:.5s" x1="1284" y1="599" x2="20" y2="1188"/>' +
           '</g>' +
           '<g data-s="2">' +
