@@ -3,6 +3,12 @@
 import { useEffect, useRef } from "react";
 
 const MAX_TILT = 16;
+const MIN_ZOOM = 0.7;
+const MAX_ZOOM = 2.6;
+
+function clampZoom(scale: number) {
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, scale));
+}
 /** Fixed lamp: left of the frame, above it, and in front. It never follows the pointer. */
 const LAMP = [-0.9, -0.78, 1.15] as const;
 /** The cover only tips a few degrees. Shade a little more so the paper still reads. */
@@ -75,34 +81,46 @@ export function TiltCover({
     const plane = planeRef.current;
     const light = lightRef.current;
     if (!frame || !plane || !light) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf = 0;
     let targetX = 0;
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
+    let targetScale = 1;
+    let currentScale = 1;
     let active = false;
+    let pinching = false;
+    let pinchStartDist = 0;
+    let pinchStartScale = 1;
+    const pointers = new Map<number, { x: number; y: number }>();
 
     let follow = 0.16;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const coverTransform = (rx: number, ry: number, scale: number) =>
+      `rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`;
 
     const paint = () => {
+      const zoomFollow = reduce ? 1 : 0.18;
       currentX += (targetX - currentX) * follow;
       currentY += (targetY - currentY) * follow;
+      currentScale += (targetScale - currentScale) * zoomFollow;
       const rx = currentY * -MAX_TILT;
       const ry = currentX * MAX_TILT;
-      plane.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      plane.style.transform = coverTransform(rx, ry, currentScale);
       const shine = paperLight(rx, ry, lamp === "strong");
       light.style.backgroundImage =
         lamp === "strong" ? shine : `${shine}, var(--paper-grain)`;
       const stillMoving =
         Math.abs(targetX - currentX) > 0.001 ||
-        Math.abs(targetY - currentY) > 0.001;
+        Math.abs(targetY - currentY) > 0.001 ||
+        Math.abs(targetScale - currentScale) > 0.001;
       if (active || stillMoving) {
         raf = requestAnimationFrame(paint);
       } else {
         raf = 0;
-        plane.style.transform = "rotateX(0deg) rotateY(0deg)";
+        plane.style.transform = coverTransform(0, 0, currentScale);
         light.style.backgroundImage = "";
       }
     };
@@ -111,7 +129,30 @@ export function TiltCover({
       if (!raf) raf = requestAnimationFrame(paint);
     };
 
+    const pointerDistance = () => {
+      const pts = [...pointers.values()];
+      if (pts.length < 2) return 0;
+      return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    };
+
     const onMove = (event: PointerEvent) => {
+      if (pointers.has(event.pointerId)) {
+        pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      }
+      if (pointers.size >= 2) {
+        const distance = pointerDistance();
+        if (!pinching) {
+          pinching = true;
+          pinchStartDist = distance;
+          pinchStartScale = targetScale;
+        } else if (pinchStartDist > 8) {
+          targetScale = clampZoom(pinchStartScale * (distance / pinchStartDist));
+        }
+        active = true;
+        kick();
+        return;
+      }
+      if (reduce) return;
       const rect = frame.getBoundingClientRect();
       const touch = event.pointerType === "touch";
       // A finger stays nearer the middle than a mouse, so reach full tilt sooner.
@@ -138,30 +179,52 @@ export function TiltCover({
     };
 
     const onDown = (event: PointerEvent) => {
-      if (event.pointerType === "touch") frame.setPointerCapture(event.pointerId);
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (event.pointerType === "touch") {
+        try {
+          frame.setPointerCapture(event.pointerId);
+        } catch {
+          /* A synthetic pointer has no browser id to capture. */
+        }
+      }
       onMove(event);
     };
 
-    const onUp = (event: PointerEvent) => {
+    const endPointer = (event: PointerEvent) => {
+      pointers.delete(event.pointerId);
+      if (pointers.size < 2) pinching = false;
       if (event.pointerType !== "touch") return;
+      if (pointers.size > 0) return;
       targetX = 0;
       targetY = 0;
       active = false;
       kick();
     };
 
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault();
+      let delta = event.deltaY;
+      if (event.deltaMode === 1) delta *= 16;
+      else if (event.deltaMode === 2) delta *= frame.clientHeight;
+      const speed = event.ctrlKey ? 0.008 : 0.0016;
+      targetScale = clampZoom(targetScale * Math.exp(-delta * speed));
+      kick();
+    };
+
     frame.addEventListener("pointermove", onMove);
     frame.addEventListener("pointerdown", onDown);
-    frame.addEventListener("pointerup", onUp);
-    frame.addEventListener("pointercancel", onUp);
+    frame.addEventListener("pointerup", endPointer);
+    frame.addEventListener("pointercancel", endPointer);
     frame.addEventListener("pointerleave", onLeave);
+    frame.addEventListener("wheel", onWheel, { passive: false });
     return () => {
       cancelAnimationFrame(raf);
       frame.removeEventListener("pointermove", onMove);
       frame.removeEventListener("pointerdown", onDown);
-      frame.removeEventListener("pointerup", onUp);
-      frame.removeEventListener("pointercancel", onUp);
+      frame.removeEventListener("pointerup", endPointer);
+      frame.removeEventListener("pointercancel", endPointer);
       frame.removeEventListener("pointerleave", onLeave);
+      frame.removeEventListener("wheel", onWheel);
     };
   }, [lamp]);
 
