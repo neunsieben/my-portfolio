@@ -32,41 +32,26 @@ precision highp float;
 varying vec2 v_uv;
 uniform sampler2D u_tex;
 uniform float u_motionValue;
-uniform float u_pointer;
+uniform float u_segments;
+uniform vec2 u_mouse;
 uniform float u_hover;
-uniform float u_letterStart[8];
-uniform float u_letterEnd[8];
-uniform float u_letterCount;
 
 #define PI 3.14159265
 
 void main(){
   vec2 uv = v_uv;
+  float numSlices = u_segments;
 
-  float span = 0.08;
-  float letterCenter = 0.0;
-  float inside = 0.0;
-  for (int i = 0; i < 8; i++) {
-    float active = step(float(i) + 0.5, u_letterCount);
-    float a = u_letterStart[i];
-    float b = u_letterEnd[i];
-    float hit = active * step(a, uv.x) * (1.0 - step(b, uv.x));
-    span = mix(span, max(b - a, 0.0001), hit);
-    letterCenter = mix(letterCenter, (a + b) * 0.5, hit);
-    inside = max(inside, hit);
-  }
+  // Horizontal-only distance from mouse X — forms a vertical band, not a circle
+  float distX = abs(uv.x - u_mouse.x);
+  float bandWidth = 0.2;
+  float falloff = smoothstep(bandWidth, 0.0, distX) * u_hover;
 
-  // A wide band follows the pointer and eases back, like the first glass wave.
-  // The letter under the pointer pulls hardest; the letters beside it still move.
-  float distX = abs(uv.x - u_pointer);
-  float band = smoothstep(0.30, 0.0, distX);
-  float letterDist = abs(letterCenter - u_pointer) / span;
-  float emphasis = mix(0.42, 1.0, smoothstep(2.8, 0.0, letterDist));
-  emphasis = mix(0.55, emphasis, inside);
-  float falloff = band * emphasis * u_hover;
+  // Extreme amplitude — breaks/tears the letters
+  float baseAmplitude = 0.25;
+  float amplitude = baseAmplitude * falloff;
 
-  float sliceProgress = fract(uv.x + u_motionValue * falloff);
-  float amplitude = 0.22 * falloff;
+  float sliceProgress = fract(uv.x * numSlices + u_motionValue * falloff);
   uv.x += amplitude * sin(sliceProgress * PI * 2.0) * (1.0 - 0.5 * abs(sliceProgress - 0.5));
 
   vec2 tileIndex = floor(uv);
@@ -86,31 +71,13 @@ void main(){
     // ========================================================
     // GLASS INSTANCE FACTORY
     // ========================================================
-    function measureLetters(
-      tx: CanvasRenderingContext2D,
-      text: string,
-      origin: number,
-      width: number,
-    ) {
-      const starts: number[] = [];
-      const ends: number[] = [];
-      let prev = 0;
-      for (let i = 0; i < text.length; i++) {
-        const advance = tx.measureText(text.slice(0, i + 1)).width;
-        starts.push((origin + prev) / width);
-        ends.push((origin + advance) / width);
-        prev = advance;
-      }
-      return { starts, ends };
-    }
-
     function createGlassEffect(
       canvasEl: HTMLCanvasElement,
       textRenderer: (
         tx: CanvasRenderingContext2D,
         tc: HTMLCanvasElement,
         dpr: number,
-      ) => { starts: number[]; ends: number[] },
+      ) => void,
       heightDesktop: number,
       heightMobile: number,
     ) {
@@ -133,9 +100,6 @@ void main(){
       }
       const tcx = tx;
 
-      const letterStarts = new Float32Array(8);
-      const letterEnds = new Float32Array(8);
-
       function resize() {
         const W = Math.min(window.innerWidth * 0.9, 1100);
         const t = Math.min(1, Math.max(0, (window.innerWidth - 480) / (1200 - 480)));
@@ -148,18 +112,7 @@ void main(){
         tc.width = canvasEl.width;
         tc.height = canvasEl.height;
         tcx.clearRect(0, 0, tc.width, tc.height);
-        const letters = textRenderer(tcx, tc, dpr);
-        letterStarts.fill(0);
-        letterEnds.fill(0);
-        const count = Math.min(8, letters.starts.length);
-        for (let i = 0; i < count; i++) {
-          letterStarts[i] = letters.starts[i];
-          letterEnds[i] = letters.ends[i];
-        }
-        glc.useProgram(prog);
-        glc.uniform1fv(uLetterStart, letterStarts);
-        glc.uniform1fv(uLetterEnd, letterEnds);
-        glc.uniform1f(uLetterCount, count);
+        textRenderer(tcx, tc, dpr);
         glc.bindTexture(glc.TEXTURE_2D, tex);
         glc.texImage2D(glc.TEXTURE_2D, 0, glc.RGBA, glc.RGBA, glc.UNSIGNED_BYTE, tc);
       }
@@ -194,11 +147,9 @@ void main(){
       glc.enableVertexAttribArray(aP);
       glc.vertexAttribPointer(aP, 2, glc.FLOAT, false, 0, 0);
       const uMotion = glc.getUniformLocation(prog, "u_motionValue");
-      const uPointer = glc.getUniformLocation(prog, "u_pointer");
+      const uSegs = glc.getUniformLocation(prog, "u_segments");
+      const uMouse = glc.getUniformLocation(prog, "u_mouse");
       const uHover = glc.getUniformLocation(prog, "u_hover");
-      const uLetterStart = glc.getUniformLocation(prog, "u_letterStart");
-      const uLetterEnd = glc.getUniformLocation(prog, "u_letterEnd");
-      const uLetterCount = glc.getUniformLocation(prog, "u_letterCount");
       const tex = glc.createTexture();
       glc.bindTexture(glc.TEXTURE_2D, tex);
       glc.texParameteri(glc.TEXTURE_2D, glc.TEXTURE_WRAP_S, glc.CLAMP_TO_EDGE);
@@ -208,49 +159,58 @@ void main(){
       glc.enable(glc.BLEND);
       glc.blendFunc(glc.SRC_ALPHA, glc.ONE_MINUS_SRC_ALPHA);
 
-      let motionValue = 0.5;
-      let pointer = 0.5;
-      let hoverStr = 0;
-      let tMotion = 0.5;
-      let tPointer = 0.5;
-      let tHover = 0;
+      let motionValue = 0.5,
+        targetMotion = 0.5;
+      let mouseUVx = 0.5,
+        mouseUVy = 0.5,
+        tMouseUVx = 0.5,
+        tMouseUVy = 0.5;
+      let hoverStr = 0,
+        tHoverStr = 0;
       const motionFactor = -8;
 
-      const aim = (clientX: number, snap: boolean) => {
+      canvasEl.addEventListener("mousemove", (e) => {
         const r = canvasEl.getBoundingClientRect();
-        const x = Math.min(1, Math.max(0, (clientX - r.left) / Math.max(r.width, 1)));
-        tPointer = x;
-        tMotion = 0.5 + x * motionFactor * 0.1;
-        tHover = 1;
-        if (!snap) return;
-        pointer = x;
-        hoverStr = Math.max(hoverStr, 0.5);
-      };
-      canvasEl.addEventListener("mousemove", (e) => aim(e.clientX, false));
+        tMouseUVx = (e.clientX - r.left) / r.width;
+        tMouseUVy = (e.clientY - r.top) / r.height;
+        targetMotion = 0.5 + tMouseUVx * motionFactor * 0.1;
+        tHoverStr = 1.0;
+      });
       canvasEl.addEventListener("mouseleave", () => {
-        tMotion = 0.5;
-        tHover = 0;
+        targetMotion = 0.5;
+        tHoverStr = 0;
       });
       function handleTouch(e: TouchEvent) {
         e.preventDefault();
-        aim(e.touches[0].clientX, true);
+        const t = e.touches[0];
+        const r = canvasEl.getBoundingClientRect();
+        tMouseUVx = (t.clientX - r.left) / r.width;
+        tMouseUVy = (t.clientY - r.top) / r.height;
+        // Snap mouse position instantly on touch for immediate response
+        mouseUVx = tMouseUVx;
+        mouseUVy = tMouseUVy;
+        targetMotion = 0.5 + tMouseUVx * motionFactor * 0.1;
+        tHoverStr = 1.0;
+        hoverStr = 0.5; // Kick-start visibility
       }
       canvasEl.addEventListener("touchstart", handleTouch, { passive: false });
       canvasEl.addEventListener("touchmove", handleTouch, { passive: false });
       canvasEl.addEventListener("touchend", () => {
-        tMotion = 0.5;
-        tHover = 0;
+        targetMotion = 0.5;
+        tHoverStr = 0;
       });
 
       function render() {
         if (pageDisposed) return;
-        motionValue += (tMotion - motionValue) * 0.035;
-        pointer += (tPointer - pointer) * 0.06;
-        hoverStr += (tHover - hoverStr) * 0.04;
+        motionValue += (targetMotion - motionValue) * 0.035;
+        mouseUVx += (tMouseUVx - mouseUVx) * 0.06;
+        mouseUVy += (tMouseUVy - mouseUVy) * 0.06;
+        hoverStr += (tHoverStr - hoverStr) * 0.04;
         glc.clearColor(0, 0, 0, 0);
         glc.clear(glc.COLOR_BUFFER_BIT);
         if (uMotion) glc.uniform1f(uMotion, motionValue);
-        if (uPointer) glc.uniform1f(uPointer, pointer);
+        if (uSegs) glc.uniform1f(uSegs, 1.0);
+        if (uMouse) glc.uniform2f(uMouse, mouseUVx, mouseUVy);
         if (uHover) glc.uniform1f(uHover, hoverStr);
         glc.drawArrays(glc.TRIANGLE_STRIP, 0, 4);
         requestAnimationFrame(render);
@@ -268,7 +228,7 @@ void main(){
     }
 
     // ========================================================
-    // HERO — "Leonard" canvas
+    // HERO — "Leonard" canvas (independent effect)
     // ========================================================
     const leonardInstance = createGlassEffect(
       leonardEl as HTMLCanvasElement,
@@ -282,14 +242,13 @@ void main(){
         tx.textBaseline = "middle";
         tx.fillStyle = "#0a0a0a";
         tx.fillText("Leonard", padding, tc.height * 0.55);
-        return measureLetters(tx, "Leonard", padding, tc.width);
       },
       260,
       75,
     );
 
     // ========================================================
-    // HERO — "Baack" canvas
+    // HERO — "Baack" canvas (independent effect)
     // ========================================================
     const baackInstance = createGlassEffect(
       baackEl as HTMLCanvasElement,
@@ -303,7 +262,6 @@ void main(){
         tx.textBaseline = "middle";
         tx.fillStyle = "#0a0a0a";
         tx.fillText("Baack", padding, tc.height * 0.55);
-        return measureLetters(tx, "Baack", padding, tc.width);
       },
       260,
       75,
