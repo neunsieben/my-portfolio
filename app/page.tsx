@@ -43,26 +43,30 @@ uniform float u_letterCount;
 void main(){
   vec2 uv = v_uv;
 
-  // The same vertical tear, repeated inside every letter and kept in phase.
+  // Glass stays inside each letter. Only the letter under the pointer reacts,
+  // and the tear is strongest at the pointer.
   float localU = 0.0;
   float span = 0.0;
-  float inside = 0.0;
+  float focus = 0.0;
+  float pointerLocal = 0.5;
   for (int i = 0; i < 8; i++) {
     float active = step(float(i) + 0.5, u_letterCount);
     float a = u_letterStart[i];
     float b = u_letterEnd[i];
+    float width = max(b - a, 0.0001);
     float hit = active * step(a, uv.x) * (1.0 - step(b, uv.x));
-    localU = mix(localU, (uv.x - a) / max(b - a, 0.0001), hit);
+    float over = active * step(a, u_pointer) * (1.0 - step(b, u_pointer));
+    localU = mix(localU, (uv.x - a) / width, hit);
     span = mix(span, b - a, hit);
-    inside = max(inside, hit);
+    pointerLocal = mix(pointerLocal, (u_pointer - a) / width, over);
+    focus = max(focus, hit * over);
   }
 
-  float dist = abs(localU - u_pointer);
-  float bandWidth = 0.2;
-  float falloff = smoothstep(bandWidth, 0.0, dist) * u_hover * inside;
+  float dist = abs(localU - pointerLocal);
+  float falloff = smoothstep(0.92, 0.0, dist) * u_hover * focus;
 
   float sliceProgress = fract(localU + u_motionValue * falloff);
-  float amplitude = span * 0.34 * falloff;
+  float amplitude = span * 0.55 * falloff;
   uv.x += amplitude * sin(sliceProgress * PI * 2.0) * (1.0 - 0.5 * abs(sliceProgress - 0.5));
 
   vec2 tileIndex = floor(uv);
@@ -99,9 +103,6 @@ void main(){
       }
       return { starts, ends };
     }
-
-    // One pointer drives both lines, so every letter of the headline tears together.
-    const headlinePointer = { tPointer: 0.5, tHover: 0, tMotion: 0.5 };
 
     function createGlassEffect(
       canvasEl: HTMLCanvasElement,
@@ -210,22 +211,25 @@ void main(){
       let motionValue = 0.5;
       let pointer = 0.5;
       let hoverStr = 0;
+      let tMotion = 0.5;
+      let tPointer = 0.5;
+      let tHover = 0;
       const motionFactor = -8;
 
       const aim = (clientX: number, snap: boolean) => {
         const r = canvasEl.getBoundingClientRect();
-        const x = (clientX - r.left) / Math.max(r.width, 1);
-        headlinePointer.tPointer = Math.min(1, Math.max(0, x));
-        headlinePointer.tMotion = 0.5 + headlinePointer.tPointer * motionFactor * 0.1;
-        headlinePointer.tHover = 1;
+        const x = Math.min(1, Math.max(0, (clientX - r.left) / Math.max(r.width, 1)));
+        tPointer = x;
+        tMotion = 0.5 + x * motionFactor * 0.1;
+        tHover = 1;
         if (!snap) return;
-        pointer = headlinePointer.tPointer;
+        pointer = x;
         hoverStr = Math.max(hoverStr, 0.5);
       };
       canvasEl.addEventListener("mousemove", (e) => aim(e.clientX, false));
       canvasEl.addEventListener("mouseleave", () => {
-        headlinePointer.tMotion = 0.5;
-        headlinePointer.tHover = 0;
+        tMotion = 0.5;
+        tHover = 0;
       });
       function handleTouch(e: TouchEvent) {
         e.preventDefault();
@@ -234,15 +238,15 @@ void main(){
       canvasEl.addEventListener("touchstart", handleTouch, { passive: false });
       canvasEl.addEventListener("touchmove", handleTouch, { passive: false });
       canvasEl.addEventListener("touchend", () => {
-        headlinePointer.tMotion = 0.5;
-        headlinePointer.tHover = 0;
+        tMotion = 0.5;
+        tHover = 0;
       });
 
       function render() {
         if (pageDisposed) return;
-        motionValue += (headlinePointer.tMotion - motionValue) * 0.035;
-        pointer += (headlinePointer.tPointer - pointer) * 0.06;
-        hoverStr += (headlinePointer.tHover - hoverStr) * 0.04;
+        motionValue += (tMotion - motionValue) * 0.035;
+        pointer += (tPointer - pointer) * 0.45;
+        hoverStr += (tHover - hoverStr) * 0.12;
         glc.clearColor(0, 0, 0, 0);
         glc.clear(glc.COLOR_BUFFER_BIT);
         if (uMotion) glc.uniform1f(uMotion, motionValue);
