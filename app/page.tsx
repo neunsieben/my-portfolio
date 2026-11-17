@@ -43,30 +43,30 @@ uniform float u_letterCount;
 void main(){
   vec2 uv = v_uv;
 
-  // Glass stays inside each letter. Only the letter under the pointer reacts,
-  // and the tear is strongest at the pointer.
-  float localU = 0.0;
-  float span = 0.0;
-  float focus = 0.0;
-  float pointerLocal = 0.5;
+  float span = 0.08;
+  float letterCenter = 0.0;
+  float inside = 0.0;
   for (int i = 0; i < 8; i++) {
     float active = step(float(i) + 0.5, u_letterCount);
     float a = u_letterStart[i];
     float b = u_letterEnd[i];
-    float width = max(b - a, 0.0001);
     float hit = active * step(a, uv.x) * (1.0 - step(b, uv.x));
-    float over = active * step(a, u_pointer) * (1.0 - step(b, u_pointer));
-    localU = mix(localU, (uv.x - a) / width, hit);
-    span = mix(span, b - a, hit);
-    pointerLocal = mix(pointerLocal, (u_pointer - a) / width, over);
-    focus = max(focus, hit * over);
+    span = mix(span, max(b - a, 0.0001), hit);
+    letterCenter = mix(letterCenter, (a + b) * 0.5, hit);
+    inside = max(inside, hit);
   }
 
-  float dist = abs(localU - pointerLocal);
-  float falloff = smoothstep(0.92, 0.0, dist) * u_hover * focus;
+  // A wide band follows the pointer and eases back, like the first glass wave.
+  // The letter under the pointer pulls hardest; the letters beside it still move.
+  float distX = abs(uv.x - u_pointer);
+  float band = smoothstep(0.30, 0.0, distX);
+  float letterDist = abs(letterCenter - u_pointer) / span;
+  float emphasis = mix(0.42, 1.0, smoothstep(2.8, 0.0, letterDist));
+  emphasis = mix(0.55, emphasis, inside);
+  float falloff = band * emphasis * u_hover;
 
-  float sliceProgress = fract(localU + u_motionValue * falloff);
-  float amplitude = span * 0.55 * falloff;
+  float sliceProgress = fract(uv.x + u_motionValue * falloff);
+  float amplitude = 0.22 * falloff;
   uv.x += amplitude * sin(sliceProgress * PI * 2.0) * (1.0 - 0.5 * abs(sliceProgress - 0.5));
 
   vec2 tileIndex = floor(uv);
@@ -245,8 +245,8 @@ void main(){
       function render() {
         if (pageDisposed) return;
         motionValue += (tMotion - motionValue) * 0.035;
-        pointer += (tPointer - pointer) * 0.45;
-        hoverStr += (tHover - hoverStr) * 0.12;
+        pointer += (tPointer - pointer) * 0.06;
+        hoverStr += (tHover - hoverStr) * 0.04;
         glc.clearColor(0, 0, 0, 0);
         glc.clear(glc.COLOR_BUFFER_BIT);
         if (uMotion) glc.uniform1f(uMotion, motionValue);
