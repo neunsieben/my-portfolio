@@ -220,7 +220,7 @@ function previewItems(slug: string, fallback: readonly string[]): PreviewItem[] 
       fromMedia.push({ kind: "image", src: previewSrc(m.frame) });
       continue;
     }
-    if (m.presentation === "story" || m.presentation === "reel") continue;
+    if (m.presentation === "story" || m.presentation === "reel" || m.presentation === "carousel") continue;
     if (!m.src) continue;
     if (m.type === "image")
       fromMedia.push({ kind: "image", src: previewSrc(m.src) });

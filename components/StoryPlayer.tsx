@@ -254,6 +254,8 @@ export function StoryPlayer({ items, name, account }: Props) {
             <span className="story-avatar">
               {account?.avatar ? (
                 <img src={account.avatar} alt="" draggable={false} />
+              ) : account?.avatarColor ? (
+                <span className="story-avatar-fill" style={{ background: account.avatarColor }} />
               ) : (
                 <span>{handle.slice(0, 1)}</span>
               )}

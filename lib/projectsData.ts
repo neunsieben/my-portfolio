@@ -9,7 +9,12 @@ export type ProjectMedia = {
   /** CSS background value shown as placeholder when no src is set */
   bg?: string;
   /** Square cover, centered in a black 4:3 frame. Only the cover tilts. */
-  presentation?: "tilt-cover" | "hm-construction" | "story" | "reel";
+  presentation?: "tilt-cover" | "hm-construction" | "story" | "reel" | "carousel";
+  /** Post text for presentation "carousel", read from the first slide. */
+  post?: {
+    caption?: string;
+    likes?: string;
+  };
   /** Overlay text for presentation "reel". */
   reel?: {
     caption?: string;
@@ -28,11 +33,13 @@ export type ProjectMedia = {
   lamp?: "strong";
 };
 
-/** Account shown on "story" and "reel" media. */
+/** Account shown on "story", "reel" and "carousel" media. */
 export type StoryAccount = {
   handle: string;
   /** Small square image, shown cropped to a circle. */
   avatar?: string;
+  /** Plain colour fill instead of an image, e.g. "#fc7b03". */
+  avatarColor?: string;
   /** Short label next to the handle, e.g. "2h". */
   time?: string;
 };
@@ -177,11 +184,73 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     role: "Visual Branding, Web Design",
     description: LOREM,
     descriptionDe: LOREM_DE,
+    storyAccount: {
+      handle: "studioliebe",
+      avatarColor: "#fc7b03",
+    },
     media: [
       {
         type: "video",
         src: "/images/projects/studio_liebe/studio_liebe_logo_animation.mp4",
         alt: "Studio Liebe — logo animation",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_01.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 1",
+        presentation: "carousel",
+        post: {
+          caption:
+            "Vol. 1 — Nov. 30, Sternschanze. Doors and dinner from 7 PM, music from 9 PM. Line-up A–Z: Anton Jonathan, Daisy Weweh, Eni Hartmann, Hello 911, Lenard Klein. Limited capacity.",
+        },
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_02.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 2",
+        presentation: "carousel",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_03.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 3",
+        presentation: "carousel",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_04.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 4",
+        presentation: "carousel",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_05.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 5",
+        presentation: "carousel",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_06.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 6",
+        presentation: "carousel",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_07.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 7",
+        presentation: "carousel",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_08.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 8",
+        presentation: "carousel",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_09.jpg",
+        alt: "Studio Liebe Vol. 1 — carousel slide 9",
+        presentation: "carousel",
       },
       {
         type: "image",

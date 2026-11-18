@@ -9,6 +9,7 @@ import { PROJECT_DETAILS, type ProjectMedia } from "@/lib/projectsData";
 import { initTerminalLinks } from "@/lib/terminalAnimation";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import { HmConstruction } from "@/components/HmConstruction";
+import { CarouselPost } from "@/components/CarouselPost";
 import { ReelPlayer } from "@/components/ReelPlayer";
 import { StoryPlayer } from "@/components/StoryPlayer";
 import { TiltCover } from "@/components/TiltCover";
@@ -17,26 +18,33 @@ import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { useEffect, useRef } from "react";
 
+type Grouped = "stories" | "carousel";
+
+/** Consecutive story or carousel items become one player; the rest stay single. */
 function mediaBlocks(media: ProjectMedia[]) {
   const blocks: Array<
     | { key: string; kind: "stories"; items: ProjectMedia[] }
+    | { key: string; kind: "carousel"; items: ProjectMedia[] }
     | { key: string; kind: "single"; item: ProjectMedia; index: number }
   > = [];
-  let stories: ProjectMedia[] = [];
-  let storyStart = 0;
+  let group: { kind: Grouped; start: number; items: ProjectMedia[] } | null = null;
   const flush = () => {
-    if (!stories.length) return;
-    blocks.push({
-      key: `stories-${storyStart}`,
-      kind: "stories",
-      items: stories,
-    });
-    stories = [];
+    if (!group) return;
+    const key = `${group.kind}-${group.start}`;
+    blocks.push(
+      group.kind === "stories"
+        ? { key, kind: "stories", items: group.items }
+        : { key, kind: "carousel", items: group.items },
+    );
+    group = null;
   };
   media.forEach((item, index) => {
-    if (item.presentation === "story" && item.src) {
-      if (!stories.length) storyStart = index;
-      stories.push(item);
+    const kind: Grouped | null =
+      item.presentation === "story" ? "stories" : item.presentation === "carousel" ? "carousel" : null;
+    if (kind && item.src) {
+      if (group && group.kind !== kind) flush();
+      if (!group) group = { kind, start: index, items: [] };
+      group.items.push(item);
       return;
     }
     flush();
@@ -335,32 +343,46 @@ export default function ProjectDetailPage() {
       <section className="pd-cols pd-media-section">
         <div className="pd-left pd-media-left-col" aria-hidden="true" />
         <div className="pd-media-right">
-          {mediaBlocks(project.media).map((block) =>
-            block.kind === "single" &&
-            block.item.presentation === "reel" &&
-            block.item.src ? (
-              <ReelPlayer
-                key={block.key}
-                item={block.item}
-                name={project.name}
-                account={project.storyAccount}
-              />
-            ) : block.kind === "stories" ? (
-              <StoryPlayer
-                key={block.key}
-                items={block.items}
-                name={project.name}
-                account={project.storyAccount}
-              />
-            ) : (
+          {mediaBlocks(project.media).map((block) => {
+            if (block.kind === "carousel") {
+              return (
+                <CarouselPost
+                  key={block.key}
+                  items={block.items}
+                  name={project.name}
+                  account={project.storyAccount}
+                />
+              );
+            }
+            if (block.kind === "stories") {
+              return (
+                <StoryPlayer
+                  key={block.key}
+                  items={block.items}
+                  name={project.name}
+                  account={project.storyAccount}
+                />
+              );
+            }
+            if (block.item.presentation === "reel" && block.item.src) {
+              return (
+                <ReelPlayer
+                  key={block.key}
+                  item={block.item}
+                  name={project.name}
+                  account={project.storyAccount}
+                />
+              );
+            }
+            return (
               <DetailMedia
                 key={block.key}
                 item={block.item}
                 eager={block.index === 0}
                 name={project.name}
               />
-            ),
-          )}
+            );
+          })}
         </div>
       </section>
 
