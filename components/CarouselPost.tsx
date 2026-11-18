@@ -23,6 +23,7 @@ type Props = {
  */
 export function CarouselPost({ items, name, account }: Props) {
   const count = items.length;
+  const single = count === 1;
   const handle = account?.handle ?? name.toLowerCase().replace(/[^a-z0-9]+/g, "");
   const post = items[0]?.post ?? {};
 
@@ -150,8 +151,8 @@ export function CarouselPost({ items, name, account }: Props) {
     <div className="story-stage carousel-stage reveal">
       <article
         className="carousel-card"
-        aria-roledescription="carousel"
-        aria-label={`${name}: carousel post`}
+        aria-roledescription={single ? undefined : "carousel"}
+        aria-label={`${name}: ${single ? "post" : "carousel post"}`}
         tabIndex={0}
         onKeyDown={onKeyDown}
       >
@@ -192,9 +193,11 @@ export function CarouselPost({ items, name, account }: Props) {
             ))}
           </div>
 
-          <span className="carousel-count" aria-hidden="true">
-            {index + 1}/{count}
-          </span>
+          {single ? null : (
+            <span className="carousel-count" aria-hidden="true">
+              {index + 1}/{count}
+            </span>
+          )}
 
           {index > 0 ? (
             <button
@@ -264,9 +267,11 @@ export function CarouselPost({ items, name, account }: Props) {
           </div>
 
           <div className="carousel-dots" aria-hidden="true">
-            {items.map((item, i) => (
-              <span key={item.src} className={`carousel-dot${i === index ? " is-active" : ""}`} />
-            ))}
+            {single
+              ? null
+              : items.map((item, i) => (
+                  <span key={item.src} className={`carousel-dot${i === index ? " is-active" : ""}`} />
+                ))}
           </div>
 
           <button
@@ -299,14 +304,14 @@ export function CarouselPost({ items, name, account }: Props) {
           ) : null}
         </div>
 
-        <span className="sr-only" aria-live="polite">{`Slide ${index + 1} of ${count}`}</span>
+        {single ? null : (
+          <span className="sr-only" aria-live="polite">{`Slide ${index + 1} of ${count}`}</span>
+        )}
       </article>
 
       <div className="story-caption carousel-bar" aria-hidden="true">
-        <span>
-          Carousel {pad(index + 1)} / {pad(count)}
-        </span>
-        <span className="story-hint">Swipe · Double-tap to like</span>
+        <span>{single ? "Post" : `Carousel ${pad(index + 1)} / ${pad(count)}`}</span>
+        <span className="story-hint">{single ? "Double-tap to like" : "Swipe · Double-tap to like"}</span>
       </div>
     </div>
   );

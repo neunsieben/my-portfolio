@@ -296,6 +296,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       },
       {
         type: "image",
+        src: "/images/projects/studio_liebe/post_valentines/studio_liebe_valentines_post.jpg",
+        alt: "Studio Liebe Vol. 2 — Valentine's Day",
+        presentation: "carousel",
+        group: "valentines",
+        post: {
+          caption: "music is for lovers pres. Studio Liebe Vol. 2 — Valentine's Day.",
+        },
+      },
+      {
+        type: "image",
         src: "/images/projects/studio_liebe/story/studio_liebe_story_venue.jpg",
         alt: "Studio Liebe — the venue with the neon sign",
         presentation: "story",
