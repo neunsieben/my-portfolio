@@ -9,7 +9,7 @@ export type ProjectMedia = {
   /** CSS background value shown as placeholder when no src is set */
   bg?: string;
   /** Square cover, centered in a black 4:3 frame. Only the cover tilts. */
-  presentation?: "tilt-cover" | "hm-construction";
+  presentation?: "tilt-cover" | "hm-construction" | "story";
   /** Which Henning Media construction sequence to play. */
   hm?: "mark" | "horizontal" | "stacked";
   /** Still 4:3 stand-in for list and grid when presentation is tilt-cover. */
@@ -307,8 +307,18 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     description: LOREM,
     descriptionDe: LOREM_DE,
     media: [
-      { type: "image", bg: "linear-gradient(135deg,#1a0a2e,#2d1054,#3d1a6e)" },
-      { type: "image", bg: "linear-gradient(160deg,#3d1a6e,#1a0a2e,#2d1054)" },
+      {
+        type: "image",
+        src: "/images/projects/magic_mansion/insta_logo_bk.jpg",
+        alt: "Magic Mansion — story, black",
+        presentation: "story",
+      },
+      {
+        type: "image",
+        src: "/images/projects/magic_mansion/insta_logo_wh.jpg",
+        alt: "Magic Mansion — story, white",
+        presentation: "story",
+      },
     ],
   },
   {

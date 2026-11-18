@@ -15,6 +15,58 @@ import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { useEffect, useRef } from "react";
 
+function mediaBlocks(media: ProjectMedia[]) {
+  const blocks: Array<
+    | { key: string; kind: "stories"; items: ProjectMedia[] }
+    | { key: string; kind: "single"; item: ProjectMedia; index: number }
+  > = [];
+  let stories: ProjectMedia[] = [];
+  let storyStart = 0;
+  const flush = () => {
+    if (!stories.length) return;
+    blocks.push({
+      key: `stories-${storyStart}`,
+      kind: "stories",
+      items: stories,
+    });
+    stories = [];
+  };
+  media.forEach((item, index) => {
+    if (item.presentation === "story" && item.src) {
+      if (!stories.length) storyStart = index;
+      stories.push(item);
+      return;
+    }
+    flush();
+    blocks.push({ key: `item-${index}`, kind: "single", item, index });
+  });
+  flush();
+  return blocks;
+}
+
+function StorySet({
+  items,
+  name,
+}: {
+  items: ProjectMedia[];
+  name: string;
+}) {
+  return (
+    <div className="pd-stories reveal">
+      {items.map((item, index) => (
+        <figure className="pd-story" key={item.src}>
+          <img
+            src={item.src}
+            alt={item.alt ?? name}
+            loading={index === 0 ? "eager" : "lazy"}
+            decoding="async"
+          />
+        </figure>
+      ))}
+    </div>
+  );
+}
+
 function DetailMedia({
   item,
   eager,
@@ -304,14 +356,18 @@ export default function ProjectDetailPage() {
       <section className="pd-cols pd-media-section">
         <div className="pd-left pd-media-left-col" aria-hidden="true" />
         <div className="pd-media-right">
-          {project.media.map((item, i) => (
-            <DetailMedia
-              key={i}
-              item={item}
-              eager={i === 0}
-              name={project.name}
-            />
-          ))}
+          {mediaBlocks(project.media).map((block) =>
+            block.kind === "stories" ? (
+              <StorySet key={block.key} items={block.items} name={project.name} />
+            ) : (
+              <DetailMedia
+                key={block.key}
+                item={block.item}
+                eager={block.index === 0}
+                name={project.name}
+              />
+            ),
+          )}
         </div>
       </section>
 
