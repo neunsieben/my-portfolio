@@ -28,7 +28,7 @@ function itemsFor(slug: string): PreviewItem[] {
       items.push({ kind: "hm", variant: item.hm });
       continue;
     }
-    if (item.presentation === "story") continue;
+    if (item.presentation === "story" || item.presentation === "reel") continue;
     if (!item.src) continue;
     if (item.type === "image") {
       items.push({ kind: "image", src: previewSrc(item.src) });

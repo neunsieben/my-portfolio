@@ -9,6 +9,7 @@ import { PROJECT_DETAILS, type ProjectMedia } from "@/lib/projectsData";
 import { initTerminalLinks } from "@/lib/terminalAnimation";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import { HmConstruction } from "@/components/HmConstruction";
+import { ReelPlayer } from "@/components/ReelPlayer";
 import { StoryPlayer } from "@/components/StoryPlayer";
 import { TiltCover } from "@/components/TiltCover";
 import Link from "next/link";
@@ -335,7 +336,16 @@ export default function ProjectDetailPage() {
         <div className="pd-left pd-media-left-col" aria-hidden="true" />
         <div className="pd-media-right">
           {mediaBlocks(project.media).map((block) =>
-            block.kind === "stories" ? (
+            block.kind === "single" &&
+            block.item.presentation === "reel" &&
+            block.item.src ? (
+              <ReelPlayer
+                key={block.key}
+                item={block.item}
+                name={project.name}
+                account={project.storyAccount}
+              />
+            ) : block.kind === "stories" ? (
               <StoryPlayer
                 key={block.key}
                 items={block.items}

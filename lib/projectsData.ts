@@ -9,7 +9,15 @@ export type ProjectMedia = {
   /** CSS background value shown as placeholder when no src is set */
   bg?: string;
   /** Square cover, centered in a black 4:3 frame. Only the cover tilts. */
-  presentation?: "tilt-cover" | "hm-construction" | "story";
+  presentation?: "tilt-cover" | "hm-construction" | "story" | "reel";
+  /** Overlay text for presentation "reel". */
+  reel?: {
+    caption?: string;
+    /** Audio line, e.g. "Artist · Song". */
+    audio?: string;
+    likes?: string;
+    comments?: string;
+  };
   /** Seconds a still story stays up (presentation "story"). Defaults to 5. */
   duration?: number;
   /** Which Henning Media construction sequence to play. */
@@ -20,7 +28,7 @@ export type ProjectMedia = {
   lamp?: "strong";
 };
 
-/** Account shown in the story header for presentation "story" media. */
+/** Account shown on "story" and "reel" media. */
 export type StoryAccount = {
   handle: string;
   /** Small square image, shown cropped to a circle. */
@@ -407,6 +415,10 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     role: "Cover Artwork",
     description: "Cover artwork for Hungry4.",
     descriptionDe: "Cover-Artwork für Hungry4.",
+    storyAccount: {
+      handle: "hungry4",
+      avatar: "/images/projects/hungry4/hungry4_avatar.jpg",
+    },
     media: [
       {
         type: "image",
@@ -415,6 +427,17 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         presentation: "tilt-cover",
         lamp: "strong",
         frame: HUNGRY4_FRAME,
+      },
+      {
+        type: "video",
+        src: "/images/projects/hungry4/hungry4_reel.mp4",
+        poster: "/images/projects/hungry4/hungry4_reel_poster.jpg",
+        alt: "Hungry4 — Alec Dienaar, If You Can, reel",
+        presentation: "reel",
+        reel: {
+          caption: "Alec Dienaar — If You Can · 20.11.26",
+          audio: "Alec Dienaar · If You Can",
+        },
       },
     ],
   },
