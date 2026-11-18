@@ -2155,6 +2155,10 @@ nav.scrolled {
   height: 18px;
 }
 
+.story-icon-btn + .story-icon-btn {
+  margin-left: 0;
+}
+
 .story-icon-btn:focus-visible {
   outline: 1px solid rgba(255, 255, 255, 0.7);
 }

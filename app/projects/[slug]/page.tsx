@@ -27,7 +27,7 @@ function mediaBlocks(media: ProjectMedia[]) {
     | { key: string; kind: "carousel"; items: ProjectMedia[] }
     | { key: string; kind: "single"; item: ProjectMedia; index: number }
   > = [];
-  let group: { kind: Grouped; start: number; items: ProjectMedia[] } | null = null;
+  let group: { kind: Grouped; start: number; id?: string; items: ProjectMedia[] } | null = null;
   const flush = () => {
     if (!group) return;
     const key = `${group.kind}-${group.start}`;
@@ -42,8 +42,8 @@ function mediaBlocks(media: ProjectMedia[]) {
     const kind: Grouped | null =
       item.presentation === "story" ? "stories" : item.presentation === "carousel" ? "carousel" : null;
     if (kind && item.src) {
-      if (group && group.kind !== kind) flush();
-      if (!group) group = { kind, start: index, items: [] };
+      if (group && (group.kind !== kind || group.id !== item.group)) flush();
+      if (!group) group = { kind, start: index, id: item.group, items: [] };
       group.items.push(item);
       return;
     }

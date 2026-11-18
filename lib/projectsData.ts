@@ -10,6 +10,8 @@ export type ProjectMedia = {
   bg?: string;
   /** Square cover, centered in a black 4:3 frame. Only the cover tilts. */
   presentation?: "tilt-cover" | "hm-construction" | "story" | "reel" | "carousel";
+  /** Keeps neighbouring stories or carousels apart: a new value starts a new player. */
+  group?: string;
   /** Post text for presentation "carousel", read from the first slide. */
   post?: {
     caption?: string;
@@ -196,6 +198,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       },
       {
         type: "image",
+        src: "/images/projects/studio_liebe/studio_liebe_thumbnail.jpg",
+        alt: "Studio Liebe",
+      },
+      {
+        type: "video",
+        src: "/images/projects/studio_liebe/studio_liebe_recap.mp4",
+        alt: "Studio Liebe — recap",
+      },
+      {
+        type: "image",
         src: "/images/projects/studio_liebe/carousel/studio_liebe_carousel_01.jpg",
         alt: "Studio Liebe Vol. 1 — carousel slide 1",
         presentation: "carousel",
@@ -254,13 +266,41 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       },
       {
         type: "image",
-        src: "/images/projects/studio_liebe/studio_liebe_thumbnail.jpg",
-        alt: "Studio Liebe",
+        src: "/images/projects/studio_liebe/carousel_kb/studio_liebe_kb_carousel_01.jpg",
+        alt: "Studio Liebe × Künstlerbörse — carousel slide 1",
+        presentation: "carousel",
+        group: "kb",
+        post: {
+          caption:
+            "Studio Liebe × Künstlerbörse — Feb. 03, 4 PM–4 AM, Cramer Wohnvilla, Osterstraße 29. Line-up: Hello 911, Eni Hartmann, Bomchello b2b Maximmodus, Margo, Anton Jonathan b2b Fion, Finona Rider, Enzo V8, Hæbn. A safe space for everyone.",
+        },
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel_kb/studio_liebe_kb_carousel_02.jpg",
+        alt: "Studio Liebe × Künstlerbörse — carousel slide 2",
+        presentation: "carousel",
+        group: "kb",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/carousel_kb/studio_liebe_kb_carousel_03.jpg",
+        alt: "Studio Liebe × Künstlerbörse — carousel slide 3",
+        presentation: "carousel",
+        group: "kb",
+      },
+      {
+        type: "image",
+        src: "/images/projects/studio_liebe/story/studio_liebe_story_venue.jpg",
+        alt: "Studio Liebe — the venue with the neon sign",
+        presentation: "story",
       },
       {
         type: "video",
-        src: "/images/projects/studio_liebe/studio_liebe_recap.mp4",
-        alt: "Studio Liebe — recap",
+        src: "/images/projects/studio_liebe/story/studio_liebe_story_party.mp4",
+        poster: "/images/projects/studio_liebe/story/studio_liebe_story_party_poster.jpg",
+        alt: "Studio Liebe — party",
+        presentation: "story",
       },
     ],
   },

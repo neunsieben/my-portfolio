@@ -27,6 +27,7 @@ export function StoryPlayer({ items, name, account }: Props) {
   const [held, setHeld] = useState(false);
   const [inView, setInView] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [muted, setMuted] = useState(true);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
@@ -89,9 +90,18 @@ export function StoryPlayer({ items, name, account }: Props) {
   useEffect(() => {
     const v = videoRefs.current[index];
     if (!v) return;
-    if (playing) v.play().catch(() => {});
-    else v.pause();
-  }, [playing, index]);
+    v.muted = muted;
+    if (playing) {
+      v.play().catch(() => {
+        // The browser refused sound without a gesture: fall back to muted.
+        if (!v.muted) {
+          v.muted = true;
+          setMuted(true);
+          v.play().catch(() => {});
+        }
+      });
+    } else v.pause();
+  }, [playing, index, muted]);
 
   // The active segment is written straight to the DOM; restore it after any render.
   useLayoutEffect(() => {
@@ -263,6 +273,27 @@ export function StoryPlayer({ items, name, account }: Props) {
               </span>
               <span className="story-handle">{handle}</span>
               {account?.time ? <span className="story-time">{account.time}</span> : null}
+              {current?.type === "video" ? (
+                <button
+                  type="button"
+                  className="story-icon-btn story-sound-btn hoverable"
+                  onClick={() => setMuted((m) => !m)}
+                  aria-label={muted ? "Turn sound on" : "Turn sound off"}
+                  aria-pressed={!muted}
+                >
+                  {muted ? (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
+                      <path d="m16 9.5 5 5m0-5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
+                      <path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+                    </svg>
+                  )}
+                </button>
+              ) : null}
               <button
                 type="button"
                 className="story-icon-btn hoverable"
