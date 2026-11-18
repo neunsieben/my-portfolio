@@ -9,6 +9,7 @@ import { PROJECT_DETAILS, type ProjectMedia } from "@/lib/projectsData";
 import { initTerminalLinks } from "@/lib/terminalAnimation";
 import { createVerticalGlassEffect } from "@/lib/verticalGlassEffect";
 import { HmConstruction } from "@/components/HmConstruction";
+import { StoryPlayer } from "@/components/StoryPlayer";
 import { TiltCover } from "@/components/TiltCover";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -42,29 +43,6 @@ function mediaBlocks(media: ProjectMedia[]) {
   });
   flush();
   return blocks;
-}
-
-function StorySet({
-  items,
-  name,
-}: {
-  items: ProjectMedia[];
-  name: string;
-}) {
-  return (
-    <div className="pd-stories reveal">
-      {items.map((item, index) => (
-        <figure className="pd-story" key={item.src}>
-          <img
-            src={item.src}
-            alt={item.alt ?? name}
-            loading={index === 0 ? "eager" : "lazy"}
-            decoding="async"
-          />
-        </figure>
-      ))}
-    </div>
-  );
 }
 
 function DetailMedia({
@@ -358,7 +336,12 @@ export default function ProjectDetailPage() {
         <div className="pd-media-right">
           {mediaBlocks(project.media).map((block) =>
             block.kind === "stories" ? (
-              <StorySet key={block.key} items={block.items} name={project.name} />
+              <StoryPlayer
+                key={block.key}
+                items={block.items}
+                name={project.name}
+                account={project.storyAccount}
+              />
             ) : (
               <DetailMedia
                 key={block.key}

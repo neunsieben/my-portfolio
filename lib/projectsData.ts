@@ -10,12 +10,23 @@ export type ProjectMedia = {
   bg?: string;
   /** Square cover, centered in a black 4:3 frame. Only the cover tilts. */
   presentation?: "tilt-cover" | "hm-construction" | "story";
+  /** Seconds a still story stays up (presentation "story"). Defaults to 5. */
+  duration?: number;
   /** Which Henning Media construction sequence to play. */
   hm?: "mark" | "horizontal" | "stacked";
   /** Still 4:3 stand-in for list and grid when presentation is tilt-cover. */
   frame?: string;
   /** Stronger lamp so the highlight reads on a black cover. */
   lamp?: "strong";
+};
+
+/** Account shown in the story header for presentation "story" media. */
+export type StoryAccount = {
+  handle: string;
+  /** Small square image, shown cropped to a circle. */
+  avatar?: string;
+  /** Short label next to the handle, e.g. "2h". */
+  time?: string;
 };
 
 export type ProjectDetail = {
@@ -31,6 +42,7 @@ export type ProjectDetail = {
   collaborators?: string;
   visitUrl?: string;
   visitLabel?: string;
+  storyAccount?: StoryAccount;
   media: ProjectMedia[];
 };
 
@@ -306,6 +318,10 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     role: "Rebranding",
     description: LOREM,
     descriptionDe: LOREM_DE,
+    storyAccount: {
+      handle: "magicmansion",
+      avatar: "/images/projects/magic_mansion/story_avatar.jpg",
+    },
     media: [
       {
         type: "image",
