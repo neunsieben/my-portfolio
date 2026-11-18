@@ -170,153 +170,155 @@ export function StoryPlayer({ items, name, account }: Props) {
 
   return (
     <div className="story-stage reveal" ref={stageRef}>
-      <button
-        type="button"
-        className="story-arrow story-arrow-prev hoverable"
-        onClick={() => go(index - 1)}
-        aria-label="Previous story"
-      >
-        ←
-      </button>
+      <div className="story-row">
+        <button
+          type="button"
+          className="story-arrow story-arrow-prev hoverable"
+          onClick={() => go(index - 1)}
+          aria-label="Previous story"
+        >
+          ←
+        </button>
 
-      <div
-        className={`story-frame${held ? " is-held" : ""}`}
-        role="region"
-        aria-roledescription="carousel"
-        aria-label={`${name}: stories`}
-        tabIndex={0}
-        onKeyDown={onKeyDown}
-      >
-        <div className="story-media">
-          {items.map((item, i) => (
-            <div
-              key={item.src}
-              className={`story-slide${i === index ? " is-active" : ""}`}
-              aria-hidden={i !== index}
-            >
-              {item.type === "video" ? (
-                <video
-                  ref={(el) => {
-                    videoRefs.current[i] = el;
-                  }}
-                  src={item.src}
-                  poster={item.poster}
-                  muted
-                  playsInline
-                  preload={i === 0 ? "auto" : "metadata"}
-                  onEnded={() => go(index + 1)}
-                />
-              ) : (
-                <img
-                  src={item.src}
-                  alt={item.alt ?? name}
-                  loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  draggable={false}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="story-shade story-shade-top" aria-hidden="true" />
-        <div className="story-shade story-shade-bottom" aria-hidden="true" />
-
-        {/* Tap layer sits under the controls so buttons stay clickable. */}
         <div
-          className="story-tap hoverable"
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerCancel}
-          onPointerLeave={onPointerCancel}
-          onContextMenu={(e) => e.preventDefault()}
-          aria-hidden="true"
-        />
-
-        <div className="story-top">
-          <div className="story-progress" aria-hidden="true">
+          className={`story-frame${held ? " is-held" : ""}`}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label={`${name}: stories`}
+          tabIndex={0}
+          onKeyDown={onKeyDown}
+        >
+          <div className="story-media">
             {items.map((item, i) => (
-              <span className="story-progress-track" key={item.src}>
-                <span
-                  ref={i === index ? barRef : undefined}
-                  className="story-progress-fill"
-                  style={
-                    i === index
-                      ? undefined
-                      : { transform: `scaleX(${i < index ? 1 : 0})` }
-                  }
-                />
-              </span>
+              <div
+                key={item.src}
+                className={`story-slide${i === index ? " is-active" : ""}`}
+                aria-hidden={i !== index}
+              >
+                {item.type === "video" ? (
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[i] = el;
+                    }}
+                    src={item.src}
+                    poster={item.poster}
+                    muted
+                    playsInline
+                    preload={i === 0 ? "auto" : "metadata"}
+                    onEnded={() => go(index + 1)}
+                  />
+                ) : (
+                  <img
+                    src={item.src}
+                    alt={item.alt ?? name}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    draggable={false}
+                  />
+                )}
+              </div>
             ))}
           </div>
 
-          <div className="story-header">
-            <span className="story-avatar">
-              {account?.avatar ? (
-                <img src={account.avatar} alt="" draggable={false} />
-              ) : account?.avatarColor ? (
-                <span className="story-avatar-fill" style={{ background: account.avatarColor }} />
-              ) : (
-                <span>{handle.slice(0, 1)}</span>
-              )}
+          <div className="story-shade story-shade-top" aria-hidden="true" />
+          <div className="story-shade story-shade-bottom" aria-hidden="true" />
+
+          {/* Tap layer sits under the controls so buttons stay clickable. */}
+          <div
+            className="story-tap hoverable"
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerCancel}
+            onPointerLeave={onPointerCancel}
+            onContextMenu={(e) => e.preventDefault()}
+            aria-hidden="true"
+          />
+
+          <div className="story-top">
+            <div className="story-progress" aria-hidden="true">
+              {items.map((item, i) => (
+                <span className="story-progress-track" key={item.src}>
+                  <span
+                    ref={i === index ? barRef : undefined}
+                    className="story-progress-fill"
+                    style={
+                      i === index
+                        ? undefined
+                        : { transform: `scaleX(${i < index ? 1 : 0})` }
+                    }
+                  />
+                </span>
+              ))}
+            </div>
+
+            <div className="story-header">
+              <span className="story-avatar">
+                {account?.avatar ? (
+                  <img src={account.avatar} alt="" draggable={false} />
+                ) : account?.avatarColor ? (
+                  <span className="story-avatar-fill" style={{ background: account.avatarColor }} />
+                ) : (
+                  <span>{handle.slice(0, 1)}</span>
+                )}
+              </span>
+              <span className="story-handle">{handle}</span>
+              {account?.time ? <span className="story-time">{account.time}</span> : null}
+              <button
+                type="button"
+                className="story-icon-btn hoverable"
+                onClick={() => setPaused((p) => !p)}
+                aria-label={paused ? "Play stories" : "Pause stories"}
+              >
+                {paused ? (
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 4.5v15l12-7.5z" fill="currentColor" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 4.5h3.5v15H7zM13.5 4.5H17v15h-3.5z" fill="currentColor" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="story-bottom">
+            <span className="story-reply" aria-hidden="true">
+              Reply to {handle}…
             </span>
-            <span className="story-handle">{handle}</span>
-            {account?.time ? <span className="story-time">{account.time}</span> : null}
             <button
               type="button"
-              className="story-icon-btn hoverable"
-              onClick={() => setPaused((p) => !p)}
-              aria-label={paused ? "Play stories" : "Pause stories"}
+              className={`story-icon-btn story-like hoverable${liked ? " is-liked" : ""}`}
+              onClick={() => setLiked((l) => !l)}
+              aria-pressed={liked}
+              aria-label="Like story"
             >
-              {paused ? (
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M7 4.5v15l12-7.5z" fill="currentColor" />
-                </svg>
-              ) : (
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M7 4.5h3.5v15H7zM13.5 4.5H17v15h-3.5z" fill="currentColor" />
-                </svg>
-              )}
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 0 1 19.4 13z"
+                  fill={liked ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
           </div>
-        </div>
 
-        <div className="story-bottom">
-          <span className="story-reply" aria-hidden="true">
-            Reply to {handle}…
+          <span className="sr-only" aria-live="polite">
+            {`Story ${index + 1} of ${count}${current?.alt ? `: ${current.alt}` : ""}`}
           </span>
-          <button
-            type="button"
-            className={`story-icon-btn story-like hoverable${liked ? " is-liked" : ""}`}
-            onClick={() => setLiked((l) => !l)}
-            aria-pressed={liked}
-            aria-label="Like story"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 0 1 19.4 13z"
-                fill={liked ? "currentColor" : "none"}
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
         </div>
 
-        <span className="sr-only" aria-live="polite">
-          {`Story ${index + 1} of ${count}${current?.alt ? `: ${current.alt}` : ""}`}
-        </span>
+        <button
+          type="button"
+          className="story-arrow story-arrow-next hoverable"
+          onClick={() => go(index + 1)}
+          aria-label="Next story"
+        >
+          →
+        </button>
       </div>
-
-      <button
-        type="button"
-        className="story-arrow story-arrow-next hoverable"
-        onClick={() => go(index + 1)}
-        aria-label="Next story"
-      >
-        →
-      </button>
 
       <div className="story-caption" aria-hidden="true">
         <span>

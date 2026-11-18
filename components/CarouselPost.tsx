@@ -320,20 +320,22 @@ export function CarouselPost({ items, name, account }: Props) {
             </button>
           </div>
 
-          {post.likes || liked ? (
-            <p className="carousel-likes">{post.likes ? `${post.likes} likes` : "Liked by you"}</p>
-          ) : null}
+          <div className="carousel-meta">
+            {post.likes || liked ? (
+              <p className="carousel-likes">{post.likes ? `${post.likes} likes` : "Liked by you"}</p>
+            ) : null}
 
-          {post.caption ? (
-            <button
-              type="button"
-              className={`carousel-caption hoverable${captionOpen ? " is-open" : ""}`}
-              onClick={() => setCaptionOpen((o) => !o)}
-              aria-expanded={captionOpen}
-            >
-              <strong>{handle}</strong> {post.caption}
-            </button>
-          ) : null}
+            {post.caption ? (
+              <button
+                type="button"
+                className={`carousel-caption hoverable${captionOpen ? " is-open" : ""}`}
+                onClick={() => setCaptionOpen((o) => !o)}
+                aria-expanded={captionOpen}
+              >
+                <strong>{handle}</strong> {post.caption}
+              </button>
+            ) : null}
+          </div>
 
           <span className="sr-only" aria-live="polite">{`Slide ${index + 1} of ${count}`}</span>
         </article>
@@ -363,7 +365,7 @@ export function CarouselPost({ items, name, account }: Props) {
 
       <div className="story-caption carousel-bar">
         <span aria-hidden="true">
-          {view === "post" ? `Carousel ${pad(index + 1)} / ${pad(count)}` : `Panorama · ${count} slides · Drag to explore`}
+          {view === "post" ? `Carousel ${pad(index + 1)} / ${pad(count)}` : `Panorama · ${count} slides`}
         </span>
         <span className="carousel-toggle" role="group" aria-label="View">
           <button
@@ -374,7 +376,6 @@ export function CarouselPost({ items, name, account }: Props) {
           >
             Post
           </button>
-          <span aria-hidden="true">/</span>
           <button
             type="button"
             className={`hoverable${view === "panorama" ? " is-active" : ""}`}

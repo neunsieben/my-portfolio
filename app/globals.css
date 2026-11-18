@@ -1934,25 +1934,46 @@ nav.scrolled {
   overflow: hidden;
 }
 
-/* ── Story player: 9:16 media presented as a story ───────────
-   Sits in the same black 4:3 stage as the tilt covers, so it reads
-   as one more exhibit in the media column rather than a phone mock-up. */
+/* ── Social players (story, reel, carousel) ──────────────────
+   A black stage, like the other media, that sizes to its content.
+   Each player is capped by the screen height first, then fits the
+   column width, so it never towers past the screen on tablets or
+   shrinks to a sliver on small laptops. The stage is a container, so
+   everything inside sizes from the space actually available. */
 .story-stage {
+  --frame-h: min(560px, 78svh);
+  --post-h: min(640px, 82svh);
+  container-type: inline-size;
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
   background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2.2vw, 22px);
+  padding: clamp(20px, 4.5vw, 52px) clamp(16px, 4vw, 44px) clamp(14px, 2.4vw, 22px);
+  overflow: hidden;
+}
+
+.story-row {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(16px, 4%, 48px);
-  padding: 5% 0 9%;
-  overflow: hidden;
+  gap: clamp(16px, 5cqw, 44px);
+}
+
+/* Narrow stages: no room for side arrows (frame + 2 × 40px + gaps);
+   tapping does the job. */
+@container (max-width: 460px) {
+  .story-arrow {
+    display: none;
+  }
 }
 
 .story-frame {
   position: relative;
-  height: 100%;
+  width: min(100cqw, calc(var(--frame-h) * 9 / 16));
   aspect-ratio: 9 / 16;
   flex: none;
   border-radius: 10px;
@@ -2205,21 +2226,37 @@ nav.scrolled {
   color: #0a0a0a;
 }
 
+/* Label bar under the player: counter left, hint or switch right.
+   Wraps onto two lines when the stage is narrow. */
 .story-caption {
-  position: absolute;
-  left: 24px;
-  right: 24px;
-  bottom: 0;
-  height: 9%;
+  width: 100%;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 6px 16px;
   font-family: var(--font-mono);
   font-size: 10px;
+  line-height: 1.6;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: rgba(245, 244, 240, 0.55);
-  pointer-events: none;
+}
+
+.story-hint {
+  margin-left: auto;
+  text-align: right;
+}
+
+@container (max-width: 520px) {
+  .story-caption {
+    letter-spacing: 0.4px;
+  }
+
+  .story-hint {
+    margin-left: 0;
+    text-align: left;
+  }
 }
 
 /* ── Reel player: shares the story stage, frame and type ──── */
@@ -2532,17 +2569,16 @@ button.reel-rail-btn {
 }
 
 /* ── Carousel post: square slides in a post card ──────────────
-   The card is sized from the stage width (container units) so header,
-   square, actions and caption always fit the 4:3 stage height. */
+   Card width = the square: the whole post (square + 142px of header,
+   actions and caption) stays within --post-h, and within the stage. */
 .carousel-stage {
-  container-type: inline-size;
-  padding: 3% 0 8%;
+  --carousel-chrome: 142px;
+  --card-w: min(100cqw, 460px, calc(var(--post-h) - var(--carousel-chrome)));
 }
 
 .carousel-card {
-  --carousel-chrome: 142px;
   position: relative;
-  width: calc(64cqw - var(--carousel-chrome));
+  width: var(--card-w);
   flex: none;
   background: #fff;
   color: var(--text);
@@ -2724,6 +2760,13 @@ button.carousel-action {
   justify-self: end;
 }
 
+/* Very small cards: drop the share icon so the dots keep their room. */
+@container (max-width: 300px) {
+  .carousel-actions-left .carousel-action:nth-child(3) {
+    display: none;
+  }
+}
+
 .carousel-dots {
   display: flex;
   gap: 4px;
@@ -2743,10 +2786,16 @@ button.carousel-action {
   transform: scale(1.15);
 }
 
+/* Likes line and caption share a fixed slot, so the card height never changes. */
+.carousel-meta {
+  height: 52px;
+  padding: 2px 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
 .carousel-likes {
-  position: absolute;
-  left: 12px;
-  bottom: 31px;
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.5px;
@@ -2757,8 +2806,7 @@ button.carousel-action {
 .carousel-caption {
   display: block;
   width: 100%;
-  height: 52px;
-  padding: 25px 12px 0;
+  padding: 0;
   border: 0;
   background: #fff;
   color: var(--text);
@@ -2806,7 +2854,8 @@ button.carousel-action {
 /* Panorama: every slide in one seamless strip, dragged sideways. */
 .carousel-pano {
   width: 100%;
-  height: 100%;
+  /* Same height as the post, so switching views doesn't move the page. */
+  height: calc(var(--card-w) + var(--carousel-chrome));
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -2868,33 +2917,41 @@ button.carousel-action {
   opacity: 1;
 }
 
+/* Post / Panorama: a two-option pill switch. */
 .carousel-toggle {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  pointer-events: auto;
+  padding: 3px;
+  border: 1px solid rgba(245, 244, 240, 0.2);
+  border-radius: 999px;
+  margin-left: auto;
 }
 
 .carousel-toggle button {
   border: 0;
   background: none;
-  padding: 4px 0;
+  min-height: 28px;
+  padding: 0 14px;
+  border-radius: 999px;
   font: inherit;
   letter-spacing: inherit;
   text-transform: inherit;
-  color: rgba(245, 244, 240, 0.55);
+  color: rgba(245, 244, 240, 0.6);
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
-.carousel-toggle button:hover,
-.carousel-toggle button.is-active {
+.carousel-toggle button:hover {
   color: #f5f4f0;
 }
 
 .carousel-toggle button.is-active {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  background: #f5f4f0;
+  color: #0a0a0a;
+}
+
+.carousel-toggle button:focus-visible {
+  outline: 1px solid #f5f4f0;
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3007,43 +3064,4 @@ button.carousel-action {
     gap: 24px;
   }
 
-  .carousel-stage {
-    padding: 20px 0 52px;
-  }
-
-  .carousel-card {
-    width: min(100%, 440px);
-  }
-
-  .carousel-pano {
-    height: min(78vw, 360px);
-  }
-
-  /* Phones: drop the 4:3 stage so the story can use the full column. */
-  .story-stage {
-    aspect-ratio: auto;
-    padding: 20px 0 52px;
-  }
-
-  .story-frame {
-    height: auto;
-    width: min(100%, 78vw);
-  }
-
-  .story-arrow {
-    display: none;
-  }
-
-  .story-caption {
-    left: 16px;
-    right: 16px;
-    height: 52px;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 4px;
-    font-size: 9px;
-    letter-spacing: 0.25px;
-    white-space: nowrap;
-  }
 }
