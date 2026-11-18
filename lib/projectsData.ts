@@ -409,12 +409,15 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     slug: "hungry4",
     num: "012",
     name: "Hungry4",
-    category: "Album Artwork",
+    category: "Art Direction · Album Artwork · Video Edit",
     year: "2026",
-    client: "Hungry4",
-    role: "Cover Artwork",
-    description: "Cover artwork for Hungry4.",
-    descriptionDe: "Cover-Artwork für Hungry4.",
+    client: "Hungry4 Records",
+    role: "Art Direction, EP Cover Artwork, Walkman Design, Video Edit",
+    collaborators: "Alec Dienaar, Hungry4 Records",
+    description:
+      "Hungry4 Records builds every release around its artists: their tastes and preferences set the direction, and the label's visual universe gives them a path to walk. For Alec Dienaar's EP If You Can, that meant keeping the classic Hungry4 look that runs through the label's feed, while catching Alec's character in a single moment.\n\nI art directed the release, designed the EP cover and the Walkman at its centre, branded in Hungry4's colours, and edited the accompanying video.",
+    descriptionDe:
+      "Hungry4 Records baut jedes Release um seine Künstler:innen herum: Ihre Vorlieben geben die Richtung vor, das visuelle Universum des Labels gibt ihnen einen Weg, den sie gehen können. Für Alec Dienaars EP If You Can hieß das, den klassischen Hungry4-Look beizubehalten, der sich durch den Feed des Labels zieht, und gleichzeitig Alecs Charakter in einem einzigen Moment festzuhalten.\n\nIch habe die Art Direction des Releases übernommen, das EP-Cover und den Walkman im Zentrum gestaltet, gebrandet in den Farben von Hungry4, und das begleitende Video geschnitten.",
     storyAccount: {
       handle: "hungry4",
       avatar: "/images/projects/hungry4/hungry4_avatar.jpg",
