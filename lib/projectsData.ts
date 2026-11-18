@@ -197,6 +197,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         alt: "Studio Liebe — logo animation",
       },
       {
+        type: "video",
+        src: "/images/projects/studio_liebe/studio_liebe_logo_circles.mp4",
+        alt: "Studio Liebe — the circles the logo is built from",
+      },
+      {
         type: "image",
         src: "/images/projects/studio_liebe/studio_liebe_thumbnail.jpg",
         alt: "Studio Liebe",
