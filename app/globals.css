@@ -1872,6 +1872,15 @@ nav.scrolled {
   touch-action: none;
 }
 
+/* Zoomed in, the cover can be dragged around. */
+.tilt-cover.is-zoomed {
+  cursor: grab;
+}
+
+.tilt-cover.is-panning {
+  cursor: grabbing;
+}
+
 .tilt-cover-art {
   position: relative;
   height: 82%;
