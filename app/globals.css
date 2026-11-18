@@ -2640,7 +2640,8 @@ button.reel-rail-btn {
   cursor: grabbing;
 }
 
-.carousel-track {
+/* Scoped to the post card: the projects list uses the same class names. */
+.carousel-card .carousel-track {
   display: flex;
   height: 100%;
   transition: transform 0.55s cubic-bezier(0.2, 0.75, 0.2, 1);
@@ -2651,12 +2652,12 @@ button.reel-rail-btn {
   transition: none;
 }
 
-.carousel-slide {
+.carousel-card .carousel-slide {
   flex: 0 0 100%;
   height: 100%;
 }
 
-.carousel-slide img {
+.carousel-card .carousel-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2865,7 +2866,7 @@ button.carousel-action {
     animation: none;
   }
 
-  .carousel-track {
+  .carousel-card .carousel-track {
     transition: none;
   }
 
