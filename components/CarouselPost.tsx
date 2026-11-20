@@ -229,6 +229,8 @@ export function CarouselPost({ items, name, account }: Props) {
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerCancel}
           onDoubleClick={(e) => {
+            // Quick clicks on the arrows or sound button are navigation, not a like.
+            if ((e.target as Element).closest("button")) return;
             // Touch double taps are handled in pointerup; skip the dblclick they also fire.
             if (e.timeStamp - lastTouchLike.current > 600) like();
           }}
