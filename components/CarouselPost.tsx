@@ -26,6 +26,8 @@ export function CarouselPost({ items, name, account }: Props) {
   const single = count === 1;
   const handle = account?.handle ?? name.toLowerCase().replace(/[^a-z0-9]+/g, "");
   const post = items[0]?.post ?? {};
+  const portrait = post.format === "portrait";
+  const hasVideo = items.some((item) => item.type === "video");
 
   const [index, setIndex] = useState(0);
   const [drag, setDrag] = useState(0);
@@ -34,8 +36,12 @@ export function CarouselPost({ items, name, account }: Props) {
   const [saved, setSaved] = useState(false);
   const [burst, setBurst] = useState(0);
   const [captionOpen, setCaptionOpen] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [inView, setInView] = useState(false);
 
   const viewportRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const start = useRef({ x: 0, y: 0, t: 0, id: -1, axis: "" as "" | "x" | "y" });
   const lastTap = useRef(0);
   const lastTouchLike = useRef(-1e9);
@@ -130,10 +136,57 @@ export function CarouselPost({ items, name, account }: Props) {
     return () => el.removeEventListener("wheel", onWheel);
   }, [count]);
 
+  // Video slides play only while the post is on screen.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage || !hasVideo) return;
+    let visible = false;
+    const update = () => setInView(visible && document.visibilityState === "visible");
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = !!entry?.isIntersecting;
+        update();
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(stage);
+    document.addEventListener("visibilitychange", update);
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", update);
+    };
+  }, [hasVideo]);
+
+  // The visible video plays from the start; the rest wait, rewound.
+  useEffect(() => {
+    videoRefs.current.forEach((v, i) => {
+      if (!v) return;
+      if (i !== index) {
+        v.pause();
+        v.currentTime = 0;
+        return;
+      }
+      v.muted = muted;
+      if (!inView) {
+        v.pause();
+        return;
+      }
+      v.play().catch(() => {
+        // Sound needs a gesture in some browsers: keep playing, muted.
+        if (!v.muted) {
+          v.muted = true;
+          setMuted(true);
+          v.play().catch(() => {});
+        }
+      });
+    });
+  }, [index, inView, muted]);
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") go(index + 1);
     else if (e.key === "ArrowLeft") go(index - 1);
     else if (e.key === "l") setLiked((l) => !l);
+    else if (e.key === "m" && items[index]?.type === "video") setMuted((m) => !m);
     else return;
     e.preventDefault();
   };
@@ -148,7 +201,11 @@ export function CarouselPost({ items, name, account }: Props) {
   );
 
   return (
-    <div className="story-stage carousel-stage reveal">
+    <div
+      ref={stageRef}
+      className="story-stage carousel-stage reveal"
+      style={portrait ? ({ "--slide-ratio": 0.8, "--slide-aspect": "4 / 5" } as React.CSSProperties) : undefined}
+    >
       <article
         className="carousel-card"
         aria-roledescription={single ? undefined : "carousel"}
@@ -182,13 +239,28 @@ export function CarouselPost({ items, name, account }: Props) {
           >
             {items.map((item, i) => (
               <div className="carousel-slide" key={item.src} aria-hidden={i !== index}>
-                <img
-                  src={item.src}
-                  alt={item.alt ?? `${name}, slide ${i + 1}`}
-                  loading={Math.abs(i - index) <= 1 ? "eager" : "lazy"}
-                  decoding="async"
-                  draggable={false}
-                />
+                {item.type === "video" ? (
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[i] = el;
+                    }}
+                    src={item.src}
+                    poster={item.poster}
+                    aria-label={item.alt ?? `${name}, slide ${i + 1}`}
+                    muted
+                    loop
+                    playsInline
+                    preload={i === index ? "auto" : Math.abs(i - index) === 1 ? "metadata" : "none"}
+                  />
+                ) : (
+                  <img
+                    src={item.src}
+                    alt={item.alt ?? `${name}, slide ${i + 1}`}
+                    loading={Math.abs(i - index) <= 1 ? "eager" : "lazy"}
+                    decoding="async"
+                    draggable={false}
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -198,6 +270,29 @@ export function CarouselPost({ items, name, account }: Props) {
               {index + 1}/{count}
             </span>
           )}
+
+          {items[index]?.type === "video" ? (
+            <button
+              type="button"
+              className="carousel-sound hoverable"
+              onClick={() => setMuted((m) => !m)}
+              onPointerDown={(e) => e.stopPropagation()}
+              aria-label={muted ? "Turn sound on" : "Turn sound off"}
+              aria-pressed={!muted}
+            >
+              {muted ? (
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
+                  <path d="m16 9.5 5 5m0-5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" />
+                  <path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+                </svg>
+              )}
+            </button>
+          ) : null}
 
           {index > 0 ? (
             <button

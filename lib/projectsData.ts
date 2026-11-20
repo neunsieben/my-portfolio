@@ -16,6 +16,8 @@ export type ProjectMedia = {
   post?: {
     caption?: string;
     likes?: string;
+    /** Slide shape: square (default) or Instagram's 4:5 portrait. */
+    format?: "square" | "portrait";
   };
   /** Overlay text for presentation "reel". */
   reel?: {
@@ -544,7 +546,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       "Hungry4 Records baut jedes Release um seine Künstler:innen herum: Ihre Vorlieben geben die Richtung vor, das visuelle Universum des Labels gibt ihnen einen Weg, den sie gehen können. Für Alec Dienaars EP If You Can hieß das, den klassischen Hungry4-Look beizubehalten, der sich durch den Feed des Labels zieht, und gleichzeitig Alecs Charakter in einem einzigen Moment festzuhalten.\n\nIch habe die Art Direction des Releases übernommen, das EP-Cover und den Walkman im Zentrum gestaltet, gebrandet in den Farben von Hungry4, und das begleitende Video geschnitten.",
     storyAccount: {
       handle: "hungry4",
-      avatar: "/images/projects/hungry4/hungry4_avatar.jpg",
+      avatarColor: "#9B0707",
     },
     media: [
       {
@@ -565,6 +567,39 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
           caption: "Alec Dienaar — If You Can · 20.11.26",
           audio: "Alec Dienaar · If You Can",
         },
+      },
+      {
+        type: "video",
+        src: "/images/projects/hungry4/carousel/hungry4_ep004_01.mp4",
+        poster: "/images/projects/hungry4/carousel/hungry4_ep004_01_poster.jpg",
+        alt: "Hungry4 EP004 — Alec Dienaar, If You Can",
+        presentation: "carousel",
+        post: {
+          caption:
+            "EP004 — Alec Dienaar, If You Can. Four tracks: If You Can, Who's In?, For All The Ladies and If You Can (Cuba Remix). Out 20.11.26 on Hungry4 Records.",
+          format: "portrait",
+        },
+      },
+      {
+        type: "video",
+        src: "/images/projects/hungry4/carousel/hungry4_ep004_02.mp4",
+        poster: "/images/projects/hungry4/carousel/hungry4_ep004_02_poster.jpg",
+        alt: "Hungry4 EP004 — Alec Dienaar, Who's In?",
+        presentation: "carousel",
+      },
+      {
+        type: "video",
+        src: "/images/projects/hungry4/carousel/hungry4_ep004_03.mp4",
+        poster: "/images/projects/hungry4/carousel/hungry4_ep004_03_poster.jpg",
+        alt: "Hungry4 EP004 — Alec Dienaar, For All The Ladies",
+        presentation: "carousel",
+      },
+      {
+        type: "video",
+        src: "/images/projects/hungry4/carousel/hungry4_ep004_04.mp4",
+        poster: "/images/projects/hungry4/carousel/hungry4_ep004_04_poster.jpg",
+        alt: "Hungry4 EP004 — Alec Dienaar, If You Can (Cuba Remix)",
+        presentation: "carousel",
       },
     ],
   },
