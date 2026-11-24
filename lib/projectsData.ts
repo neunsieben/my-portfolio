@@ -204,6 +204,11 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         alt: "Studio Liebe — the circles the logo is built from",
       },
       {
+        type: "video",
+        src: "/images/projects/studio_liebe/studio_liebe_star_construction.mp4",
+        alt: "Studio Liebe — how the star is made from four circles",
+      },
+      {
         type: "image",
         src: "/images/projects/studio_liebe/studio_liebe_thumbnail.jpg",
         alt: "Studio Liebe",
